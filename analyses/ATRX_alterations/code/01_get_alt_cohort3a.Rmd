@@ -122,7 +122,7 @@ telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor
 
 check_ratio<-telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))
 
-ggplot(check_ratio,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compare_means()
+ggplot(check_ratio,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compare_means()+ggsave("../plots/ATRX_telomere_ratio_boxplot.pdf")
 
 ```
 ```{r}
