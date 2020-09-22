@@ -33,6 +33,10 @@ consensus_cnv <- read_tsv(file.path(root_dir,
                                       "data",
                                       "consensus_seg_annotated_cn_autosomes.tsv.gz")) 
 
+manta_snv <- read_tsv(file.path(root_dir,
+                                      "data",
+                                      "pbta-sv-manta.tsv.gz"))
+
 ```
 
 
@@ -88,7 +92,9 @@ ATRX_strelka2<- alt$strelka2 %>% format_snv_hgvs("ATRX",.,"strelka2")
 ATRX_mutect2 <- alt$mutect2 %>% format_snv_hgvs("ATRX",.,"mutect2")
 
 ATRX_consensus <- alt$consensus_snv %>% format_snv_hgvs("ATRX",.,"consensus")
+```
 
+```{r}
 ATRX_consensus_cnv <- alt$consensus_cnv %>%
   # select TP53
   dplyr::filter(gene_symbol=="ATRX")
@@ -113,7 +119,29 @@ if ( nrow(ATRX_consensus_cnv) > 0){
    
 }
 
-telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))  %>% write_tsv(file.path("..","scratch","pbta_telomere_ratio_merged_ATRX.tsv"))
+```
+
+```{r}
+ATRX_sv <- manta_snv %>% 
+  dplyr::filter(grepl("ATRX",Gene.name),FILTER=="PASS") 
+
+if ( nrow(ATRX_sv) > 0){
+  ATRX_sv<- ATRX_sv %>%
+    # reshape to make gain /loss columns
+    reshape2::dcast(Kids.First.Biospecimen.ID.Tumor ~ SV.type,fun.aggregate = length) %>%
+    # rename columns
+    dplyr::rename("ATRX_BND"="BND","ATRX_DEL"="DEL","ATRX_DUP"="DUP","ATRX_INV"="INV")
+  
+  
+  merge_ATRX <- merge_ATRX %>%
+    full_join(ATRX_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+}
+
+```
+
+```{r}
+telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))  %>% write_tsv(file.path("..","output","pbta_telomere_ratio_merged_ATRX.tsv"))
 
 ```
 
@@ -127,12 +155,12 @@ ggplot(check_ratio,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compa
 ```
 ```{r}
 # with ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(Hugo_Symbol == "ATRX") %>% pull(ratio) %>% mean()
+check_ratio %>% dplyr::filter(Hugo_Symbol == "ATRX"|!is.na(ATRX_DEL)|!is.na(ATRX_BND)|!is.na(ATRX_DUP)|!is.na(ATRX_INV)) %>% pull(ratio) %>% mean()
 ```
 
 
 ```{r}
 # without ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(is.na(Hugo_Symbol)) %>% pull(ratio) %>% mean()
+check_ratio %>% dplyr::filter(is.na(Hugo_Symbol),is.na(ATRX_DEL),is.na(ATRX_BND),is.na(ATRX_DUP),is.na(ATRX_INV)) %>% pull(ratio) %>% mean()
 ```
 

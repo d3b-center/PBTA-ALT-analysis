@@ -39,18 +39,7 @@ get_alt<-function(gene){
     # unique so that 1 = mutation exists 0 mutation doesn't exist
     unique() %>% 
     dplyr::mutate(data_source="consensus_snv")
-  
-  rna_seq_snv <- rna_seq %>%
-    # select only MODERATE/HIGH IMPACT mutations
-    dplyr::filter((IMPACT %in% c("MODERATE","HIGH")))  %>%
-    dplyr::select (c("Tumor_Sample_Barcode",
-                     "Hugo_Symbol","HGVSp_Short")) %>%
-    # select only gene
-    dplyr::filter(Hugo_Symbol %in%  gene ) %>% 
-    # unique so that 1 = mutation exists 0 mutation doesn't exist
-    unique() %>% 
-    dplyr::mutate(data_source="rnaseq_snv")
-  
+ 
   # all_cnv<- read_tsv(file.path(root_dir,
   #   "data",
   #   "pbta-cnv-consensus-gistic",
@@ -71,6 +60,6 @@ get_alt<-function(gene){
     dplyr::filter(gene_symbol %in% gene) %>% 
     dplyr::mutate(data_source="consensus_cnv")
   
-  gene_alt_list<-list("strelka2"=strelka2,"mutect2"=mutect2,"consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv,"rna_seq_snv"=rna_seq_snv)
+  gene_alt_list<-list("strelka2"=strelka2,"mutect2"=mutect2,"consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv)
   
 }
