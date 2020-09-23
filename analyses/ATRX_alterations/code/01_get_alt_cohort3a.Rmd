@@ -31,9 +31,17 @@ strelka2 <- fread(file.path(root_dir,"data","pbta-snv-strelka2.vep.maf.gz"),sele
 consensus_snv <- fread(file.path(root_dir,"data","pbta-snv-consensus-mutation.maf.tsv.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
 consensus_cnv <- read_tsv(file.path(root_dir,
                                       "data",
-                                      "consensus_seg_annotated_cn_autosomes.tsv.gz")) 
+                                      "consensus_seg_annotated_cn_x_and_y.tsv.gz")) 
 
-manta_snv <- read_tsv(file.path(root_dir,
+cnvkit <- read_tsv(file.path(root_dir,
+                                      "data",
+                                      "cnvkit_annotated_cn_x_and_y.tsv.gz"))
+
+controlfreec <- read_tsv(file.path(root_dir,
+                                      "data",
+                                      "controlfreec_annotated_cn_x_and_y.tsv.gz"))
+
+manta_sv <- read_tsv(file.path(root_dir,
                                       "data",
                                       "pbta-sv-manta.tsv.gz"))
 
@@ -47,94 +55,64 @@ alt<-get_alt(c("ATRX"))
 ```
 
 
-```{r echo=FALSE,message=FALSE,warning=FALSE}
-format_snv_binary<-function(gene,alt_caller,caller) {
-  colname<-paste0(gene,"_MOD_HIGH_mut_",caller)
-  alt_caller <- alt_caller %>% 
-    dplyr::select(c("Tumor_Sample_Barcode",
-                    "Hugo_Symbol")) %>%
-    # select only TP53
-    dplyr::filter(Hugo_Symbol %in% gene ) %>% 
-    # unique so that 1 = mutation exists 0 mutation doesn't exist
-    unique()
-  if (nrow(alt_caller)>0) {
-  alt_caller <- alt_caller %>%
-    # reshape to make TP53 row
-    reshape2::dcast(Tumor_Sample_Barcode ~ Hugo_Symbol,fun.aggregate = length) %>%
-    # rename 
-    dplyr::rename(!!colname := gene )
-  }
-}
-
-format_snv_hgvs<-function(gene,alt_caller,caller) {
-  colname<-paste0(gene,"_MOD_HIGH_mut_",caller)
-  alt_caller <- alt_caller %>%
-  dplyr::select (c("Tumor_Sample_Barcode",
-                    "Hugo_Symbol","HGVSp_Short")) %>%
-  # select only gene 
-  dplyr::filter(Hugo_Symbol== gene) %>% 
-  # unique so that 1 = mutation exists 0 mutation doesn't exist
-  unique() 
-  if (nrow(alt_caller)>0) {
-  alt_caller <- alt_caller %>%
-    dplyr::group_by(Tumor_Sample_Barcode ,Hugo_Symbol) %>%
-    # aggregate mutations
-    summarise( !! colname := toString(HGVSp_Short))
-  }
-}
-
-```
-
-
 ```{r}
 ATRX_strelka2<- alt$strelka2 %>% format_snv_hgvs("ATRX",.,"strelka2")
 
 ATRX_mutect2 <- alt$mutect2 %>% format_snv_hgvs("ATRX",.,"mutect2")
 
 ATRX_consensus <- alt$consensus_snv %>% format_snv_hgvs("ATRX",.,"consensus")
+
+ATRX_consensus_cnv <- alt$consensus_cnv %>% format_cnv("ATRX",.,"consensus")
+
+ATRX_cnvkit_cnv <- alt$consensus_cnv %>% format_cnv("ATRX",.,"cnvkit")
+
+ATRX_controlfreec_cnv <- alt$consensus_cnv %>% format_cnv("ATRX",.,"controlfreec")
 ```
 
 ```{r}
-ATRX_consensus_cnv <- alt$consensus_cnv %>%
-  # select TP53
-  dplyr::filter(gene_symbol=="ATRX")
 
-if ( nrow(ATRX_consensus_cnv) > 0){
-  ATRX_consensus_cnv <- ATRX_consensus_cnv %>%
-    # reshape to make gain /loss columns
-    reshape2::dcast(biospecimen_id ~ status ,value.var = "status",fun.aggregate = length) %>%
-    # rename columns
-    dplyr::rename("ATRX_gain_consensus_cnv"="gain","ATRX_loss_consensus_cnv"="loss")
-  
-  
-  merge_ATRX <- full_join(ATRX_strelka2,ATRX_mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
-    full_join(ATRX_consensus,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
-    full_join(ATRX_rna_seq_snv,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
-    full_join(ATRX_consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-}else {
- merge_ATRX <- full_join(ATRX_strelka2,ATRX_mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
+# merge snv alterations
+merge_ATRX <- full_join(ATRX_strelka2,ATRX_mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
     full_join(ATRX_consensus,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-   
+
+if ( !is.null(ATRX_consensus_cnv) ){
+  merge_ATRX <- merge_ATRX %>%
+    full_join(ATRX_consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+}
+
+if ( !is.null(ATRX_cnvkit_cnv) ){
+  merge_ATRX <- merge_ATRX %>%
+    full_join(ATRX_cnvkit_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+} 
+
+if ( !is.null(ATRX_controlfreec_cnv) ){
+  merge_ATRX <- merge_ATRX %>%
+    full_join(ATRX_controlfreec_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
 ```
 
 ```{r}
-ATRX_sv <- manta_snv %>% 
-  dplyr::filter(grepl("ATRX",Gene.name),FILTER=="PASS") 
+ATRX_sv <- alt$manta
 
 if ( nrow(ATRX_sv) > 0){
   ATRX_sv<- ATRX_sv %>%
     # reshape to make gain /loss columns
-    reshape2::dcast(Kids.First.Biospecimen.ID.Tumor ~ SV.type,fun.aggregate = length) %>%
+    reshape2::dcast(Kids.First.Biospecimen.ID.Tumor +Gene.name ~ SV.type,fun.aggregate = length) %>%
     # rename columns
-    dplyr::rename("ATRX_BND"="BND","ATRX_DEL"="DEL","ATRX_DUP"="DUP","ATRX_INV"="INV")
+    dplyr::rename("ATRX_BND"="BND","ATRX_DEL"="DEL","ATRX_DUP"="DUP","ATRX_INV"="INV",
+                  Hugo_Symbol_SV = Gene.name) %>%
+    # add Hugo_Symbol column for plotting
+    dplyr::mutate(Hugo_Symbol = "ATRX")
+  
   
   
   merge_ATRX <- merge_ATRX %>%
-    full_join(ATRX_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor")) %>%
+    full_join(ATRX_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
@@ -153,14 +131,16 @@ check_ratio<-telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospec
 ggplot(check_ratio,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compare_means()+ggsave("../plots/ATRX_telomere_ratio_boxplot.pdf")
 
 ```
+
+
 ```{r}
 # with ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(Hugo_Symbol == "ATRX"|!is.na(ATRX_DEL)|!is.na(ATRX_BND)|!is.na(ATRX_DUP)|!is.na(ATRX_INV)) %>% pull(ratio) %>% mean()
+check_ratio %>% dplyr::filter(Hugo_Symbol == "ATRX") %>% pull(ratio) %>% mean()
 ```
 
 
 ```{r}
 # without ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(is.na(Hugo_Symbol),is.na(ATRX_DEL),is.na(ATRX_BND),is.na(ATRX_DUP),is.na(ATRX_INV)) %>% pull(ratio) %>% mean()
+check_ratio %>% dplyr::filter(is.na(Hugo_Symbol)) %>% pull(ratio) %>% mean()
 ```
 

@@ -53,13 +53,80 @@ get_alt<-function(gene){
   #   dplyr::rename("TP53_all_gistic"="TP53")
   
   
-  consensus_cnv <- read_tsv(file.path(root_dir,
-                                      "data",
-                                      "consensus_seg_annotated_cn_autosomes.tsv.gz")) %>%
+  consensus_cnv <- consensus_cnv %>%
     # select TP53
     dplyr::filter(gene_symbol %in% gene) %>% 
     dplyr::mutate(data_source="consensus_cnv")
   
-  gene_alt_list<-list("strelka2"=strelka2,"mutect2"=mutect2,"consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv)
+  manta_sv <- manta_sv %>% 
+    dplyr::filter(grepl(gene,Gene.name),FILTER=="PASS") 
   
+  cnvkit <- cnvkit %>%
+    # select TP53
+    dplyr::filter(gene_symbol %in% gene) %>% 
+    dplyr::mutate(data_source="consensus_cnv")
+    
+  controlfreec <- controlfreec %>%
+    # select TP53
+    dplyr::filter(gene_symbol %in% gene) %>% 
+    dplyr::mutate(data_source="consensus_cnv")
+  
+  gene_alt_list<-list("strelka2"=strelka2,"mutect2"=mutect2,"consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv,"controlfreec"=controlfreec,"cnvkit"=cnvkit,"manta_sv"=manta_sv)
+  
+}
+
+
+format_snv_binary<-function(gene,alt_caller,caller) {
+  colname<-paste0(gene,"_MOD_HIGH_mut_",caller)
+  alt_caller <- alt_caller %>% 
+    dplyr::select(c("Tumor_Sample_Barcode",
+                    "Hugo_Symbol")) %>%
+    # select only TP53
+    dplyr::filter(Hugo_Symbol %in% gene ) %>% 
+    # unique so that 1 = mutation exists 0 mutation doesn't exist
+    unique()
+  if (nrow(alt_caller)>0) {
+    alt_caller <- alt_caller %>%
+      # reshape to make TP53 row
+      reshape2::dcast(Tumor_Sample_Barcode ~ Hugo_Symbol,fun.aggregate = length) %>%
+      # rename 
+      dplyr::rename(!!colname := gene )
+  }
+}
+
+format_snv_hgvs<-function(gene,alt_caller,caller) {
+  colname<-paste0(gene,"_MOD_HIGH_mut_",caller)
+  alt_caller <- alt_caller %>%
+    dplyr::select (c("Tumor_Sample_Barcode",
+                     "Hugo_Symbol","HGVSp_Short")) %>%
+    # select only gene 
+    dplyr::filter(Hugo_Symbol== gene) %>% 
+    # unique so that 1 = mutation exists 0 mutation doesn't exist
+    unique() 
+  if (nrow(alt_caller)>0) {
+    alt_caller <- alt_caller %>%
+      dplyr::group_by(Tumor_Sample_Barcode ,Hugo_Symbol) %>%
+      # aggregate mutations
+      summarise( !! colname := toString(HGVSp_Short))
+  }
+}
+
+format_cnv<-function(gene,alt_caller,caller) {
+  colname_gain <- paste0(gene,"_gain_consensus_cnv_",caller)
+  colname_loss <- paste0(gene,"_loss_consensus_cnv_",caller)
+  alt_caller <- alt_caller %>% 
+    # select only gene 
+    dplyr::filter(gene_symbol== gene) %>% 
+    # unique 
+    unique() 
+    
+  if (nrow(alt_caller)>0) {
+    alt_caller <- alt_caller %>%
+      # reshape to make gain /loss columns
+      reshape2::dcast(biospecimen_id ~ status ,value.var = "status",fun.aggregate = length) %>%
+      # rename columns
+      dplyr::rename(!! colname_gain :="gain",!! colname_loss :="loss") %>%
+      # add column Hugo_Symbol to use for plotting
+      dplyr::mutate(Hugo_Symbol = gene)
+  }
 }
