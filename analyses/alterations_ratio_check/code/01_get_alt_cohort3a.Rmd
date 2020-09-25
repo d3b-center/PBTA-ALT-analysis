@@ -26,20 +26,39 @@ library(tidyverse)
 cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file))
 telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio))
 
+
 mutect2 <- fread(file.path(root_dir,"data","pbta-snv-mutect2.vep.maf.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
 strelka2 <- fread(file.path(root_dir,"data","pbta-snv-strelka2.vep.maf.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
 consensus_snv <- fread(file.path(root_dir,"data","pbta-snv-consensus-mutation.maf.tsv.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
 consensus_cnv <- read_tsv(file.path(root_dir,
                                       "data",
+                                      "consensus_seg_annotated_cn_autosomes.tsv.gz")) 
+
+consensus_cnv_x_y <- read_tsv(file.path(root_dir,
+                                      "data",
                                       "consensus_seg_annotated_cn_x_and_y.tsv.gz")) 
+
+consensus_cnv <- rbind(consensus_cnv,consensus_cnv_x_y[,colnames(consensus_cnv)])
 
 cnvkit <- read_tsv(file.path(root_dir,
                                       "data",
+                                      "cnvkit_annotated_cn_autosomes.tsv.gz"))
+
+cnvkit_x_y <- read_tsv(file.path(root_dir,
+                                      "data",
                                       "cnvkit_annotated_cn_x_and_y.tsv.gz"))
+
+cnvkit <- rbind(cnvkit,cnvkit_x_y[,colnames(cnvkit)])
 
 controlfreec <- read_tsv(file.path(root_dir,
                                       "data",
+                                      "controlfreec_annotated_cn_autosomes.tsv.gz"))
+
+controlfreec_x_y <- read_tsv(file.path(root_dir,
+                                      "data",
                                       "controlfreec_annotated_cn_x_and_y.tsv.gz"))
+
+controlfreec <- rbind(controlfreec,controlfreec_x_y[,colnames(controlfreec)])
 
 manta_sv <- read_tsv(file.path(root_dir,
                                       "data",
@@ -51,12 +70,12 @@ manta_sv <- read_tsv(file.path(root_dir,
 ```{r echo=FALSE,message=FALSE,warning=FALSE}
 source(file.path("..","utils","get_alt.R"))
 
-alt<-get_alt(c("ATRX"))
+alt<-get_alt(c("ATRX","DAXX"))
 ```
 
 
 ```{r}
-ATRX_strelka2<- alt$strelka2 %>% format_snv_hgvs("ATRX",.,"strelka2")
+ATRX_strelka2<- alt$strelka2 %>% format_snv_hgvs(c("ATRX"),.,"strelka2")
 
 ATRX_mutect2 <- alt$mutect2 %>% format_snv_hgvs("ATRX",.,"mutect2")
 
@@ -68,6 +87,22 @@ ATRX_cnvkit_cnv <- alt$consensus_cnv %>% format_cnv("ATRX",.,"cnvkit")
 
 ATRX_controlfreec_cnv <- alt$consensus_cnv %>% format_cnv("ATRX",.,"controlfreec")
 ```
+
+```{r}
+DAXX_strelka2 <- alt$strelka2 %>% format_snv_hgvs(c("DAXX"),.,"strelka2")
+
+DAXX_mutect2 <- alt$mutect2 %>% format_snv_hgvs("DAXX",.,"mutect2")
+
+DAXX_consensus <- alt$consensus_snv %>% format_snv_hgvs("DAXX",.,"consensus")
+
+DAXX_consensus_cnv <- alt$consensus_cnv %>% format_cnv("DAXX",.,"consensus")
+
+DAXX_cnvkit_cnv <- alt$consensus_cnv %>% format_cnv("DAXX",.,"cnvkit")
+
+DAXX_controlfreec_cnv <- alt$consensus_cnv %>% format_cnv("DAXX",.,"controlfreec")
+
+```
+
 
 ```{r}
 
@@ -124,23 +159,77 @@ telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor
 ```
 
 
+
 ```{r}
 
-check_ratio<-telomere_ratio %>% left_join( merge_ATRX , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))
 
-ggplot(check_ratio,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compare_means()+ggsave("../plots/ATRX_telomere_ratio_boxplot.pdf")
+# merge snv alterations
+merge_DAXX <- full_join(DAXX_strelka2,DAXX_mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+
+if ( !is.null(DAXX_consensus_cnv) ){
+  merge_DAXX <- merge_DAXX %>%
+    full_join(DAXX_consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+}
+
+if ( !is.null(DAXX_cnvkit_cnv) ){
+  merge_DAXX <- merge_DAXX %>%
+    full_join(DAXX_cnvkit_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+} 
+
+if ( !is.null(DAXX_controlfreec_cnv) ){
+  merge_DAXX <- merge_DAXX %>%
+    full_join(DAXX_controlfreec_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+}
 
 ```
 
 
 ```{r}
-# with ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(Hugo_Symbol == "ATRX") %>% pull(ratio) %>% mean()
+
+DAXX_sv <- alt$manta
+
+if ( nrow(DAXX_sv) > 0){
+  DAXX_sv<- DAXX_sv %>%
+    # reshape to make gain /loss columns
+    reshape2::dcast(Kids.First.Biospecimen.ID.Tumor +Gene.name ~ SV.type,fun.aggregate = length) %>%
+    # rename columns
+    dplyr::rename("DAXX_BND"="BND","DAXX_DEL"="DEL","DAXX_DUP"="DUP","DAXX_INV"="INV",
+                  Hugo_Symbol_SV = Gene.name) %>%
+    # add Hugo_Symbol column for plotting
+    dplyr::mutate(Hugo_Symbol = "DAXX")
+  
+  
+  
+  merge_DAXX <- merge_DAXX %>%
+    full_join(DAXX_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol")) %>%
+    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+}
+```
+
+```{r}
+telomere_ratio %>% left_join( merge_DAXX , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))  %>% write_tsv(file.path("..","output","pbta_telomere_ratio_merged_DAXX.tsv"))
+
 ```
 
 
 ```{r}
-# without ATRX alt in strelka2/mutect2/consensus 
-check_ratio %>% dplyr::filter(is.na(Hugo_Symbol)) %>% pull(ratio) %>% mean()
+check_ratio<-telomere_ratio %>% left_join( rbind(merge_ATRX, merge_DAXX) , by=c("Kids_First_Biospecimen_ID_tumor"="Tumor_Sample_Barcode"))
+
+check_ratio_collapseGene <- check_ratio %>% group_by(Kids_First_Biospecimen_ID_tumor,ratio) %>%
+  dplyr::summarise(Hugo_Symbol=toString(unique(Hugo_Symbol)))
+  
+
+ggplot(check_ratio_collapseGene,aes(x=Hugo_Symbol,y=ratio))+geom_boxplot()+ggpubr::stat_compare_means()
+
 ```
+
+```{r}
+# means of ratio 
+check_ratio_collapseGene %>% dplyr::group_by(Hugo_Symbol) %>% dplyr::summarise(ratio=mean(ratio),count = n())
+```
+
 
