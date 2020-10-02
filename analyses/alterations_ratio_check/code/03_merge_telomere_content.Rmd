@@ -188,7 +188,7 @@ count_alt<-all_alterations_ratio %>% dplyr::group_by(defining_alt) %>% tally() %
 
 all_alterations_ratio <- all_alterations_ratio %>% left_join(count_alt)
 
-ggplot(all_alterations_ratio,aes(x=count_alt,y=ratio))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))+ ggsave(filename = "../output/all_alterations_ATRX_DAXX_TERT.png")
+ggplot(all_alterations_ratio,aes(x=count_alt,y=ratio))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))+ ggsave(filename = "../plots/all_alterations_ATRX_DAXX_TERT.png")
 ```
 
 
