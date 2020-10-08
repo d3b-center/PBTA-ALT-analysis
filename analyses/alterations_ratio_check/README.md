@@ -26,6 +26,7 @@ TelomeraseScores were derived from [here](https://github.com/AlexsLemonade/OpenP
 
 ## Ouptut
 
+```
 plots/
 ├── all_alterations_ATRX.png # ATRX boxplot for samples with alterations `_mut` and without `_WT`
 ├── all_alterations_ATRX_DAXX_TERT.png # ATRX,DAXX and TERT altrations boxplot for samples with alterations `_mut` and without `_WT`
@@ -33,8 +34,9 @@ plots/
 ├── all_alterations_DAXX.png # DAXX boxplot for samples with alterations `_mut` and without `_WT`
 ├── all_alterations_TERT.png # TERT boxplot for samples with alterations `_mut` and without `_WT`
 └── corr_extend_scores_telhunter_ratio.png # Telomrase score and telomere hunter log2(ratio) scatter plot
+```
 
-
+```
 output/
 ├── ATRTX_DAXX_TERT_FPKM_expression.tsv # ATRX,DAXX and TERT expression from stranded and polya 
 ├── FilteredFusionAnnoFuse.tsv # All PBTA filtered fusion in PBTA from annoFuse v0.90.0
@@ -47,7 +49,7 @@ output/
 ├── pbta_telomere_ratio_merged_ATRX.tsv # merged alterations in ATRX with telomere ratio 
 ├── pbta_telomere_ratio_merged_DAXX.tsv # merged alterations in DAXX with telomere ratio
 └── pbta_telomere_ratio_merged_TERT.tsv # merged alterations in TERT with telomere ratio
-
+```
 
 
 
