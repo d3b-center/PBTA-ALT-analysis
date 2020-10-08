@@ -42,15 +42,22 @@ library("openxlsx")
 
 # soft linked to v17
 # histology
-cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file))
+cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file)) 
+# cell-line composition 
+cell_line <- read_tsv("../input/cell-line-composition.tsv") %>% 
+  dplyr::select(Kids_First_Biospecimen_ID ,cell_line_composition)
+
 # telomere ratio
-telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio))
+telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio)) 
 # DAXX alterations
-merge_dna_alt_DAXX <- read_tsv(file.path(params$merge_dna_alt_DAXX))
+merge_dna_alt_DAXX <- read_tsv(file.path(params$merge_dna_alt_DAXX)) %>%
+  left_join(cell_line)
 # ATRX alterations
-merge_dna_alt_ATRX <- read_tsv(file.path(params$merge_dna_alt_ATRX))
+merge_dna_alt_ATRX <- read_tsv(file.path(params$merge_dna_alt_ATRX)) %>%
+  left_join(cell_line)
 # TERT alterations
-merge_dna_alt_TERT <- read_tsv(file.path(params$merge_dna_alt_TERT))
+merge_dna_alt_TERT <- read_tsv(file.path(params$merge_dna_alt_TERT)) %>%
+  left_join(cell_line)
 # ccircle from Dr. Cole
 ccircle <- readWorkbook("~/Documents/Cole_HCC/telomere_maintenance/Copy of pHGG_CCA_061318.xlsx") %>%
   dplyr::filter(!is.na(Research.ID)) %>%
@@ -60,16 +67,18 @@ ccircle <- readWorkbook("~/Documents/Cole_HCC/telomere_maintenance/Copy of pHGG_
 # Terra from 
 terra_stranded <- read_tsv(file.path(root_dir,"data","TelomeraseScores_PTBAStranded_FPKM.txt"))
 terra_polya <- read_tsv(file.path(root_dir,"data","TelomeraseScores_PTBAPolya_FPKM.txt"))
-terra <- rbind(terra_polya,terra_stranded)
+terra <- rbind(terra_polya,terra_stranded) %>%
+  left_join(cell_line, by = c("SampleID"="Kids_First_Biospecimen_ID"))
 
-merged_rna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_rna_alt))
+merged_rna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_rna_alt))  %>%
+  left_join(cell_line)
 
 merged_rna_ATRX <- merged_rna_ATRX_DAXX_TERT %>%
   dplyr::rename(ATRX_fusion = FusionName) %>%
   dplyr::mutate(ATRX_fusion = case_when(grepl("ATRX",ATRX_fusion) ~ ATRX_fusion,
                                         TRUE ~ NA_character_ )) %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID",
-                "sample_id","parent_aliquot_id",
+                "sample_id","cell_line_composition",
                 "ATRX_fusion","ATRX_fpkm")
 
 merged_rna_DAXX <- merged_rna_ATRX_DAXX_TERT %>%
@@ -77,7 +86,7 @@ merged_rna_DAXX <- merged_rna_ATRX_DAXX_TERT %>%
   dplyr::mutate( DAXX_fusion = case_when(grepl("DAXX",DAXX_fusion) ~ DAXX_fusion,
                                          TRUE ~ NA_character_ )) %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID",
-                "sample_id","parent_aliquot_id",
+                "sample_id","cell_line_composition",
                 "DAXX_fusion","DAXX_fpkm")
 
 merged_rna_TERT <- merged_rna_ATRX_DAXX_TERT %>%
@@ -85,7 +94,7 @@ merged_rna_TERT <- merged_rna_ATRX_DAXX_TERT %>%
   dplyr::mutate(TERT_fusion = case_when(grepl("TERT",TERT_fusion) ~TERT_fusion,
                                         TRUE ~ NA_character_ )) %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID",
-                "sample_id","parent_aliquot_id",
+                "sample_id","cell_line_composition",
                 "TERT_fusion","TERT_fpkm")
 
 
@@ -95,14 +104,13 @@ merged_rna_TERT <- merged_rna_ATRX_DAXX_TERT %>%
 ```{r}
 
 format_ATRX <- merge_dna_alt_ATRX %>%
-  left_join(merged_rna_ATRX,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id")) %>%
-  dplyr::filter(gsub("[.].*$","",parent_aliquot_id_DNA)==gsub("[.].*$","",parent_aliquot_id_RNA)) %>%
+  left_join(merged_rna_ATRX,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id","cell_line_composition")) %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol) %>% 
   dplyr::mutate("alterations_ATRX"=case_when(
     !is.na(ATRX_MOD_HIGH_mut_consensus) | !is.na(ATRX_loss_consensus) ~ "ATRX_loss",
            !is.na(ATRX_gain_consensus)  ~ "ATRX_gain",
-    TRUE ~ ""
+    TRUE ~ NA_character_
   ))
   
 
@@ -113,14 +121,13 @@ format_ATRX <- merge_dna_alt_ATRX %>%
 ```{r}
 
 format_DAXX <- merge_dna_alt_DAXX %>%
-  left_join(merged_rna_DAXX,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id")) %>%
-  dplyr::filter(gsub("[.].*$","",parent_aliquot_id_DNA)==gsub("[.].*$","",parent_aliquot_id_RNA)) %>%
+  left_join(merged_rna_DAXX,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id","cell_line_composition")) %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol)  %>% 
   dplyr::mutate("alterations_DAXX"=case_when(
       !is.na(DAXX_loss_consensus) ~ "DAXX_loss",
        !is.na(DAXX_gain_consensus) ~ "DAXX_gain",
-      TRUE ~ ""
+      TRUE ~ NA_character_
   ))
 
 
@@ -130,15 +137,14 @@ format_DAXX <- merge_dna_alt_DAXX %>%
 ```{r}
 
 format_TERT <- merge_dna_alt_TERT %>%
-  left_join(merged_rna_TERT,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id")) %>% 
-  dplyr::filter(gsub("[.].*$","",parent_aliquot_id_DNA)==gsub("[.].*$","",parent_aliquot_id_RNA)) %>%
+  left_join(merged_rna_TERT,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id","cell_line_composition")) %>% 
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol) %>% 
   dplyr::mutate("alterations_TERT"=case_when(
     !is.na(TERT_MOD_HIGH_mut_consensus) | !is.na(TERT_upstream_mut_consensus) |
       !is.na(TERT_amplification_consensus) | !is.na(TERT_gain_consensus) |
       !is.na(TERT_loss_consensus) ~ "TERT_mod",
-    TRUE ~ ""
+    TRUE ~ NA_character_
   ))
   
 
@@ -151,21 +157,39 @@ all_alterations <- full_join(format_ATRX,
                              by=c("Kids_First_Participant_ID",
                                   "Kids_First_Biospecimen_ID_DNA",
                                   "Kids_First_Biospecimen_ID_RNA",
-                                  "parent_aliquot_id_DNA",
-                                  "parent_aliquot_id_RNA",
+                                  "cell_line_composition",
                                   "sample_id")) %>%
   full_join(format_TERT,by=c("Kids_First_Participant_ID",
                              "Kids_First_Biospecimen_ID_DNA",
                              "Kids_First_Biospecimen_ID_RNA",
-                             "parent_aliquot_id_DNA",
-                             "parent_aliquot_id_RNA",
-                             "sample_id"))
+                             "cell_line_composition",
+                             "sample_id")) %>%
+  # since there are NA in RNA Ids in some rows 
+  # using DNA which is non NA to match to histology
+  full_join(cohort_plot_labels[which(cohort_plot_labels$experimental_strategy != "RNA-Seq" & cohort_plot_labels$composition == "Solid Tissue"),],
+            by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID",
+            "Kids_First_Participant_ID","sample_id","parent_aliquot_id"))
+
 all_alterations[all_alterations == 0] <- NA
 
 all_alterations <- all_alterations %>% 
-  dplyr::mutate("defining_alt" = paste(alterations_TERT,alterations_DAXX,alterations_ATRX)) %>%
-  dplyr::mutate("defining_alt" = if_else(defining_alt== "  ","no SNV/CNV alt",defining_alt))
-
+  dplyr::mutate("defining_alt" = 
+                  case_when(
+                    !is.na(alterations_TERT) &
+                      !is.na(alterations_DAXX) & 
+                      !is.na(alterations_ATRX) ~ paste(alterations_TERT,alterations_DAXX,alterations_ATRX),
+                !is.na(alterations_DAXX) & 
+                  !is.na(alterations_ATRX) ~ paste(alterations_DAXX,alterations_ATRX),
+                !is.na(alterations_TERT) & 
+                  !is.na(alterations_ATRX) ~ paste(alterations_TERT,alterations_ATRX),
+                !is.na(alterations_TERT) & 
+                  !is.na(alterations_DAXX) ~ paste(alterations_TERT,alterations_DAXX),
+                !is.na(alterations_ATRX) ~ alterations_ATRX,
+                !is.na(alterations_DAXX) ~ alterations_DAXX,
+                !is.na(alterations_TERT) ~ alterations_TERT,
+                TRUE ~ "no SNV/CNV alt"
+                )
+  )
 ```
 
 
@@ -174,7 +198,7 @@ all_alterations_ratio <- all_alterations %>%
   left_join(telomere_ratio,by = c("Kids_First_Participant_ID",
                                 "Kids_First_Biospecimen_ID_DNA" = "Kids_First_Biospecimen_ID_tumor")) %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA",
-                "Kids_First_Biospecimen_ID_RNA","sample_id", ends_with("fpkm"),ends_with("fusion"),ends_with("consensus"),ends_with("manta"),"ratio","defining_alt" ) %>%
+                "Kids_First_Biospecimen_ID_RNA","sample_id", ends_with("fpkm"),ends_with("fusion"),ends_with("consensus"),ends_with("manta"),"ratio","defining_alt" ,"broad_histology") %>%
   dplyr::mutate(ratio = log2(ratio)) %>%
   left_join(terra,by = c("Kids_First_Biospecimen_ID_RNA" = "SampleID")) %>%
   left_join(ccircle[,c("CCA.Dot.Blot","Kids_First_Biospecimen_ID")],by = c("Kids_First_Biospecimen_ID_DNA" = "Kids_First_Biospecimen_ID")) %>%
@@ -186,10 +210,35 @@ all_alterations_ratio <- all_alterations %>%
 
 count_alt<-all_alterations_ratio %>% dplyr::group_by(defining_alt) %>% tally() %>% dplyr::mutate("count_alt"=paste0(defining_alt,"(",n,")"))
 
-all_alterations_ratio <- all_alterations_ratio %>% left_join(count_alt)
+all_alterations_ratio <- all_alterations_ratio %>% left_join(count_alt)  
 
-ggplot(all_alterations_ratio,aes(x=count_alt,y=ratio))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))+ ggsave(filename = "../plots/all_alterations_ATRX_DAXX_TERT.png")
+ggplot(all_alterations_ratio,aes(x=count_alt,y=ratio))+geom_boxplot()+geom_jitter(aes(color=broad_histology,alpha=0.001))+theme(axis.text.x = element_text(angle = 90))+ ggsave(filename = "../plots/all_alterations_ATRX_DAXX_TERT.png")
 ```
 
+
+Comparing ATRX WT and mutation 
+```{r}
+plot_per_gene <- function(gene,all_alterations_ratio){
+  
+gene_alterations_ratio <- all_alterations_ratio %>%
+  dplyr::select(-count_alt,-n) %>%
+  dplyr::mutate(status =case_when(grepl(gene,defining_alt) ~ paste0(gene,"_mut"),
+                                       TRUE ~ paste0(gene,"_WT"))) 
+
+count_alt<- gene_alterations_ratio %>% dplyr::group_by(status) %>% tally() %>% dplyr::mutate("count_alt"=paste0(status,"(",n,")"))
+
+gene_alterations_ratio <- gene_alterations_ratio %>% left_join(count_alt,by="status")  
+
+ggplot(gene_alterations_ratio,aes(x=count_alt,y=ratio,color=broad_histology))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))
+}
+
+plot_per_gene("ATRX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX.png")
+
+plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_DAXX.png")
+
+plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_TERT.png")
+
+
+```
 
 
