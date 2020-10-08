@@ -52,12 +52,18 @@ telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio))
 # DAXX alterations
 merge_dna_alt_DAXX <- read_tsv(file.path(params$merge_dna_alt_DAXX)) %>%
   left_join(cell_line)
+merge_dna_alt_DAXX[merge_dna_alt_DAXX  == 0] <- NA
+
 # ATRX alterations
 merge_dna_alt_ATRX <- read_tsv(file.path(params$merge_dna_alt_ATRX)) %>%
   left_join(cell_line)
+merge_dna_alt_ATRX[merge_dna_alt_ATRX == 0] <- NA
+
 # TERT alterations
 merge_dna_alt_TERT <- read_tsv(file.path(params$merge_dna_alt_TERT)) %>%
   left_join(cell_line)
+merge_dna_alt_TERT[merge_dna_alt_TERT == 0] <- NA
+
 # ccircle from Dr. Cole
 ccircle <- readWorkbook("~/Documents/Cole_HCC/telomere_maintenance/Copy of pHGG_CCA_061318.xlsx") %>%
   dplyr::filter(!is.na(Research.ID)) %>%
@@ -72,6 +78,8 @@ terra <- rbind(terra_polya,terra_stranded) %>%
 
 merged_rna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_rna_alt))  %>%
   left_join(cell_line)
+
+merged_rna_ATRX_DAXX_TERT[merged_rna_ATRX_DAXX_TERT == 0] <- NA
 
 merged_rna_ATRX <- merged_rna_ATRX_DAXX_TERT %>%
   dplyr::rename(ATRX_fusion = FusionName) %>%
@@ -108,8 +116,9 @@ format_ATRX <- merge_dna_alt_ATRX %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol) %>% 
   dplyr::mutate("alterations_ATRX"=case_when(
-    !is.na(ATRX_MOD_HIGH_mut_consensus) | !is.na(ATRX_loss_consensus) ~ "ATRX_loss",
-           !is.na(ATRX_gain_consensus)  ~ "ATRX_gain",
+    !is.na(ATRX_MOD_HIGH_mut_consensus) | 
+      !is.na(ATRX_loss_consensus) |
+      !is.na(ATRX_gain_consensus) ~ "ATRX_mut",
     TRUE ~ NA_character_
   ))
   
@@ -125,8 +134,8 @@ format_DAXX <- merge_dna_alt_DAXX %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol)  %>% 
   dplyr::mutate("alterations_DAXX"=case_when(
-      !is.na(DAXX_loss_consensus) ~ "DAXX_loss",
-       !is.na(DAXX_gain_consensus) ~ "DAXX_gain",
+      !is.na(DAXX_loss_consensus) |
+      !is.na(DAXX_gain_consensus)  ~ "DAXX_mut",
       TRUE ~ NA_character_
   ))
 
@@ -141,9 +150,11 @@ format_TERT <- merge_dna_alt_TERT %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
   dplyr::select(-Hugo_Symbol) %>% 
   dplyr::mutate("alterations_TERT"=case_when(
-    !is.na(TERT_MOD_HIGH_mut_consensus) | !is.na(TERT_upstream_mut_consensus) |
-      !is.na(TERT_amplification_consensus) | !is.na(TERT_gain_consensus) |
-      !is.na(TERT_loss_consensus) ~ "TERT_mod",
+    !is.na(TERT_MOD_HIGH_mut_consensus) | 
+      !is.na(TERT_upstream_mut_consensus) |
+      !is.na(TERT_amplification_consensus) | 
+      !is.na(TERT_gain_consensus) |
+      !is.na(TERT_loss_consensus) ~ "TERT_mut",
     TRUE ~ NA_character_
   ))
   
@@ -233,13 +244,13 @@ ggplot(gene_alterations_ratio,aes(x=count_alt,y=ratio,color=broad_histology))+ge
 }
 
 
-plot_per_gene("ATRX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX.png",width = 12)
+plot_per_gene("ATRX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX.png",width = 12,height = 8)
 
-plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_DAXX.png",width = 12)
+plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_DAXX.png",width = 12, height = 8)
 
-plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_TERT.png",width = 12)
+plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename =    "../plots/all_alterations_TERT.png",width = 12, height = 8)
 
-plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png",width = 12)
+plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png",width = 12, height = 8)
 
 ```
 

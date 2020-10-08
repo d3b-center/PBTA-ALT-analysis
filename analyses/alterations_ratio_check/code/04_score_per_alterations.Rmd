@@ -32,7 +32,9 @@ merged_alt_tel_file <- merged_alt_tel_file %>%
 
 corr_check<-as.matrix(cor(merged_alt_tel_file[,c("ratio","RawEXTENDScores","NormEXTENDScores","ATRX_fpkm","DAXX_fpkm","TERT_fpkm")],use = "complete.obs"))
 
+png("../plots/corr_scored_fpkm.png")
 corrplot::corrplot(corr_check,is.corr = FALSE,method = "number") 
+dev.off()
 
 ggplot(as.data.frame(merged_alt_tel_file[,c("ratio","NormEXTENDScores")]),aes(x=ratio,y=NormEXTENDScores)) + 
   geom_point()+
