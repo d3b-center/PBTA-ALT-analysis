@@ -32,7 +32,7 @@ plots/
 ├── all_alterations_ATRX_or_DAXX.png # ATRX or DAXX boxplot for samples with alterations `_mut` and without `_WT`
 ├── all_alterations_DAXX.png # DAXX boxplot for samples with alterations `_mut` and without `_WT`
 ├── all_alterations_TERT.png # TERT boxplot for samples with alterations `_mut` and without `_WT`
-└── corr_score_fpkm.png
+└── corr_extend_scores_telhunter_ratio.png # Telomrase score and telomere hunter log2(ratio) scatter plot
 
 
 output/
