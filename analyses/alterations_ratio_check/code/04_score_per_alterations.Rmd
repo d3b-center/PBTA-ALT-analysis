@@ -34,5 +34,10 @@ corr_check<-as.matrix(cor(merged_alt_tel_file[,c("ratio","RawEXTENDScores","Norm
 
 corrplot::corrplot(corr_check,is.corr = FALSE,method = "number") +ggsave("../plots/corr_score_fpkm.png")
 
+ggplot(as.data.frame(merged_alt_tel_file[,c("ratio","NormEXTENDScores")]),aes(x=ratio,y=NormEXTENDScores)) + 
+  geom_point()+
+  geom_smooth(method='lm') + ggsave("../plots/corr_extend_scores_telhunter_ratio.png")
+
+
 ```
 
