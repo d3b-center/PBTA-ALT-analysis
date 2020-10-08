@@ -232,12 +232,14 @@ gene_alterations_ratio <- gene_alterations_ratio %>% left_join(count_alt,by="sta
 ggplot(gene_alterations_ratio,aes(x=count_alt,y=ratio,color=broad_histology))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))
 }
 
+
 plot_per_gene("ATRX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX.png")
 
 plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_DAXX.png")
 
 plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_TERT.png")
 
+plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png")
 
 ```
 
