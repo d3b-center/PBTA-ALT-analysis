@@ -10,7 +10,7 @@ TelomereHunter was run for telomre content in tumor and normal. We plot log2(rat
 TelomeraseScores were derived from [here](https://github.com/AlexsLemonade/OpenPBTA-analysis/tree/master/analyses/telomerase-activity-prediction)
 
 
-## Input v17
+## Input OpenPBTA v17
  - data/pbta-merged-chop-method-consensus_somatic.maf.gz (CBTN)
  - data/consensus_seg_annotated_cn_autosomes.tsv.gz data/consensus_seg_annotated_cn_x_and_y.tsv.gz
  - data/pbta-sv-manta.tsv.gz
