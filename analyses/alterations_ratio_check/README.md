@@ -11,7 +11,7 @@ TelomeraseScores were derived from [here](https://github.com/AlexsLemonade/OpenP
 
 
 ## Input v17
- - data/pbta-snv-consensus-mutation.maf.tsv.gz
+ - data/pbta-merged-chop-method-consensus_somatic.maf.gz (CBTN)
  - data/consensus_seg_annotated_cn_autosomes.tsv.gz data/consensus_seg_annotated_cn_x_and_y.tsv.gz
  - data/pbta-sv-manta.tsv.gz
  - data/pbta-gene-expression-rsem-fpkm.polya.rds
