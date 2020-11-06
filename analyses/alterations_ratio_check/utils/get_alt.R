@@ -7,22 +7,12 @@ library(data.table)
 get_alt<-function(gene,format_snv="hgvs",format_cnv="length",format_sv="length"){
   
   if (format_snv=="hgvs"){
-  # strelka2
-  strelka2 <- format_snv_hgvs(gene,strelka2,"strelka2")
-  
-  # mutect2
-  mutect2 <- format_snv_hgvs(gene,mutect2,"mutect2")
   
   # consensus maf
   consensus_snv <- format_snv_hgvs(gene,consensus_snv,"consensus")
   }
   
   if (format_snv=="binary"){
-    # strelka2
-    strelka2 <- format_snv_binary(gene,strelka2,"strelka2")
-    
-    # mutect2
-    mutect2 <- format_snv_binary(gene,mutect2,"mutect2")
     
     # consensus maf
     consensus_snv <- format_snv_binary(gene,consensus_snv,"consensus")
@@ -32,17 +22,11 @@ get_alt<-function(gene,format_snv="hgvs",format_cnv="length",format_sv="length")
   #consensus
   consensus_cnv <- format_cnv(gene,consensus_cnv,"consensus")
   
-  # cnvkit
-  cnvkit <- format_cnv(gene,cnvkit,"cnvkit")
-  
-  # controlfreec  
-  controlfreec <- format_cnv(gene,controlfreec,"controlfreec")
-  
   # manta
   manta_sv <- format_sv(gene,manta_sv,caller = "manta")
 
   
-  gene_alt_list<-list("strelka2"=strelka2,"mutect2"=mutect2,"consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv,"controlfreec"=controlfreec,"cnvkit"=cnvkit,"manta_sv"=manta_sv)
+  gene_alt_list<-list("consensus_snv"=consensus_snv,"consensus_cnv"=consensus_cnv,"manta_sv"=manta_sv)
   
 }
 
@@ -137,6 +121,7 @@ format_sv <- function(gene,alt_caller,caller){
   colname_INV <- paste0(gene,"_INV_",caller)
   
   alt_caller <- alt_caller %>%
+    dplyr::filter(grepl(gene,Gene.name)) %>%
     reshape2::dcast(Kids.First.Biospecimen.ID.Tumor ~ SV.type,fun.aggregate = length) %>%
     # add Hugo_Symbol column for plotting
     dplyr::mutate(Hugo_Symbol = gene) 

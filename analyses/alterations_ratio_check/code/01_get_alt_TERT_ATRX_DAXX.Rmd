@@ -26,10 +26,10 @@ library(tidyverse)
 cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file))
 telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio))
 
+consensus_snv <- fread(file.path(root_dir,"data","pbta-merged-chop-method-consensus_somatic.maf.gz"),
+                       select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>%
+  unique()
 
-mutect2 <- fread(file.path(root_dir,"data","pbta-snv-mutect2.vep.maf.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
-strelka2 <- fread(file.path(root_dir,"data","pbta-snv-strelka2.vep.maf.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
-consensus_snv <- fread(file.path(root_dir,"data","pbta-snv-consensus-mutation.maf.tsv.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>% unique()
 consensus_cnv <- read_tsv(file.path(root_dir,
                                       "data",
                                       "consensus_seg_annotated_cn_autosomes.tsv.gz")) 
@@ -39,26 +39,6 @@ consensus_cnv_x_y <- read_tsv(file.path(root_dir,
                                       "consensus_seg_annotated_cn_x_and_y.tsv.gz")) 
 
 consensus_cnv <- rbind(consensus_cnv,consensus_cnv_x_y[,colnames(consensus_cnv)])
-
-cnvkit <- read_tsv(file.path(root_dir,
-                                      "data",
-                                      "cnvkit_annotated_cn_autosomes.tsv.gz"))
-
-cnvkit_x_y <- read_tsv(file.path(root_dir,
-                                      "data",
-                                      "cnvkit_annotated_cn_x_and_y.tsv.gz"))
-
-cnvkit <- rbind(cnvkit,cnvkit_x_y[,colnames(cnvkit)])
-
-controlfreec <- read_tsv(file.path(root_dir,
-                                      "data",
-                                      "controlfreec_annotated_cn_autosomes.tsv.gz"))
-
-controlfreec_x_y <- read_tsv(file.path(root_dir,
-                                      "data",
-                                      "controlfreec_annotated_cn_x_and_y.tsv.gz"))
-
-controlfreec <- rbind(controlfreec,controlfreec_x_y[,colnames(controlfreec)])
 
 manta_sv <- read_tsv(file.path(root_dir,
                                       "data",
@@ -79,29 +59,13 @@ TERT_alt <- get_alt("TERT")
 ```{r}
 
 # merge snv alterations
-merge_ATRX <- full_join(ATRX_alt$strelka2,ATRX_alt$mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) 
-
-if ( !is.null(ATRX_alt$consensus_snv) ){
-  merge_ATRX <- merge_ATRX %>%
-    full_join(ATRX_alt$consensus_snv,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
+merge_ATRX <- ATRX_alt$consensus_snv %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-}
+
 
 if ( !is.null(ATRX_alt$consensus_cnv) ){
   merge_ATRX <- merge_ATRX %>%
     full_join(ATRX_alt$consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-}
-
-if ( !is.null(ATRX_alt$cnvkit) ){
-  merge_ATRX <- merge_ATRX %>%
-    full_join(ATRX_alt$cnvkit,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-} 
-
-if ( !is.null(ATRX_alt$controlfreec) ){
-  merge_ATRX <- merge_ATRX %>%
-    full_join(ATRX_alt$controlfreec,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
@@ -114,40 +78,17 @@ if ( nrow(ATRX_alt$manta_sv) > 0){
 
 ```
 
-```{r}
-cohort_plot_labels %>%
-  dplyr::filter(experimental_strategy %in% c("WGS","WXS","Panel"),
-                sample_type== "Tumor") %>%
-  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id","parent_aliquot_id") %>%
-  left_join(merge_ATRX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
-  write_tsv(file.path("..","output","PutativeDriver_ATRX_DNA_alt.tsv"))
-
-```
-
-
 
 ```{r}
 
 
 # merge snv alterations
-merge_DAXX <- full_join(DAXX_alt$strelka2,DAXX_alt$mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
+merge_DAXX <- DAXX_alt$consensus_snv %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 
 if ( !is.null(DAXX_alt$consensus_cnv) ){
   merge_DAXX <- merge_DAXX %>%
     full_join(DAXX_alt$consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-}
-
-if ( !is.null(DAXX_alt$cnvkit) ){
-  merge_DAXX <- merge_DAXX %>%
-    full_join(DAXX_alt$cnvkit,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-} 
-
-if ( !is.null(DAXX_alt$controlfreec) ){
-  merge_DAXX <- merge_DAXX %>%
-    full_join(DAXX_alt$controlfreec,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
@@ -160,22 +101,16 @@ if ( nrow(DAXX_alt$manta_sv) > 0){
 
 ```
 
-```{r}
-
-cohort_plot_labels %>%
-  dplyr::filter(experimental_strategy %in% c("WGS","WXS","Panel"),
-                sample_type== "Tumor") %>%
-  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id","parent_aliquot_id") %>%
-  left_join(merge_DAXX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%  write_tsv(file.path("..","output","PutativeDriver_DAXX_DNA_alt.tsv"))
-
-```
-
-
 
 ```{r}
 
 # get 5'Flank updtream gene variants for TERT
-TERT_promoter_alt <- fread(file.path(root_dir,"data","pbta-snv-consensus-mutation.maf.tsv.gz"),select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","Existing_variation","Consequence","Reference_Allele","Tumor_Seq_Allele2")) %>% unique() %>% dplyr::filter(Consequence == "upstream_gene_variant", Hugo_Symbol=="TERT") 
+TERT_promoter_alt <- fread(file.path(
+  root_dir,
+  "data",
+  "pbta-merged-chop-method-consensus_somatic.maf.gz"),
+  select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","Existing_variation","Consequence","Reference_Allele","Tumor_Seq_Allele2")) %>% 
+  unique() %>% dplyr::filter(Consequence == "upstream_gene_variant", Hugo_Symbol=="TERT") 
 
 
 colname<-paste0("TERT_upstream_mut_consensus")
@@ -193,26 +128,13 @@ if (nrow(TERT_promoter_alt)>0) {
 
 
 # merge snv alterations
-merge_TERT <- full_join(TERT_alt$strelka2,TERT_alt$mutect2,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
-  full_join(TERT_alt$consensus_snv,by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
+merge_TERT <- TERT_alt$consensus_snv %>%
   full_join(TERT_promoter_alt, by=c("Tumor_Sample_Barcode","Hugo_Symbol")) %>%
   dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 
 if ( !is.null(TERT_alt$consensus_cnv) ){
   merge_TERT <- merge_TERT %>%
     full_join(TERT_alt$consensus_cnv,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-}
-
-if ( !is.null(TERT_alt$cnvkit) ){
-  merge_TERT <- merge_TERT %>%
-    full_join(TERT_alt$cnvkit,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
-    dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
-} 
-
-if ( !is.null(TERT_alt$controlfreec) ){
-  merge_TERT <- merge_TERT %>%
-    full_join(TERT_alt$controlfreec,by=c("Tumor_Sample_Barcode"="biospecimen_id","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
@@ -226,14 +148,14 @@ if ( nrow(TERT_alt$manta_sv) > 0){
 ```
 
 ```{r}
-
 cohort_plot_labels %>%
   dplyr::filter(experimental_strategy %in% c("WGS","WXS","Panel"),
                 sample_type== "Tumor") %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id","parent_aliquot_id") %>%
-  left_join(merge_TERT,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
-  write_tsv(file.path("..","output","PutativeDriver_TERT_DNA_alt.tsv"))
+  full_join(merge_TERT,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  full_join(merge_ATRX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  full_join(merge_DAXX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  write_tsv(file.path("..","output","PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv"))
 
 ```
-
 

@@ -11,32 +11,24 @@ params:
     label: "Merged alteration and tel content ratio along with extend scores "
     value: ../output/all_alterations_ATRX_DAXX_TERT.tsv
     input: file 
-  telomere_ratio:
-    label: "Telomere ratio file from merging control_summary.tsv and tumor_summary.tsv"
-    value: telomere_940_ratio.tsv
-    input: file    
+
 ---
 
 ```{r}
 
 # merge alt and ratio file
 merged_alt_tel_file <- read_tsv(params$merged_alt_tel_file) 
-# telomere ratio
-telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio)) 
-
-merged_alt_tel_file <- merged_alt_tel_file %>%
-  left_join(telomere_ratio,by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID_tumor","ratio"))
 ```
 
 ```{r}
 
-corr_check<-as.matrix(cor(merged_alt_tel_file[,c("ratio","RawEXTENDScores","NormEXTENDScores","ATRX_fpkm","DAXX_fpkm","TERT_fpkm")],use = "complete.obs"))
+corr_check<-as.matrix(cor(merged_alt_tel_file[,c("telomere_ratio","RawEXTENDScores","NormEXTENDScores","ATRX_fpkm","DAXX_fpkm","TERT_fpkm")],use = "complete.obs"))
 
 png("../plots/corr_scored_fpkm.png")
 corrplot::corrplot(corr_check,is.corr = FALSE,method = "number") 
 dev.off()
 
-ggplot(as.data.frame(merged_alt_tel_file[,c("ratio","NormEXTENDScores")]),aes(x=ratio,y=NormEXTENDScores)) + 
+ggplot(as.data.frame(merged_alt_tel_file[,c("telomere_ratio","NormEXTENDScores")]),aes(x=telomere_ratio,y=NormEXTENDScores)) + 
   geom_point()+
   geom_smooth(method='lm') + ggsave("../plots/corr_extend_scores_telhunter_ratio.png")
 

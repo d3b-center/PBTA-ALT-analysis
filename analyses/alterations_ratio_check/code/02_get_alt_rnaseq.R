@@ -9,16 +9,16 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 setwd(root_dir)
 
 #read in caller results
-STARFusioninputfile<-read_tsv("~/Documents/OpenPBTA-analysis/data/pbta-fusion-starfusion.tsv.gz") %>%
+STARFusioninputfile<-read_tsv(file.path(root_dir,"data","pbta-fusion-starfusion.tsv.gz")) %>%
   dplyr::rename(`#FusionName`= FusionName)
-Arribainputfile<-read_tsv("~/Documents/OpenPBTA-analysis/data/pbta-fusion-arriba.tsv.gz") %>%
+Arribainputfile<-read_tsv(file.path(root_dir,"data","pbta-fusion-arriba.tsv.gz")) %>%
   dplyr::rename(`#gene1`= gene1)
 
 outputfile <- "PBTA_v17"
-expressionMatrixPolya<-readRDS("~/Documents/OpenPBTA-analysis/data/pbta-gene-expression-rsem-fpkm.polya.rds")
-expressionMatrixStranded<-readRDS("~/Documents/OpenPBTA-analysis/data/pbta-gene-expression-rsem-fpkm.stranded.rds")
-referenceFolder<-"~/Documents/OpenPBTA-analysis/analyses/fusion_filtering/references/"
-clin<-read_tsv("~/Documents/OpenPBTA-analysis/data/pbta-histologies.tsv")
+expressionMatrixPolya<-readRDS(file.path(root_dir,"data","pbta-gene-expression-rsem-fpkm.polya.rds"))
+expressionMatrixStranded<-readRDS(file.path(root_dir,"data","pbta-gene-expression-rsem-fpkm.stranded.rds"))
+
+cohort_plot_labels <-read_tsv(file.path(root_dir,"data","pbta-histologies.tsv"))
 
 standardizedSTARFusion<-fusion_standardization(fusion_calls = STARFusioninputfile,caller = "STARFUSION",tumorID = STARFusioninputfile$tumor_id)
 standardizedArriba<-fusion_standardization(fusion_calls = Arribainputfile,caller = "ARRIBA",tumorID = Arribainputfile$tumor_id)
@@ -69,7 +69,6 @@ filteredFusionAnnotatedStranded<-annotate_fusion_calls(standardFusioncalls=fusio
 
 
 QCGeneFiltered_filtFusion<-rbind(filteredFusionAnnotatedStranded,filteredFusionAnnotatedPolya)
-write.table(QCGeneFiltered_filtFusion,file.path(root_dir,"analyses/alterations_ratio_check","output","FilteredFusionAnnoFuse.tsv"),sep="\t",quote = FALSE,row.names = FALSE)
 
 # subset for recurrent fusion detection and multifused genes QC
 fusion_calls<-unique(QCGeneFiltered_filtFusion)
@@ -86,8 +85,7 @@ fus_goi <- putative_driver_fusions %>% dplyr::filter(grepl("ATRX|TERT|DAXX",Fusi
   dplyr::select(Sample,FusionName) %>%
   unique() %>%
   group_by(Sample) %>%
-  summarise(FusionName=toString(FusionName)) %>%
-  write_tsv(file.path(root_dir,"analyses/alterations_ratio_check","output","PutativeDriver_ATRTX_DAXX_TERT_AnnoFuse.tsv"))
+  summarise(FusionName=toString(FusionName))
 
 
 exp_stranded <-expressionMatrixStranded %>% 
@@ -104,13 +102,18 @@ exp_polya <-expressionMatrixPolya %>%
   dplyr::filter(grepl("ATRX|DAXX|TERT",GeneSymbol)) %>%
   column_to_rownames("GeneSymbol") %>%
   t() %>% as.data.frame() %>%
-  dplyr::rename(ATRX_fpkm=ATRX, TERT_fpkm=TERT,  DAXX_fpkm=DAXX)
+  dplyr::rename(ATRX_fpkm=ATRX, TERT_fpkm=TERT,  DAXX_fpkm=DAXX) 
 
-exp_goi <- rbind(exp_stranded,exp_polya) %>% rownames_to_column()  %>%
-  write_tsv(file.path(root_dir,"analyses/alterations_ratio_check","output","ATRTX_DAXX_TERT_FPKM_expression.tsv"))
+exp_goi <- rbind(exp_stranded,exp_polya) %>% rownames_to_column()
 
 rna_alt <- exp_goi %>% left_join(fus_goi,by=c("rowname"="Sample"))  %>%
-  dplyr::rename(Kids_First_Biospecimen_ID=rowname)
+  dplyr::rename(Kids_First_Biospecimen_ID=rowname) %>%
+  dplyr::mutate(ATRX_fusion = case_when(grepl("ATRX",FusionName) ~ FusionName,
+                                        TRUE ~ NA_character_ ),
+                DAXX_fusion = case_when(grepl("DAXX",FusionName) ~ FusionName,
+                                        TRUE ~ NA_character_ ),
+                TERT_fusion = case_when(grepl("TERT",FusionName) ~ FusionName,
+                                        TRUE ~ NA_character_ ))
 
 cohort_plot_labels %>%
   dplyr::filter(experimental_strategy %in% c("RNA-Seq")) %>%
