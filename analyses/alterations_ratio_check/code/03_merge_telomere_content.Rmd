@@ -135,8 +135,13 @@ all_alterations_ratio <- all_alterations %>%
       cohort_plot_labels$experimental_strategy=="WGS" &
         cohort_plot_labels$sample_type== "Tumor"),],
             by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID",
-            "Kids_First_Participant_ID","sample_id")) %>%
+            "Kids_First_Participant_ID","sample_id")) 
+
+
+all_alterations_ratio %>%
+  dplyr::select(-defining_alt) %>%
   write_tsv(file.path("../output/all_alterations_ATRX_DAXX_TERT.tsv"))
+
 
 ```
 
@@ -175,5 +180,4 @@ plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_al
 plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename =    "../plots/all_alterations_TERT.png",width = 12, height = 8)
 
 plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png",width = 12, height = 8)
-
 ```
