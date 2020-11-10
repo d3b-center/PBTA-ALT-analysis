@@ -41,3 +41,5 @@ vignettes/*.pdf
 # don't save data folder , too large
 data/
 
+# macOS
+.DS_Store
