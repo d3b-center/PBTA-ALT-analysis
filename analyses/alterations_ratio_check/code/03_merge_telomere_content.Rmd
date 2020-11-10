@@ -71,7 +71,6 @@ merged_rna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_rna_alt))  %>%
 all_alterations <- merge_dna_ATRX_DAXX_TERT %>%
   left_join(merged_rna_ATRX_DAXX_TERT,suffix=c("_DNA","_RNA"),by=c("Kids_First_Participant_ID","sample_id","cell_line_composition")) %>%
   dplyr::select("Kids_First_Participant_ID","Kids_First_Biospecimen_ID_DNA","Kids_First_Biospecimen_ID_RNA",everything()) %>%
-  dplyr::select(-Hugo_Symbol) %>% 
   dplyr::mutate(
     "alterations_ATRX"=case_when(
     !is.na(ATRX_MOD_HIGH_mut_consensus) | 
@@ -89,14 +88,7 @@ all_alterations <- merge_dna_ATRX_DAXX_TERT %>%
       !is.na(TERT_gain_consensus) |
       !is.na(TERT_loss_consensus) ~ "TERT_mut",
     TRUE ~ NA_character_
-  )) %>%
-  # since there are NA in RNA Ids in some rows 
-  # using DNA which is non NA to match to histology
-  full_join(cohort_plot_labels[which(cohort_plot_labels$experimental_strategy != "RNA-Seq" & cohort_plot_labels$composition == "Solid Tissue"),],
-            by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID",
-            "Kids_First_Participant_ID","sample_id"))
-  
-
+  )) 
 
 ```
 
@@ -121,8 +113,11 @@ all_alterations <- all_alterations %>%
                 !is.na(alterations_DAXX) ~ alterations_DAXX,
                 !is.na(alterations_TERT) ~ alterations_TERT,
                 TRUE ~ "no SNV/CNV alt"
-                )
-  )
+                ) ) %>%
+  dplyr::select(-alterations_ATRX,
+                - alterations_DAXX,
+                - alterations_TERT)
+                  
 ```
 
 
@@ -134,6 +129,13 @@ all_alterations_ratio <- all_alterations %>%
   dplyr::rename(telomere_ratio=ratio) %>%
   left_join(terra,by = c("Kids_First_Biospecimen_ID_RNA" = "SampleID","cell_line_composition")) %>%
   left_join(ccircle[,c("CCA.Dot.Blot","Kids_First_Biospecimen_ID")],by = c("Kids_First_Biospecimen_ID_DNA" = "Kids_First_Biospecimen_ID")) %>%
+  # since there are NA in RNA Ids in some rows 
+  # using only WGS DNA which is used in telomerehunter to match to histology
+  full_join(cohort_plot_labels[which(
+      cohort_plot_labels$experimental_strategy=="WGS" &
+        cohort_plot_labels$sample_type== "Tumor"),],
+            by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID",
+            "Kids_First_Participant_ID","sample_id")) %>%
   write_tsv(file.path("../output/all_alterations_ATRX_DAXX_TERT.tsv"))
 
 ```
@@ -175,4 +177,3 @@ plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename =    "../plots/all
 plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png",width = 12, height = 8)
 
 ```
-

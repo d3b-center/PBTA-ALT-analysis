@@ -113,11 +113,13 @@ rna_alt <- exp_goi %>% left_join(fus_goi,by=c("rowname"="Sample"))  %>%
                 DAXX_fusion = case_when(grepl("DAXX",FusionName) ~ FusionName,
                                         TRUE ~ NA_character_ ),
                 TERT_fusion = case_when(grepl("TERT",FusionName) ~ FusionName,
-                                        TRUE ~ NA_character_ ))
+                                        TRUE ~ NA_character_ )) %>%
+  # remove column name FusionName
+  dplyr::select(-FusionName)
 
 cohort_plot_labels %>%
   dplyr::filter(experimental_strategy %in% c("RNA-Seq")) %>%
-  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id","parent_aliquot_id") %>%
+  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id") %>%
   left_join(rna_alt) %>% 
   write_tsv(file.path(root_dir,"analyses/alterations_ratio_check","output","PutativeDriver_ATRTX_DAXX_TERT_RNA_alt.tsv"))
 

@@ -16,6 +16,7 @@ params:
 
 ```{r}
 
+library(tidyverse)
 # merge alt and ratio file
 merged_alt_tel_file <- read_tsv(params$merged_alt_tel_file) 
 ```
@@ -34,4 +35,3 @@ ggplot(as.data.frame(merged_alt_tel_file[,c("telomere_ratio","NormEXTENDScores")
 
 
 ```
-

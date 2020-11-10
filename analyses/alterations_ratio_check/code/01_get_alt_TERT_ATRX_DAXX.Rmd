@@ -76,6 +76,8 @@ if ( nrow(ATRX_alt$manta_sv) > 0){
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
+merge_ATRX <- merge_ATRX %>% dplyr::select(-Hugo_Symbol)
+
 ```
 
 
@@ -98,6 +100,8 @@ if ( nrow(DAXX_alt$manta_sv) > 0){
     full_join(DAXX_alt$manta_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol")) %>%
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
+
+merge_DAXX <- merge_DAXX %>% dplyr::select(-Hugo_Symbol)
 
 ```
 
@@ -145,17 +149,18 @@ if ( nrow(TERT_alt$manta_sv) > 0){
     dplyr::filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
 }
 
+merge_TERT <- merge_TERT %>% dplyr::select(-Hugo_Symbol)
+
 ```
 
 ```{r}
 cohort_plot_labels %>%
-  dplyr::filter(experimental_strategy %in% c("WGS","WXS","Panel"),
-                sample_type== "Tumor") %>%
-  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id","parent_aliquot_id") %>%
-  full_join(merge_TERT,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
-  full_join(merge_ATRX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
-  full_join(merge_DAXX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  dplyr::filter(experimental_strategy %in% c("WGS"),
+                sample_type=="Tumor") %>%
+  dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id") %>%
+  left_join(merge_TERT,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  left_join(merge_ATRX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
+  left_join(merge_DAXX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
   write_tsv(file.path("..","output","PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv"))
 
 ```
-
