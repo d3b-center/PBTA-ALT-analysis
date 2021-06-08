@@ -2,7 +2,8 @@
 
 ## Input
 - release-Tellen-20210604
-- maftools 2.8.05
+- ComplexHeatmap
+- R3.5.1
 
 ## Output 
 telomere_hgat.pdf
