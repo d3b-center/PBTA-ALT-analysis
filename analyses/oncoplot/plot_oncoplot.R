@@ -1,3 +1,8 @@
+# load libraries
+library(tidyverse)
+library(ComplexHeatmap)
+library(circlize)
+
 # Setup dir
 input_dir <- "input"
 data_dir <- "../../data"
@@ -18,14 +23,22 @@ gene_matrix<- gene_matrix[goi.list$genes,hgat$Kids_First_Biospecimen_ID_DNA]
 ## color for barplot
 col = colors
 
-ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("telomere_ratio","CCA Binary","tumor_descriptor")],
-                        "TMB"=anno_barplot(hgat$TMB,ylim = c(0,10)),
+ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","CCA Binary")],
+                        "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
-                          "telomere_ratio" = colorRamp2(c(0, 1,11), c("white", "blue","darkblue")),
-                          "CCA Binary" = c("1"="#CD96CD",
-                                           "0"="#000000",
-                                           "NA" = "#f0efef")),
-                      annotation_name_side = "right",annotation_name_gp = gpar(fontsize = 9))
+                          "germline_sex_estimate" = c("Male" = "#CAE1FF",
+                                                      "Female" = "#FFC1C1"),
+                          "tumor_descriptor" = c("Initial CNS Tumor" = "#7FFFD4",
+                                                 "Progressive" = "#EEAEEE",
+                                                 "Recurrence" = "#EEAEEE",
+                                                 "Progressive Disease Post-Mortem" = "#FAFAD2",
+                                                 "Second Malignancy" = "orange"),
+                          "telomere_ratio" = colorRamp2(c(0, 1.05, 1.06), c("whitesmoke", "#CAE1FF","dodgerblue4")),
+                          "CCA Binary" = c("1"="dodgerblue4",
+                                           "0"="whitesmoke",
+                                           "NA" = "gainsboro")),
+                      annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
+                      na_col = "gainsboro")
 
 hgat_bt_anno = hgat[,c("ATRX_fpkm","DAXX_fpkm","TERT_fpkm")] %>%
   mutate("zscore_ATRX_fpkm" = scale(ATRX_fpkm),
@@ -36,17 +49,18 @@ hgat_bt_anno = hgat[,c("ATRX_fpkm","DAXX_fpkm","TERT_fpkm")] %>%
 ha1 = HeatmapAnnotation( df = hgat_bt_anno,
                         height = unit(3, "cm"),
                         col=list(
-                          "zscore_ATRX_fpkm"= colorRamp2(c(-5, 0, 5), c("green", "white", "red")),
-                          "zscore_DAXX_fpkm" = colorRamp2(c(-5, 0, 5), c("green", "white", "red")),
-                          "zscore_TERT_fpkm" = colorRamp2(c(-5, 0, 5), c("green", "white", "red"))
+                          "zscore_ATRX_fpkm"= colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
+                          "zscore_DAXX_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
+                          "zscore_TERT_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1"))
                         ),
-                        annotation_name_side = "left",annotation_name_gp = gpar(fontsize = 9))
+                        annotation_name_side = "left",annotation_name_gp = gpar(fontsize = 9),
+                        na_col = "gainsboro")
 
-pdf("telomere_hgat.pdf", height = 9, width = 20)
+pdf("telomere_hgat.pdf", height = 4, width = 15)
 oncoPrint(gene_matrix, get_type = function(x) strsplit(x, ",")[[1]],
-          column_names_gp = gpar(fontsize = 9),show_column_names = F,show_row_barplot = F,
+          column_names_gp = gpar(fontsize = 9), show_column_names = F,#show_row_barplot = F,
           alter_fun = list(
-            background = function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "white",col="white")),
+            background = function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "whitesmoke",col="whitesmoke")),
             Missense_Mutation = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Missense_Mutation"]),col = NA)),
             Nonsense_Mutation = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Nonsense_Mutation"]),col = NA)),
             Frame_Shift_Del = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Frame_Shift_Del"]), col = NA)),
@@ -61,13 +75,13 @@ oncoPrint(gene_matrix, get_type = function(x) strsplit(x, ",")[[1]],
             Fusion = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Fusion"]),col = NA)),
             Multi_Hit_Fusion  = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Multi_Hit_Fusion"]),col = NA)),
             Multi_Hit = function(x, y, w, h) grid.rect(x, y, w*0.75, h*0.85, gp = gpar(fill = unname(col["Multi_Hit"]), col = NA)),
-            Del = function(x, y, w, h) grid.rect(x, y, w*0.75, h*0.5, gp = gpar(fill = unname(col["Del"]), col = NA)),
-            Amp = function(x, y, w, h) grid.rect(x, y, w*0.75, h*0.5, gp = gpar(fill = unname(col["Amp"]), col = NA))),
+            Del = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Del"]), col = NA)),
+            Amp = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Amp"]), col = NA))),
           col = col,
           top_annotation = ha,
           bottom_annotation = ha1,
-          column_order = NULL
-)
+          column_order =  hgat$Kids_First_Biospecimen_ID_DNA
+          )
 
 dev.off()
 

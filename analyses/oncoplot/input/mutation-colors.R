@@ -1,4 +1,6 @@
-colors = c("Missense_Mutation" = "#35978f", 
+col2hex("violetred1")
+
+colors = c("Missense_Mutation" = "#3CB371", 
             "Nonsense_Mutation" = "#000000",
             "Frame_Shift_Del" = "#56B4E9", 
             "Frame_Shift_Ins" = "#FFBBFF", 
@@ -11,7 +13,7 @@ colors = c("Missense_Mutation" = "#35978f",
             "Start_Codon_Del" = "#56B4E9",
             "Fusion" = "#7B68EE",
             "Multi_Hit_Fusion" = "#CD96CD",
-            "Multi_Hit" = "#f46d43",
+            "Multi_Hit" = "#FF3E96",
             "Del" = "#313695",
             "Amp" = "#c51b7d")
 
