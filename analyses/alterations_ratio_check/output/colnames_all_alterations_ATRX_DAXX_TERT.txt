@@ -1,0 +1,61 @@
+Added columns from ALT analysis
+
+# 2 out of 4 SNV caller alteration count 
+[ATRX|TERT|DAXX]_MOD_HIGH_mut_consensus : 
+	description: pbta-merged-chop-method-consensus_somatic.maf.gz is filtred for gene of interest [ATRX|TERT|DAXX]  and IMPACT== "MODERATE"|"HIGH" 
+	value: 1 = mutation exists 0 mutation doesn't exist
+TERT_upstream_mut_consensus : 
+	description: pbta-merged-chop-method-consensus_somatic.maf.gz filtered for Consequence == "upstream_gene_variant", Hugo_Symbol=="TERT"
+	value : "Existing_variation"
+
+# 2 out of 3 CNV/SV caller alteration count
+[ATRX|TERT|DAXX]_gain_consensus :
+[ATRX|TERT|DAXX]_loss_consensus :
+[ATRX|TERT|DAXX]_amplification_consensus :
+[ATRX|TERT|DAXX]_deletion_consenus :
+	description : Per CNV type (gain, loss, amplification, deletion ) from consensus CNV 
+	value : count per CNV type
+
+# Raw manta call
+[ATRX|TERT|DAXX]_BND_manta :
+[ATRX|TERT|DAXX]_DEL_manta :
+[ATRX|TERT|DAXX]_DUP_manta :
+[ATRX|TERT|DAXX]_INV_manta :
+	description : Per SV type ( BND , DEL, DUP, INV) from manta
+	value : count per SV type
+
+# annoFuse filtered fusion calls
+[ATRX|TERT|DAXX]_fusion :
+	description : annoFuse standardized,filtered fusion calls from Starfusion and Arriba
+	value : FusionName
+
+# RSEM fpkm 
+[ATRX|TERT|DAXX]_fpkm :
+	description : FPKM per sample per 
+	value : FPKM
+ 
+# annotation
+alterations_[ATRX|TERT|DAXX] :
+	description : If gene of interest is altered the value is set to [GeneName]_alt
+defining_alt :
+	description : Adds all alterations_[ATRX|TERT|DAXX] status if the gene is altered
+
+# TelomereHunter
+total_reads_tumor : Total reads in Tumor
+intratel_reads_tumor : Intra telomere reads in Tumor
+gc_bins_for_correction_tumor : GC bin used in Tumor 
+total_reads_with_tel_gc_tumor :  GC normalizsed total reads with telomere repeats
+tel_content_tumor : Tumor TelomereHunter telomere content
+total_reads_normal : Total reads in Normal 
+intratel_reads_normal : Intra telomere reads Normal
+gc_bins_for_correction_normal : GC bin used in Normal
+total_reads_with_tel_gc_normal : GC normalizsed total reads with telomere repeats
+tel_content_normal : Normal TelomereHunter telomere content
+telomere_ratio : log2(Tumor_TelomereHunter_content/Normal_TelomereHunter_content)
+
+# EXTEND
+RawEXTENDScores : Raw Telomerase Activity Prediction from RNA-Seq 
+NormEXTENDScores : Normalized Telomerase Activity Prediction from RNA-Seq
+
+# C circle assay
+CCA.Dot.Blot : C circle assay output
