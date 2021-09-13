@@ -1,4 +1,4 @@
-col2hex("violetred1")
+#col2hex("violetred1")
 
 colors = c("Missense_Mutation" = "#3CB371", 
             "Nonsense_Mutation" = "#000000",
