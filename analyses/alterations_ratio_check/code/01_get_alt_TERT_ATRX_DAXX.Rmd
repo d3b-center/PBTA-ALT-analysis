@@ -54,7 +54,6 @@ TERT_alt <- get_alt("TERT")
 ```
 
 ```{r}
-
 # merge snv alterations
 merge_ATRX <- ATRX_alt$consensus_snv
 
@@ -93,7 +92,6 @@ merge_DAXX <- merge_DAXX %>% dplyr::select(-Hugo_Symbol)
 
 
 ```{r}
-
 # get 5'Flank upstream gene variants for TERT - shouold probably combine this with read in snv file above
 TERT_promoter_alt <- fread(file.path(
   root_dir,
@@ -129,13 +127,14 @@ if ( !is.null(TERT_alt$consensus_cnv) ){
 
 if ( nrow(TERT_alt$manta_sv) > 0){
   merge_TERT <- merge_TERT %>%
-    full_join(TERT_alt$manta_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol"))}
+    full_join(TERT_alt$manta_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol"))
+  }
 
 merge_TERT <- merge_TERT %>% dplyr::select(-Hugo_Symbol)
 ```
 
 ```{r}
-cohort_plot_labels %>%
+final <- cohort_plot_labels %>%
   dplyr::filter(experimental_strategy %in% c("WGS"),
                 sample_type=="Tumor") %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id") %>%
@@ -144,3 +143,4 @@ cohort_plot_labels %>%
   left_join(merge_DAXX,by=c("Kids_First_Biospecimen_ID"="Tumor_Sample_Barcode")) %>%
   write_tsv(file.path("..","output","PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv"))
 ```
+

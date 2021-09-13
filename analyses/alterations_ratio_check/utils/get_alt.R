@@ -83,7 +83,8 @@ format_cnv<-function(gene,alt_caller,caller) {
   colname_gain <- paste0(gene,"_gain_",caller)
   colname_loss <- paste0(gene,"_loss_",caller)
   colname_amp <- paste0(gene,"_amplification_",caller)
-  colname_del <- paste0(gene,"_deletion_",caller)
+  colname_del <- paste0(gene,"_deep deletion_",caller)
+  colname_neutral <- paste0(gene,"_neutral_",caller)
   alt_caller <- alt_caller %>% 
     # select only gene 
     dplyr::filter(gene_symbol == gene) %>% 
@@ -106,8 +107,11 @@ format_cnv<-function(gene,alt_caller,caller) {
     if(!is.null(alt_caller$amplification)){
       alt_caller<-dplyr::rename(alt_caller,!! colname_amp :="amplification")
     }
-    if(!is.null(alt_caller$deletion)){
-      alt_caller<-dplyr::rename(alt_caller,!! colname_del :="deletion")
+    if(!is.null(alt_caller$`deep deletion`)){
+      alt_caller<-dplyr::rename(alt_caller,!! colname_del :=`deep deletion`)
+    }
+    if(!is.null(alt_caller$neutral)){
+      alt_caller<-dplyr::rename(alt_caller,!! colname_neutral :="neutral")
     }
   }
   return(alt_caller)
