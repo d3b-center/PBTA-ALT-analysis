@@ -67,8 +67,10 @@ if ( nrow(ATRX_alt$manta_sv) > 0){
     full_join(ATRX_alt$manta_sv,by=c("Tumor_Sample_Barcode"="Kids.First.Biospecimen.ID.Tumor","Hugo_Symbol"))
 }
 
-merge_ATRX <- merge_ATRX %>% dplyr::select(-Hugo_Symbol)
-
+merge_ATRX <- merge_ATRX %>% 
+  dplyr::select(-Hugo_Symbol)
+#remove NA column - needs fixed
+merge_ATRX <- merge_ATRX[,-7]
 ```
 
 
