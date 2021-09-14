@@ -1,60 +1,41 @@
 library(tidyverse)
-v19 <- read_tsv("~/Documents/GitHub/OpenPBTA-analysis/data/release-v19-20210423/pbta-histologies.tsv")
-
-jen <- readxl::read_excel("~/Box Sync/D3B-share/collaborations/Kristina/from-jenny/ALT May 2021 JS.xlsx", 
+hist <- read_tsv("analyses/add-histologies/input-v21/pbta-histologies.tsv")
+jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA Sept 2021 (not including plate 3).xlsx", 
                           .name_repair = "unique") %>%
   rename(Sample_id = sample_id)
-kc <- readxl::read_excel("~/Box Sync/D3B-share/collaborations/Kristina/from-jenny/ALT May 2021 KC.xlsx", 
-                         .name_repair = "unique") %>%
-  rename(Sample_id = sample_id)
+alt <- read_tsv("analyses/alterations_ratio_check/output/PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv", guess_max = 10000)
 
 
-jen %>%
-  select(Sample_id, sample)
-
-
-#kc %>%
- # select(Sample_id, sample)
-
-rm.cols <- intersect(names(jen), names(v19))
+rm.cols <- intersect(names(jen), names(hist))
 jen.new <- jen[,!colnames(jen) %in% rm.cols]
 
-rm.cols.kc <- intersect(names(kc), names(v19))
-kc.new <- kc[,!colnames(kc) %in% rm.cols.kc]
-
-
-#grab only appropriate columns from v19
-v19_subset <- v19 %>%
+#grab only appropriate columns from hist
+hist_subset <- hist %>%
   filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>%
-  select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, rm.cols))
+  select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
 
 jen_mer <- jen.new %>%
   rename(sample_id = Sample_id,
         # Kids_First_Participant_ID = pt_id,
          Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(v19_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
+  left_join(hist_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
   rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
-jen_mer$phenotype <- ifelse(jen_mer$`CCA Binary` == 1, "ALT", "non-ALT")
+jen_mer$phenotype <- ifelse(jen_mer$`CCA Sept 2021` == "POS", "ALT", "non-ALT")
 jen_mer$group <- ifelse(jen_mer$short_histology == "HGAT", "HGAT", "non-HGAT")
 jen_mer$telomere_ratio <- jen_mer$tel_content_tumor/jen_mer$tel_content_normal
 
-jen_mer %>%
-  write_tsv("~/Box Sync/D3B-share/collaborations/Kristina/from-jenny/ALT_May_2021_JS_plus_v19_histologies.tsv")
-
-kc_mer <- kc.new %>%
-  rename(sample_id = Sample_id,
-         # Kids_First_Participant_ID = pt_id,
-         Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(v19_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
+# update tel analysis
+alt$sample_id <- NULL
+rm_alt_cols <- intersect(names(jen_mer), names(alt))
+jen_mer_rm <- jen_mer[,!colnames(jen_mer) %in% rm_alt_cols]
+names(jen_mer_rm)
+# merge back cols
+jen_mer_alt <- jen_mer %>%
+  rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
+  left_join(alt, by = c("Kids_First_Biospecimen_ID")) %>%
   rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
-kc_mer$telomere_ratio <- kc_mer$tel_content_tumor/jen_mer$tel_content_normal
 
-kc_mer %>%
-  write_tsv("~/Box Sync/D3B-share/collaborations/Kristina/from-jenny/ALT_May_2021_KC_plus_v19_histologies.tsv")
-  
-hgat <- jen_mer %>%
-  filter(group == "HGAT")
-non_hgat <- jen_mer %>%
-  filter(group == "non-HGAT")
+jen_mer_alt %>%
+  write_tsv("analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv")

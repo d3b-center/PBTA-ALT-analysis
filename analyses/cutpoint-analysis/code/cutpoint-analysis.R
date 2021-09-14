@@ -1,5 +1,9 @@
 
 library(cutpointr)
+hgat <- jen_mer %>%
+  filter(group == "HGAT")
+non_hgat <- jen_mer %>%
+  filter(group == "non-HGAT")
 #all
 #set.seed(2021)
 #opt_cut <- cutpointr(jen_mer, telomere_ratio, phenotype, group, 
