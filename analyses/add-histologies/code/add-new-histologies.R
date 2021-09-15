@@ -26,14 +26,17 @@ jen_mer$group <- ifelse(jen_mer$short_histology == "HGAT", "HGAT", "non-HGAT")
 jen_mer$telomere_ratio <- jen_mer$tel_content_tumor/jen_mer$tel_content_normal
 
 # update tel analysis
-alt$sample_id <- NULL
 rm_alt_cols <- intersect(names(jen_mer), names(alt))
+rm_alt_cols <- rm_alt_cols[-c(1,25)]
+rm_alt_cols
+
 jen_mer_rm <- jen_mer[,!colnames(jen_mer) %in% rm_alt_cols]
 names(jen_mer_rm)
+names(jen_mer)
 # merge back cols
-jen_mer_alt <- jen_mer %>%
+jen_mer_alt <- jen_mer_rm %>%
   rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(alt, by = c("Kids_First_Biospecimen_ID")) %>%
+  left_join(alt, by = c("Kids_First_Participant_ID", "Kids_First_Biospecimen_ID","sample_id")) %>%
   rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
 
