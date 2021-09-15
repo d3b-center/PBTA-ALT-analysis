@@ -12,19 +12,22 @@ source(file.path(input_dir, "mutation-colors.R"))
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 
 # read processed files
-hgat <- read_tsv("hgat_subset.tsv") %>% 
+hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>% 
   arrange(telomere_ratio) %>% 
-  column_to_rownames("Tumor_Sample_Barcode")
-gene_matrix<-readRDS("hgat_snv_cnv_alt_matrix.RDS")
+  column_to_rownames("Tumor_Sample_Barcode") %>%
+  mutate(`C-circle` = `CCA Sept 2021`)
+gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
 
-gene_matrix<- gene_matrix[goi.list$genes,hgat$Kids_First_Biospecimen_ID_DNA]
-
+#subset for what's in the meta file
+gene_matrix<- gene_matrix[goi.list$genes, colnames(gene_matrix) %in% hgat$Kids_First_Biospecimen_ID_DNA]
+setdiff(hgat$Kids_First_Biospecimen_ID_DNA, colnames(gene_matrix))
 
 ## color for barplot
 col = colors
-
-ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","CCA Binary")],
-                        "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
+names(hgat)
+df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle")]
+ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle")],
+                       # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
                           "germline_sex_estimate" = c("Male" = "#CAE1FF",
                                                       "Female" = "#FFC1C1"),
@@ -34,29 +37,29 @@ ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate
                                                  "Recurrence" = "#ABDEE6",
                                                  "Second Malignancy" = "#CBAACB"),
                           "telomere_ratio" = colorRamp2(c(0, 1.05, 1.06), c("whitesmoke", "#CAE1FF","dodgerblue4")),
-                          "CCA Binary" = c("1"="dodgerblue4",
-                                           "0"="whitesmoke",
+                          "C-circle" = c("POS"="dodgerblue4",
+                                           "NEG"="whitesmoke",
                                            "NA" = "gainsboro")),
                       annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
                       na_col = "gainsboro")
 
-hgat_bt_anno = hgat[,c("ATRX_fpkm","DAXX_fpkm","TERT_fpkm")] %>%
-  mutate("zscore_ATRX_fpkm" = scale(ATRX_fpkm),
-         "zscore_TERT_fpkm" = scale(TERT_fpkm),
-         "zscore_DAXX_fpkm" = scale(DAXX_fpkm)) %>%
-  select("zscore_ATRX_fpkm","zscore_DAXX_fpkm","zscore_TERT_fpkm")
+#hgat_bt_anno = hgat[,c("ATRX_fpkm","DAXX_fpkm","TERT_fpkm")] %>%
+ # mutate("zscore_ATRX_fpkm" = scale(ATRX_fpkm),
+  #       "zscore_TERT_fpkm" = scale(TERT_fpkm),
+   #      "zscore_DAXX_fpkm" = scale(DAXX_fpkm)) %>%
+  #select("zscore_ATRX_fpkm","zscore_DAXX_fpkm","zscore_TERT_fpkm")
 
-ha1 = HeatmapAnnotation( df = hgat_bt_anno,
-                        height = unit(3, "cm"),
-                        col=list(
-                          "zscore_ATRX_fpkm"= colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
-                          "zscore_DAXX_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
-                          "zscore_TERT_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1"))
-                        ),
-                        annotation_name_side = "left",annotation_name_gp = gpar(fontsize = 9),
-                        na_col = "gainsboro")
+#ha1 = HeatmapAnnotation( df = hgat_bt_anno,
+ #                       height = unit(3, "cm"),
+  #                      col=list(
+   #                       "zscore_ATRX_fpkm"= colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
+    #                      "zscore_DAXX_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1")),
+     #                     "zscore_TERT_fpkm" = colorRamp2(c(-5, 0, 5), c("midnightblue", "white", "firebrick1"))
+      #                  ),
+       #                 annotation_name_side = "left",annotation_name_gp = gpar(fontsize = 9),
+        #                na_col = "gainsboro")
 
-pdf("telomere_hgat.pdf", height = 4, width = 15)
+pdf("output/telomere_hgat.pdf", height = 2, width = 15, onefile = FALSE)
 oncoPrint(gene_matrix, get_type = function(x) strsplit(x, ",")[[1]],
           column_names_gp = gpar(fontsize = 9), show_column_names = F,#show_row_barplot = F,
           alter_fun = list(
@@ -79,8 +82,8 @@ oncoPrint(gene_matrix, get_type = function(x) strsplit(x, ",")[[1]],
             Amp = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Amp"]), col = NA))),
           col = col,
           top_annotation = ha,
-          bottom_annotation = ha1,
-          column_order =  hgat$Kids_First_Biospecimen_ID_DNA
+          #bottom_annotation = ha1,
+          column_order =  colnames(gene_matrix)
           )
 
 dev.off()
