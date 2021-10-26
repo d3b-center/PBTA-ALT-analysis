@@ -57,3 +57,4 @@ dups <- dups %>%
          tumor_descriptor, sample_type, composition) %>%
   arrange(sample_id)
 
+# need to update merge of DNA/RNA by parental sample id and remove duplicates (1 per sample)
