@@ -54,7 +54,8 @@ jen_mer_alt %>%
 dups <- jen_mer_alt[duplicated(jen_mer_alt$sample_id),]
 dups <- dups %>%
   select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, sample_id, 
-         tumor_descriptor, sample_type, composition) %>%
+         tumor_descriptor, sample_type, composition, parent_aliquot_id) %>%
   arrange(sample_id)
 
 # need to update merge of DNA/RNA by parental sample id and remove duplicates (1 per sample)
+names(jen_mer_alt)
