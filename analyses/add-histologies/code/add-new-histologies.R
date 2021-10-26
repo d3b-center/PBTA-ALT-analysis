@@ -1,6 +1,6 @@
 library(tidyverse)
 hist <- read_tsv("analyses/add-histologies/input-v21/pbta-histologies.tsv")
-jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA Sept 2021 (not including plate 3).xlsx", 
+jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA oct 2021 (including all plates).xlsx", 
                           .name_repair = "unique") %>%
   rename(Sample_id = sample_id)
 alt <- read_tsv("analyses/alterations_ratio_check/output/PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv", guess_max = 10000)
@@ -36,9 +36,9 @@ names(jen_mer)
 # merge back cols
 jen_mer_alt <- jen_mer_rm %>%
   rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(alt, by = c("Kids_First_Participant_ID", "Kids_First_Biospecimen_ID","sample_id")) %>%
+  left_join(alt, by = c("Kids_First_Biospecimen_ID","sample_id")) %>%
   rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
 
 jen_mer_alt %>%
-  write_tsv("analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv")
+  write_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
