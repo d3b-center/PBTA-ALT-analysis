@@ -4,7 +4,7 @@ library(tidyverse)
 hist <- read_tsv("analyses/add-histologies/input-v21/pbta-histologies.tsv")
 
 # read in file from jenny
-jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA oct 2021 (including all plates).xlsx", 
+jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA Sept 2021 (not including plate 3).xlsx", 
                           .name_repair = "unique") %>%
   rename(Sample_id = sample_id)
 
@@ -48,7 +48,7 @@ jen_mer_alt <- jen_mer_rm %>%
   distinct() 
 
 jen_mer_alt %>%
-  write_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
+  write_tsv("analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv")
 
 # which are duplicate sample_ids?
 dups <- jen_mer_alt[duplicated(jen_mer_alt$sample_id),]
