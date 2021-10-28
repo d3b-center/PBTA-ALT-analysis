@@ -1,6 +1,14 @@
 library(cutpointr)
+library(readr)
+library(dplyr)
+library(tidyr)
 
-jen_mer <- read_tsv("./analyses/add-histologies/output/ALT_May_2021_JS_plus_v19_histologies.tsv")
+jen_mer <- readr::read_tsv("./analyses/add-histologies/output/ALT_May_2021_JS_plus_v19_histologies.tsv")
+
+hgat <- jen_mer %>%
+  filter(group == "HGAT")
+non_hgat <- jen_mer %>%
+  filter(group == "non-HGAT")
 
 opt_cut <- cutpointr(jen_mer, telomere_ratio, phenotype, group, metric = sum_sens_spec, 
                      tol_metric = 0.05, break_ties = c, na.rm = T)
