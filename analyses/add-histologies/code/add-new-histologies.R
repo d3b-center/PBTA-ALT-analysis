@@ -1,5 +1,5 @@
 library(tidyverse)
-v19 <- read_tsv("~/Documents/GitHub/OpenPBTA-analysis/data/release-v19-20210423/pbta-histologies.tsv")
+v19 <- read_tsv("./analyses/add-histologies/input-v19/pbta-histologies.tsv")
 
 jen <- readxl::read_excel("./analyses/add-histologies/input-jenny/ALT May 2021 JS.xlsx", 
                           .name_repair = "unique") %>%
