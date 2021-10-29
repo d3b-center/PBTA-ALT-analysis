@@ -17,6 +17,7 @@ jen.new <- jen[,!colnames(jen) %in% rm.cols]
 
 #grab only appropriate rows from hist
 hist_subset <- hist %>%
+
   filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>%
   select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
 
@@ -59,3 +60,4 @@ dups <- dups %>%
 
 # need to update merge of DNA/RNA by parental sample id and remove duplicates (1 per sample)
 names(jen_mer_alt)
+

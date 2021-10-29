@@ -1,19 +1,20 @@
-
 library(cutpointr)
+
+library(readr)
+library(dplyr)
+library(tidyr)
+
+jen_mer <- readr::read_tsv("./analyses/add-histologies/output/ALT_May_2021_JS_plus_v19_histologies.tsv")
+
 hgat <- jen_mer %>%
   filter(group == "HGAT")
 non_hgat <- jen_mer %>%
   filter(group == "non-HGAT")
-#all
-#set.seed(2021)
-#opt_cut <- cutpointr(jen_mer, telomere_ratio, phenotype, group, 
-#         method = maximize_boot_metric,
-#        boot_cut = 200, summary_func = mean,
-#       metric = accuracy, silent = TRUE, na.rm = T)
+
 opt_cut <- cutpointr(jen_mer, telomere_ratio, phenotype, group, metric = sum_sens_spec, 
                      tol_metric = 0.05, break_ties = c, na.rm = T)
 summary(opt_cut)
-pdf("~/Box Sync/D3B-share/collaborations/Kristina/cutoff-analysis/all-pbta-by-subgroup.pdf", height = 4, width = 6)
+pdf("./analyses/cutpoint-analysis/plots/all-pbta-by-subgroup.pdf", height = 4, width = 6)
 plot_metric(opt_cut)
 dev.off()
 opt_cut %>%
@@ -32,21 +33,21 @@ opt_cut %>%
 cp <- cutpointr(jen_mer, telomere_ratio, phenotype, 
                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
 summary(cp)
-pdf("~/Box Sync/D3B-share/collaborations/Kristina/cutoff-analysis/all-pbta.pdf", height = 4, width = 8)
+pdf("./analyses/cutpoint-analysis/plots/all-pbta.pdf", height = 4, width = 8)
 plot(cp)
 dev.off()
 #hgat
 cp <- cutpointr(hgat, telomere_ratio, phenotype,
                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
 summary(cp)
-pdf("~/Box Sync/D3B-share/collaborations/Kristina/cutoff-analysis/hgat.pdf", height = 4, width = 8)
+pdf("./analyses/cutpoint-analysis/plots/hgat.pdf", height = 4, width = 8)
 plot(cp)
 dev.off()
 #non-hgat
 cp <- cutpointr(non_hgat, telomere_ratio, phenotype, 
                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
 summary(cp)
-pdf("~/Box Sync/D3B-share/collaborations/Kristina/cutoff-analysis/non-hgat.pdf", height = 4, width = 8)
+pdf("./analyses/cutpoint-analysis/plots/non-hgat.pdf", height = 4, width = 8)
 plot(cp)
 dev.off()
 
@@ -75,7 +76,7 @@ hgat_tumor <- hgat %>%
 cp <- cutpointr(hgat_tumor, telomere_ratio, phenotype,
                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
 summary(cp)
-pdf("~/Box Sync/D3B-share/collaborations/Kristina/cutoff-analysis/hgat-tumor-only.pdf", height = 4, width = 8)
+pdf("./analyses/cutpoint-analysis/plots/hgat-tumor-only.pdf", height = 4, width = 8)
 plot(cp)
 dev.off()
 
