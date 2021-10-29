@@ -65,7 +65,7 @@ jen_mer_alt_match <- jen_mer_alt %>%
 
 # additionally, for each sample ID we need to take independent DNA sample
 # implement independent sample list module in OpenPedCan
-seed=2021
+set.seed(2021)
 # first sample them
 jen_mer_alt_match <- jen_mer_alt_match[sample(nrow(jen_mer_alt_match)), ]
 # then take distinct
