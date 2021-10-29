@@ -6,7 +6,7 @@ hist <- read_tsv("analyses/add-histologies/input-v21/pbta-histologies.tsv")
 # read in file from jenny
 jen <- readxl::read_excel("analyses/add-histologies/input-jenny/ALT PBTA oct 2021 (including all plates).xlsx", 
                           .name_repair = "unique") %>%
-  rename(Sample_id = sample_id)
+  dplyr::rename(Sample_id = sample_id)
 
 # read in alterations file
 alt <- read_tsv("analyses/alterations_ratio_check/output/PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv", guess_max = 10000)
@@ -17,16 +17,15 @@ jen.new <- jen[,!colnames(jen) %in% rm.cols]
 
 #grab only appropriate rows from hist
 hist_subset <- hist %>%
-
-  filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>%
-  select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
+  dplyr::filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>%
+  dplyr::select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
 
 jen_mer <- jen.new %>%
-  rename(sample_id = Sample_id,
+  dplyr::rename(sample_id = Sample_id,
         # Kids_First_Participant_ID = pt_id,
          Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(hist_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
-  rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
+  dplyr::left_join(hist_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
 jen_mer$phenotype <- ifelse(jen_mer$`CCA Sept 2021` == "POS", "ALT", "non-ALT")
 jen_mer$group <- ifelse(jen_mer$short_histology == "HGAT", "HGAT", "non-HGAT")
@@ -43,21 +42,55 @@ names(jen_mer_rm)
 names(jen_mer)
 # merge back cols
 jen_mer_alt <- jen_mer_rm %>%
-  rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  left_join(alt, by = c("Kids_First_Participant_ID", "Kids_First_Biospecimen_ID","sample_id")) %>%
-  rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
+  dplyr::left_join(alt, by = c("Kids_First_Participant_ID", "Kids_First_Biospecimen_ID","sample_id")) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
+
+# take the base for parent aliquot id to only keep DNA-RNA match with the same parent aliquot ID
+# get base parent aliquot ID for DNA samples
+dna_aliquot <- hist %>% 
+  dplyr::filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>% 
+  dplyr::select(Kids_First_Biospecimen_ID, sample_id, parent_aliquot_id) %>% 
+  dplyr::mutate(dna_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
+  dplyr::select(-parent_aliquot_id)%>%
+  dplyr::rename(Kids_First_Biospecimen_ID_DNA=Kids_First_Biospecimen_ID)
+
+# get base parent aliquot ID for RNA samples
+rna_aliquot <- hist %>% 
+  dplyr::filter(sample_type == "Tumor" & experimental_strategy == "RNA-Seq") %>% 
+  dplyr::select(Kids_First_Biospecimen_ID, sample_id, parent_aliquot_id) %>% 
+  dplyr::mutate(rna_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
+  dplyr::select(-parent_aliquot_id) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID_RNA=Kids_First_Biospecimen_ID)
+  
+# only keep entries where DNA-RNA match have the same parent aliquot ID
+same_df <- jen_mer_alt %>% 
+  dplyr::left_join(dna_aliquot) %>%
+  dplyr::left_join(rna_aliquot) %>%
+  dplyr::filter(dna_aliquot_id == rna_aliquot_id) %>%
+  dplyr::select(-c(dna_aliquot_id, rna_aliquot_id))
+
+# also keep the entries where aliquot ID are missing
+na_df <- jen_mer_alt %>% 
+  dplyr::left_join(dna_aliquot) %>%
+  dplyr::left_join(rna_aliquot) %>%
+  dplyr::filter(is.na(dna_aliquot_id) | is.na(rna_aliquot_id)) %>%
+  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, sample_id, parent_aliquot_id, dna_aliquot_id, rna_aliquot_id)
+
+# combine the two to generate complete dataset
+jen_mer_alt <- bind_rows(same_df, na_df)
+
+# additionally, for each sample ID we need to take independent DNA sample
+# implement independent sample list module in OpenPedCan
+seed=2021
+# first sample them
+jen_mer_alt <- jen_mer_alt[sample(nrow(jen_mer_alt)), ]
+# then take distinct
+jen_mer_alt <- jen_mer_alt %>%
+  dplyr::distinct(sample_id, .keep_all = TRUE)
 
 jen_mer_alt %>%
   write_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
 
-# which are duplicate sample_ids?
-dups <- jen_mer_alt[duplicated(jen_mer_alt$sample_id),]
-dups <- dups %>%
-  select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, sample_id, 
-         tumor_descriptor, sample_type, composition, parent_aliquot_id) %>%
-  arrange(sample_id)
-
-# need to update merge of DNA/RNA by parental sample id and remove duplicates (1 per sample)
-names(jen_mer_alt)
 
