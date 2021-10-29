@@ -48,49 +48,32 @@ jen_mer_alt <- jen_mer_rm %>%
   distinct() 
 
 # take the base for parent aliquot id to only keep DNA-RNA match with the same parent aliquot ID
-# get base parent aliquot ID for DNA samples
-dna_aliquot <- hist %>% 
-  dplyr::filter(sample_type == "Tumor" & experimental_strategy != "RNA-Seq") %>% 
-  dplyr::select(Kids_First_Biospecimen_ID, sample_id, parent_aliquot_id) %>% 
-  dplyr::mutate(dna_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
-  dplyr::select(-parent_aliquot_id)%>%
-  dplyr::rename(Kids_First_Biospecimen_ID_DNA=Kids_First_Biospecimen_ID)
-
 # get base parent aliquot ID for RNA samples
-rna_aliquot <- hist %>% 
+rna_aliquot_df <- hist %>% 
   dplyr::filter(sample_type == "Tumor" & experimental_strategy == "RNA-Seq") %>% 
   dplyr::select(Kids_First_Biospecimen_ID, sample_id, parent_aliquot_id) %>% 
-  dplyr::mutate(rna_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
+  dplyr::mutate(match_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
   dplyr::select(-parent_aliquot_id) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_RNA=Kids_First_Biospecimen_ID)
   
-# only keep entries where DNA-RNA match have the same parent aliquot ID
-same_df <- jen_mer_alt %>% 
-  dplyr::left_join(dna_aliquot) %>%
-  dplyr::left_join(rna_aliquot) %>%
-  dplyr::filter(dna_aliquot_id == rna_aliquot_id) %>%
-  dplyr::select(-c(dna_aliquot_id, rna_aliquot_id))
-
-# also keep the entries where aliquot ID are missing
-na_df <- jen_mer_alt %>% 
-  dplyr::left_join(dna_aliquot) %>%
-  dplyr::left_join(rna_aliquot) %>%
-  dplyr::filter(is.na(dna_aliquot_id) | is.na(rna_aliquot_id)) %>%
-  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, sample_id, parent_aliquot_id, dna_aliquot_id, rna_aliquot_id)
-
-# combine the two to generate complete dataset
-jen_mer_alt <- bind_rows(same_df, na_df)
+# only keep entries where DNA-RNA match have the same parent aliquot ID or is NA
+jen_mer_alt_match <- jen_mer_alt %>% 
+  dplyr::select(-Kids_First_Biospecimen_ID_RNA) %>% 
+  dplyr::mutate(match_aliquot_id = gsub("\\..*", "", parent_aliquot_id)) %>% 
+  dplyr::left_join(rna_aliquot_df) %>%
+  dplyr::select(-match_aliquot_id)
 
 # additionally, for each sample ID we need to take independent DNA sample
 # implement independent sample list module in OpenPedCan
 seed=2021
 # first sample them
-jen_mer_alt <- jen_mer_alt[sample(nrow(jen_mer_alt)), ]
+jen_mer_alt_match <- jen_mer_alt_match[sample(nrow(jen_mer_alt_match)), ]
 # then take distinct
-jen_mer_alt <- jen_mer_alt %>%
+jen_mer_alt_match <- jen_mer_alt_match %>%
   dplyr::distinct(sample_id, .keep_all = TRUE)
 
-jen_mer_alt %>%
+jen_mer_alt_match %>%
+  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>% 
   write_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
 
 
