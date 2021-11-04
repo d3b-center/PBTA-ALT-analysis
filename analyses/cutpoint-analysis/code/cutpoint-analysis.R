@@ -1,9 +1,10 @@
 library(cutpointr)
+
 library(readr)
 library(dplyr)
 library(tidyr)
 
-jen_mer <- readr::read_tsv("./analyses/add-histologies/output/ALT_May_2021_JS_plus_v19_histologies.tsv")
+jen_mer <- readr::read_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
 
 hgat <- jen_mer %>%
   filter(group == "HGAT")
