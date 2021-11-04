@@ -63,7 +63,7 @@ ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate
        #                 annotation_name_side = "left",annotation_name_gp = gpar(fontsize = 9),
         #                na_col = "gainsboro")
 
-pdf("output/telomere_hgat.pdf", height = 2, width = 15, onefile = FALSE)
+pdf("output/oncoprint_hgat.pdf", height = 2, width = 15, onefile = FALSE)
 oncoPrint(gene_matrix, get_type = function(x) strsplit(x, ",")[[1]],
           column_names_gp = gpar(fontsize = 9), show_column_names = F,#show_row_barplot = F,
           alter_fun = list(
