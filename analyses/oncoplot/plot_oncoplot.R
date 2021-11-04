@@ -18,6 +18,10 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
   mutate(`C-circle` = `CCA Sept 2021`)
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
 
+# order columns for plotting
+hgat$`C-circle` <- factor(hgat$`C-circle`, levels = c("POS", "NEG"))
+hgat$germline_sex_estimate <- factor(hgat$germline_sex_estimate, levels = c("Male", "Female"))
+
 #subset for what's in the meta file
 gene_matrix<- gene_matrix[goi.list$genes, colnames(gene_matrix) %in% hgat$Kids_First_Biospecimen_ID_DNA]
 setdiff(hgat$Kids_First_Biospecimen_ID_DNA, colnames(gene_matrix))
