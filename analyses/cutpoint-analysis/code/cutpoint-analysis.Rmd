@@ -8,7 +8,7 @@ library(cutpointr)
 library(tidyverse)
 
 #read in combined file
-meta <- read_tsv("~/Documents/GitHub/Cole-telomere-analysis/analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv",
+meta <- read_tsv("../../../analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv",
          guess_max = 1000)
 
 #subset for HGG and non-HGG
@@ -34,7 +34,7 @@ summary(opt_cut)
 ```{r}
 plot_metric(opt_cut)
 #save as PDF
-pdf("~/Documents/GitHub/Cole-telomere-analysis/analyses/cutpoint-analysis/plots/all-pbta-by-subgroup.pdf", height = 4, width = 6, onefile=FALSE)
+pdf("../../../analyses/cutpoint-analysis/plots/all-pbta-by-subgroup.pdf", height = 4, width = 6, onefile=FALSE)
 plot_metric(opt_cut)
 invisible(dev.off())
 ```
@@ -65,7 +65,7 @@ summary(cp)
 # all samples together - plot
 ```{r}
 plot(cp)
-pdf("~/Documents/GitHub/Cole-telomere-analysis/analyses/cutpoint-analysis/plots/all-pbta.pdf", height = 4, width = 8, onefile=FALSE)
+pdf("../../../analyses/cutpoint-analysis/plots/all-pbta.pdf", height = 4, width = 8, onefile=FALSE)
 plot(cp)
 invisible(dev.off())
 ```
@@ -79,7 +79,7 @@ summary(cp)
 #hgat alone - plot
 ```{r}
 plot(cp)
-pdf("~/Documents/GitHub/Cole-telomere-analysis/analyses/cutpoint-analysis/plots/hgat.pdf", height = 4, width = 8, onefile=FALSE)
+pdf("../../../analyses/cutpoint-analysis/plots/hgat.pdf", height = 4, width = 8, onefile=FALSE)
 plot(cp)
 invisible(dev.off())
 ```
@@ -94,7 +94,7 @@ summary(cp)
 #non-hgat alone plot
 ```{r}
 plot(cp)
-pdf("~/Documents/GitHub/Cole-telomere-analysis/analyses/cutpoint-analysis/plots/non-hgat.pdf", height = 4, width = 8, onefile=FALSE)
+pdf("../../../analyses/cutpoint-analysis/plots/non-hgat.pdf", height = 4, width = 8, onefile=FALSE)
 plot(cp)
 invisible(dev.off())
 ```
