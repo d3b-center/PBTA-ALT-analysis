@@ -8,7 +8,7 @@ library(cutpointr)
 library(tidyverse)
 
 #read in combined file
-meta <- read_tsv("../../../analyses/add-histologies/output/ALT PBTA Sept 2021 (not including plate 3)-updated-hist-alt.tsv",
+meta <- read_tsv("../../../analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv",
          guess_max = 1000)
 
 #subset for HGG and non-HGG
