@@ -19,12 +19,21 @@ non_hgat <- meta %>%
 
 #how many per group?
 meta %>%
-  group_by(group) %>%
+  group_by(group, phenotype) %>%
   tally()
 ```
 
 #run optimal cutpoint by group
 ```{r}
+# remove NA becuase those were being counted as negatives
+meta <- meta %>%
+  filter(!is.na(phenotype))
+
+#how many per group?
+meta %>%
+  group_by(group, phenotype) %>%
+  tally()
+
 opt_cut <- cutpointr(meta, telomere_ratio, phenotype, group, metric = sum_sens_spec, 
                      tol_metric = 0.05, break_ties = c, na.rm = T)
 summary(opt_cut)
