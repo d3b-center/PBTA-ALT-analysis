@@ -27,7 +27,10 @@ jen_mer <- jen.new %>%
   dplyr::left_join(hist_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
-jen_mer$phenotype <- ifelse(jen_mer$`CCA Sept 2021` == "POS", "ALT", "non-ALT")
+jen_mer$phenotype <- ifelse(jen_mer$`CCA Sept 2021` == "POS", "ALT", 
+                            ifelse(jen_mer$`CCA Sept 2021` == "NEG", "non-ALT", NA))
+jen_mer %>%
+  select(phenotype, `CCA Sept 2021`)
 jen_mer$group <- ifelse(jen_mer$short_histology == "HGAT", "HGAT", "non-HGAT")
 jen_mer$telomere_ratio <- jen_mer$tel_content_tumor/jen_mer$tel_content_normal
 
