@@ -1,3 +1,7 @@
+library(readr)
+library(tidyr)
+library(dplyr)
+
 meta<- read_tsv("analyses/add-histologies/output/ALT PBTA oct 2021 (including all plates)-updated-hist-alt.tsv")
 
 meta %>%
@@ -10,7 +14,7 @@ rna <- v21 %>%
   filter(experimental_strategy == "RNA-Seq") %>%
   pull(Kids_First_Biospecimen_ID)
 
- pedc <- read_tsv("analyses/get-pedcbio-ids/input/ped_opentargets_2021_clinical_data.tsv") %>%
+pedc <- read_tsv("analyses/get-pedcbio-ids/input/ped_opentargets_2021_clinical_data.tsv") %>%
    # remove RNA-only samples
    filter(!SPECIMEN_ID %in% rna) %>%
    # separate DNA and RNA ids
