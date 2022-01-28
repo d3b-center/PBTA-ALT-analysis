@@ -68,7 +68,7 @@ hgat_small_telhunt <- meta_ids %>%
 
 bind_rows(nonalt_hgat, hgat_small_telhunt) %>%
   distinct() %>% 
-  readr::write_tsv("analyses/get-pedcbio-ids/output/nonalt_hgat_telhunt_less107_ids.txt", col_names = F)
+  readr::write_tsv("analyses/get-pedcbio-ids/output/nonalt_hgat_w_hgat_telhunt_less107_ids.txt", col_names = F)
 
  names(meta)
  
