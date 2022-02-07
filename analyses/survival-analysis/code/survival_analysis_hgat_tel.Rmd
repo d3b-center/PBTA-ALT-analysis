@@ -11,14 +11,14 @@ This notebook will do the following survival analysis
 
 1. Univariate analysis 
 - DMG H3K28 vs rest
-- ALT vs. non-ALT for all HGAT
+- ALT vs. non-ALT for all samples
 - Telhunt score (separate into categories by 1.07)
 - CCA telhunt category
 
 
 2. Multivariate analysis
-- DMG H3K28 vs rest + ALT vs. non-ALT for all HGAT
-- DMG H3K28 vs rest + ALT vs. non-ALT for all HGAT + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + ALT vs. non-ALT 
+- DMG H3K28 vs rest + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
 - DMG H3K28 vs rest + Telhunt score (categorical) + sex + ATRX (mut N/Y)
 - DMG H3K28 vs rest + Telhunt score (continuous) + sex + ATRX (mut N/Y)
 - DMG H3K28 vs rest + CCA Telhunt category + sex + ATRX (mut N/Y)
@@ -116,6 +116,8 @@ meta_formatted$phenotype <- factor(meta_formatted$phenotype, levels = c("non-ALT
 
 # define as numberic
 meta_formatted$telhunt_score <- as.numeric(meta_formatted$telhunt_score)
+meta_formatted_hgat <- meta_formatted %>%
+  dplyr::filter(group == "HGAT")
 ```
 
 ## Log Rank analysis 
@@ -125,9 +127,12 @@ for(ind_var in c("dmg_h3k28", "tel_hunt_cat", "group", "atrx_mut", "phenotype"))
   # define model
   model <- paste0("survival::Surv(time = OS_years, event = OS_status_recoded) ~ ", ind_var)
   
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted
+  
   # run survival analysis
   fit <- survival::survdiff(formula(model),
-                            data = meta_formatted)
+                            data = data_used)
   # Obtain p value for Chi-Squared stat
   fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
   
@@ -135,11 +140,11 @@ for(ind_var in c("dmg_h3k28", "tel_hunt_cat", "group", "atrx_mut", "phenotype"))
   saveRDS(fit, file.path(output_dir, paste0("log_rank_survival_per_", ind_var, ".RDS")))
   
   # generate plots fit
-  fit_plot <- survfit(formula(model), data = meta_formatted)
+  fit_plot <- survfit(formula(model), data = data_used)
   
   # output the plot
   plot_logrank <- survminer::ggsurvplot(fit_plot,
-                                        data=meta_formatted,
+                                        data=data_used,
                                         xlim = c(0, 14),
                                         break.time.by = 1,
                                         pval = TRUE, 
@@ -169,8 +174,8 @@ for(ind_var in c("dmg_h3k28", "tel_hunt_cat", "group", "atrx_mut", "phenotype"))
 ### Two comparisons made are `tp53_score + telomerase_score + hgg_group` and `tp53_score + telomerase_score + broad_histology_display`
 
 Multivariate analysis
-- DMG H3K28 vs rest + ALT vs. non-ALT for all HGAT
-- DMG H3K28 vs rest + ALT vs. non-ALT for all HGAT + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + ALT vs. non-ALT 
+- DMG H3K28 vs rest + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
 - DMG H3K28 vs rest + Telhunt score (categorical) + sex + ATRX (mut N/Y)
 - DMG H3K28 vs rest + Telhunt score (continuous) + sex + ATRX (mut N/Y)
 
@@ -188,9 +193,12 @@ list_of_variates <- c("dmg_h3k28+group",
 for (ind_var in list_of_variates){
   model <- paste0("survival::Surv(time = OS_years, event = OS_status_recoded) ~ ", ind_var)
 
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted
+  
   fit <- survival::coxph(
         formula(model),
-        data = meta_formatted
+        data = data_used
       )
   # generate output
   table <- broom::tidy(fit) 
@@ -201,7 +209,7 @@ for (ind_var in list_of_variates){
   print(table)
   
   # printout the plot
-  forest_coxph <- survminer::ggforest(fit, data = meta_formatted)
+  forest_coxph <- survminer::ggforest(fit, data = data_used)
   print(forest_coxph)
 
 }
