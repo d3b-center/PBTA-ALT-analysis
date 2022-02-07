@@ -121,7 +121,7 @@ meta_formatted$telhunt_score <- as.numeric(meta_formatted$telhunt_score)
 meta_formatted_hgat <- meta_formatted %>%
   dplyr::filter(group == "HGAT")
 ```
-
+# A Run for all samples
 ## Log Rank analysis 
 ### Generate output for categorical files 
 ```{r}
@@ -212,7 +212,7 @@ for (ind_var in list_of_variates){
 
 ```
 
-# run for HGAT only 
+# B run for HGAT only 
 ## Univariate analysis
 
 ```{r}
@@ -304,7 +304,7 @@ for (ind_var in list_of_variates){
 
 ```
 
-## run for HGAT only but use PFS 
+# C run for HGAT only but use PFS 
 
 ```{r}
 for(ind_var in c("dmg_h3k28", "telhunt_cat", "atrx_mut", "phenotype")){
