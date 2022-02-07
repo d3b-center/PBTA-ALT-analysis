@@ -11,18 +11,15 @@ This notebook will do the following survival analysis
 
 1. Univariate analysis 
 - DMG H3K28 vs rest
-- ALT vs. non-ALT for all samples
 - Telhunt score (separate into categories by 1.07)
-- CCA telhunt category
-
+- HGAT vs. non-HGAT for all samples
+- ATRX (mut N/Y)
+- ALT vs. non-ALT for all samples
 
 2. Multivariate analysis
-- DMG H3K28 vs rest + ALT vs. non-ALT 
-- DMG H3K28 vs rest + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
-- DMG H3K28 vs rest + Telhunt score (categorical) + sex + ATRX (mut N/Y)
-- DMG H3K28 vs rest + Telhunt score (continuous) + sex + ATRX (mut N/Y)
-- DMG H3K28 vs rest + CCA Telhunt category + sex + ATRX (mut N/Y)
-
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + Telhunt score (categorical) + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + Telhunt score (continuous) + sex + ATRX (mut N/Y)
 
 
 #### Packages and functions
@@ -76,6 +73,7 @@ survival_v21 <- readr::read_tsv(file.path(root_dir,
 meta <- meta %>%
   dplyr::left_join(survival_v21) %>% 
   dplyr::distinct(Kids_First_Participant_ID, .keep_all = TRUE)
+meta$PFS_days <- as.numeric(meta$PFS_days)
 
 # recode for analysis 
 meta_formatted <- meta %>%
@@ -89,9 +87,10 @@ meta_formatted <- meta %>%
   dplyr::filter(!is.na(OS_days)) %>% 
   # calculte the years
   dplyr::mutate(OS_years = OS_days / 365.25) %>% 
+  dplyr::mutate(PFS_years = PFS_days / 365.25) %>% 
   dplyr::mutate(PFS_status = if_else(PFS_days < OS_days, 1, 0)) %>%
   # categorize by telhunt scores
-  dplyr::mutate(tel_hunt_cat = case_when(
+  dplyr::mutate(telhunt_cat = case_when(
     `TH T/TH N` > 1.07 ~ "High", 
     `TH T/TH N` < 1.07 ~ "Low"
   )) %>%
@@ -106,13 +105,16 @@ meta_formatted <- meta %>%
     TRUE ~ "non_ATRX_mut"
   )) %>%
   # rename telhunt score and CCA
-  dplyr::mutate(telhunt_score = `TH T/TH N`) 
+  dplyr::mutate(telhunt_score = `TH T/TH N`,
+                cca_telhunt = `CCA Sept 2021`) 
 
 # define as factor 
 meta_formatted$dmg_h3k28 <- factor(meta_formatted$dmg_h3k28, levels = c("non-DMG", "DMG"))
-meta_formatted$tel_hunt_cat <- factor(meta_formatted$tel_hunt_cat, levels = c("Low", "High"))
+meta_formatted$telhunt_cat <- factor(meta_formatted$telhunt_cat, levels = c("Low", "High"))
 meta_formatted$group <- factor(meta_formatted$group, levels = c("non-HGAT", "HGAT"))
 meta_formatted$phenotype <- factor(meta_formatted$phenotype, levels = c("non-ALT", "ALT"))
+meta_formatted$atrx_mut <- factor(meta_formatted$atrx_mut, levels = c("non_ATRX_mut", "ATRX_mut"))
+
 
 # define as numberic
 meta_formatted$telhunt_score <- as.numeric(meta_formatted$telhunt_score)
@@ -121,9 +123,9 @@ meta_formatted_hgat <- meta_formatted %>%
 ```
 
 ## Log Rank analysis 
-### Generate output for categorical files - only hgg group is used  
+### Generate output for categorical files 
 ```{r}
-for(ind_var in c("dmg_h3k28", "tel_hunt_cat", "group", "atrx_mut", "phenotype")){
+for(ind_var in c("dmg_h3k28", "telhunt_cat", "group", "atrx_mut", "phenotype")){
   # define model
   model <- paste0("survival::Surv(time = OS_years, event = OS_status_recoded) ~ ", ind_var)
   
@@ -164,27 +166,21 @@ for(ind_var in c("dmg_h3k28", "tel_hunt_cat", "group", "atrx_mut", "phenotype"))
   cowplot::save_plot(filename = file.path(plots_dir, 
                                           paste0("logrank_survival_by_", ind_var, ".png")), 
                      plot = surv_plot_logrank)
-     
 
 }
 
 ```
 
 ## Multivariate analysis 
-### Two comparisons made are `tp53_score + telomerase_score + hgg_group` and `tp53_score + telomerase_score + broad_histology_display`
-
 Multivariate analysis
-- DMG H3K28 vs rest + ALT vs. non-ALT 
-- DMG H3K28 vs rest + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
-- DMG H3K28 vs rest + Telhunt score (categorical) + sex + ATRX (mut N/Y)
-- DMG H3K28 vs rest + Telhunt score (continuous) + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + Telhunt score (categorical) + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + HGAT vs. non-HGAT + Telhunt score (continuous) + sex + ATRX (mut N/Y)
 
 
 ```{r}
 # define multi-variates that we are using for analyzing survival
-list_of_variates <- c("dmg_h3k28+group",
-                      "dmg_h3k28+group+reported_gender+atrx_mut",
-                      "dmg_h3k28+group+tel_hunt_cat+reported_gender+atrx_mut",
+list_of_variates <- c("dmg_h3k28+group+telhunt_cat+reported_gender+atrx_mut",
                       "dmg_h3k28+group+telhunt_score+reported_gender+atrx_mut",
                       "dmg_h3k28+group+phenotype+reported_gender+atrx_mut"
                       )
@@ -205,6 +201,183 @@ for (ind_var in list_of_variates){
   
   # Save the table data in a TSV
   readr::write_tsv(table, file.path(output_dir, paste0("cox_reg_results_per_", ind_var, ".tsv")))
+  
+  print(table)
+  
+  # printout the plot
+  forest_coxph <- survminer::ggforest(fit, data = data_used)
+  print(forest_coxph)
+
+}
+
+```
+
+# run for HGAT only 
+## Univariate analysis
+
+```{r}
+for(ind_var in c("dmg_h3k28", "telhunt_cat", "atrx_mut", "phenotype")){
+  # define model
+  model <- paste0("survival::Surv(time = OS_years, event = OS_status_recoded) ~ ", ind_var)
+  
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted_hgat
+  
+  # run survival analysis
+  fit <- survival::survdiff(formula(model),
+                            data = data_used)
+  # Obtain p value for Chi-Squared stat
+  fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
+  
+  # save the output
+  saveRDS(fit, file.path(output_dir, paste0("log_rank_survival_per_", ind_var, "_os_only_hgat.RDS")))
+  
+  # generate plots fit
+  fit_plot <- survfit(formula(model), data = data_used)
+  
+  # output the plot
+  plot_logrank <- survminer::ggsurvplot(fit_plot,
+                                        data=data_used,
+                                        xlim = c(0, 14),
+                                        break.time.by = 1,
+                                        pval = TRUE, 
+                                        conf.int = TRUE,
+                                        risk.table = TRUE, # Add risk table
+                                        linetype = "strata", # Change line type by groups
+                                        surv.median.line = "hv", # Specify median survival
+                                        ggtheme = theme_bw())
+  
+  print(plot_logrank)
+  # Make this plot a combined plot
+  surv_plot_logrank <- cowplot::plot_grid(plot_logrank[[1]], 
+                                          plot_logrank[[2]], 
+                                          nrow = 2, 
+                                          rel_heights = c(2.5, 1))
+  # Save the plot
+  cowplot::save_plot(filename = file.path(plots_dir, 
+                                          paste0("logrank_survival_by_", ind_var, "_os_only_hgat.png")), 
+                     plot = surv_plot_logrank)
+     
+
+}
+
+```
+
+## Multivariate analysis 
+Multivariate analysis for HGAT samples only 
+- DMG H3K28 vs rest + ALT vs. non-ALT  + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + Telhunt score (categorical) + sex + ATRX (mut N/Y)
+- DMG H3K28 vs rest + Telhunt score (continuous) + sex + ATRX (mut N/Y)
+
+
+```{r}
+# define multi-variates that we are using for analyzing survival
+list_of_variates <- c("dmg_h3k28+telhunt_cat+reported_gender+atrx_mut",
+                      "dmg_h3k28+telhunt_score+reported_gender+atrx_mut",
+                      "dmg_h3k28+phenotype+reported_gender+atrx_mut"
+                      )
+
+# define model
+for (ind_var in list_of_variates){
+  model <- paste0("survival::Surv(time = OS_years, event = OS_status_recoded) ~ ", ind_var)
+
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted_hgat
+  
+  fit <- survival::coxph(
+        formula(model),
+        data = data_used
+      )
+  # generate output
+  table <- broom::tidy(fit) 
+  
+  # Save the table data in a TSV
+  readr::write_tsv(table, file.path(output_dir, paste0("cox_reg_results_per_", ind_var, "_os_only_hgat.tsv")))
+  
+  print(table)
+  
+  # printout the plot
+  forest_coxph <- survminer::ggforest(fit, data = data_used)
+  print(forest_coxph)
+
+}
+
+```
+
+## run for HGAT only but use PFS 
+
+```{r}
+for(ind_var in c("dmg_h3k28", "telhunt_cat", "atrx_mut", "phenotype")){
+  # define model
+  model <- paste0("survival::Surv(time = PFS_years, event = PFS_status) ~ ", ind_var)
+  
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted_hgat
+  
+  # run survival analysis
+  fit <- survival::survdiff(formula(model),
+                            data = data_used)
+  # Obtain p value for Chi-Squared stat
+  fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
+  
+  # save the output
+  saveRDS(fit, file.path(output_dir, paste0("log_rank_survival_per_", ind_var, "_pfs_only_hgat.RDS")))
+  
+  # generate plots fit
+  fit_plot <- survfit(formula(model), data = data_used)
+  
+  # output the plot
+  plot_logrank <- survminer::ggsurvplot(fit_plot,
+                                        data=data_used,
+                                        xlim = c(0, 14),
+                                        break.time.by = 1,
+                                        pval = TRUE, 
+                                        conf.int = TRUE,
+                                        risk.table = TRUE, # Add risk table
+                                        linetype = "strata", # Change line type by groups
+                                        surv.median.line = "hv", # Specify median survival
+                                        ggtheme = theme_bw())
+  
+  print(plot_logrank)
+  # Make this plot a combined plot
+  surv_plot_logrank <- cowplot::plot_grid(plot_logrank[[1]], 
+                                          plot_logrank[[2]], 
+                                          nrow = 2, 
+                                          rel_heights = c(2.5, 1))
+  # Save the plot
+  cowplot::save_plot(filename = file.path(plots_dir, 
+                                          paste0("logrank_survival_by_", ind_var, "_pfs_only_hgat.png")), 
+                     plot = surv_plot_logrank)
+     
+
+}
+
+```
+
+## Multivariate analysis 
+
+```{r}
+# define multi-variates that we are using for analyzing survival
+list_of_variates <- c("dmg_h3k28+telhunt_cat+reported_gender+atrx_mut",
+                      "dmg_h3k28+telhunt_score+reported_gender+atrx_mut",
+                      "dmg_h3k28+phenotype+reported_gender+atrx_mut")
+
+# define model
+for (ind_var in list_of_variates){
+  model <- paste0("survival::Surv(time = PFS_years, event = PFS_status) ~ ", ind_var)
+
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted_hgat
+  
+  fit <- survival::coxph(
+        formula(model),
+        data = data_used
+      )
+  # generate output
+  table <- broom::tidy(fit) 
+  
+  # Save the table data in a TSV
+  readr::write_tsv(table, file.path(output_dir, paste0("cox_reg_results_per_", ind_var, "_pfs_only_hgat.tsv")))
   
   print(table)
   
