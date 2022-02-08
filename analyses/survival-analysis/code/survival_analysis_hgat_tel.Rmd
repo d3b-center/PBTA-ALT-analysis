@@ -388,3 +388,57 @@ for (ind_var in list_of_variates){
 }
 
 ```
+
+# Run without ATRX mutants
+
+```{r}
+meta_formatted_hgat_non_atrx <- meta_formatted_hgat %>%
+  dplyr::filter(atrx_mut == "non_ATRX_mut")
+
+for(ind_var in c("telhunt_cat", "phenotype")){
+  # define model
+  model <- paste0("survival::Surv(time = PFS_years, event = PFS_status) ~ ", ind_var)
+  
+  # depending on which variables are used, data used will be different
+  data_used <- meta_formatted_hgat_non_atrx
+  
+  # run survival analysis
+  fit <- survival::survdiff(formula(model),
+                            data = data_used)
+  # Obtain p value for Chi-Squared stat
+  fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
+  
+  # save the output
+  saveRDS(fit, file.path(output_dir, paste0("log_rank_survival_per_", ind_var, "_pfs_only_hgat_non_atrx.RDS")))
+  
+  # generate plots fit
+  fit_plot <- survfit(formula(model), data = data_used)
+  
+  # output the plot
+  plot_logrank <- survminer::ggsurvplot(fit_plot,
+                                        data=data_used,
+                                        xlim = c(0, 14),
+                                        break.time.by = 1,
+                                        pval = TRUE, 
+                                        conf.int = TRUE,
+                                        risk.table = TRUE, # Add risk table
+                                        linetype = "strata", # Change line type by groups
+                                        surv.median.line = "hv", # Specify median survival
+                                        ggtheme = theme_bw())
+  
+  print(plot_logrank)
+  # Make this plot a combined plot
+  surv_plot_logrank <- cowplot::plot_grid(plot_logrank[[1]], 
+                                          plot_logrank[[2]], 
+                                          nrow = 2, 
+                                          rel_heights = c(2.5, 1))
+  # Save the plot
+  cowplot::save_plot(filename = file.path(plots_dir, 
+                                          paste0("logrank_survival_by_", ind_var, "_pfs_only_hgat_non_atrx.png")), 
+                     plot = surv_plot_logrank)
+     
+
+}
+
+```
+
