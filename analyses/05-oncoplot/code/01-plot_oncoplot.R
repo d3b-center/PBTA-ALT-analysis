@@ -19,9 +19,9 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
   column_to_rownames("Tumor_Sample_Barcode") %>%
   mutate(`C-circle` = `CCA Sept 2021`)
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
-tmb <- read_tsv(file.path(input_dir,"pbta-snv-consensus-TMB_intarget.txt")) %>%
+tmb <- read_tsv(file.path(input_dir,"pbta-snv-mutation-tmb-coding.txt")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
-  select(Kids_First_Biospecimen_ID_DNA, TMB)
+  select(Kids_First_Biospecimen_ID_DNA, tmb)
 
 # mutate the hgat dataframe for plotting
 hgat <- hgat %>%
@@ -32,9 +32,9 @@ hgat <- hgat %>%
   )) %>%
   dplyr::mutate(
     mutation_status = case_when(
-      TMB < 10 ~ "Normal",
-      TMB >= 10 & TMB < 100 ~ "Hypermutant",
-      TMB>= 100 ~ "Ultra-hypermutant")
+      tmb < 10 ~ "Normal",
+      tmb >= 10 & tmb < 100 ~ "Hypermutant",
+      tmb>= 100 ~ "Ultra-hypermutant")
   )
 # order columns for plotting
 hgat$`C-circle` <- factor(hgat$`C-circle`, levels = c("POS", "NEG", "Not done"))
