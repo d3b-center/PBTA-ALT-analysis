@@ -15,6 +15,10 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
   dplyr::select(Tumor_Sample_Barcode, `alt final`)
 
+# get TMB 
+tmb <- read_tsv(file.path(input_dir,"pbta-snv-mutation-tmb-coding.txt")) %>%
+  select(Tumor_Sample_Barcode, tmb)
+
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
   dplyr::mutate(Variant_Classification = gsub(",", "", Variant_Classification)) %>%
@@ -31,14 +35,38 @@ merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
                                               "Start_Codon_Del",
                                               "Fusion",
                                               "Multi_Hit_Fusion",
-                                              "Multi_Hit")) 
-# filter to genes of interest 
+                                              "Multi_Hit")) %>%
+  dplyr::left_join(tmb) %>%
+  dplyr::filter(tmb < 10)
+
+
+# generate count dataframe
+count_df <- merged_dat %>%
+  dplyr::group_by(Tumor_Sample_Barcode) %>%
+  dplyr::mutate(mut_count = sum(count)) %>%
+  dplyr::select(Tumor_Sample_Barcode, mut_count) %>%
+  distinct() %>%
+  dplyr::left_join(metadata) %>%
+  dplyr::mutate(log2_mut_count = log2(mut_count))
+count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG"))
+
+# output plots
+pdf(file.path(plots_dir, "mut_count_alt_all_genes.pdf"))
+p <- ggplot(count_df, aes(x =`alt final`, y = log2_mut_count)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test') 
+  
+print(p)
+dev.off()
+
+# filter to genes of interest
 merged_dat_4_genes <- merged_dat %>%
   dplyr::filter(Hugo_Symbol %in% c("TP53",
                                    "H3F3A",
                                    "ATRX",
                                    "NF1"))
-  
+
 # generate count dataframe
 count_df_4_genes <- merged_dat_4_genes %>%
   dplyr::group_by(Tumor_Sample_Barcode) %>%
@@ -46,14 +74,15 @@ count_df_4_genes <- merged_dat_4_genes %>%
   dplyr::select(Tumor_Sample_Barcode, mut_count) %>%
   distinct() %>%
   dplyr::left_join(metadata) %>%
-  dplyr::filter(mut_count < 10)
+  dplyr::mutate(log2_mut_count = log2(mut_count))
+count_df_4_genes$`alt final` <- factor(count_df_4_genes$`alt final`, levels = c("POS", "NEG"))
 
 # output plots
-pdf(file.path(plots_dir, "mut_count_alt.pdf"))
-p <- ggplot(count_df_4_genes, aes(x =`alt final`, y = mut_count)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test') + 
-  
+pdf(file.path(plots_dir, "mut_count_alt_4_genes.pdf"))
+p <- ggplot(count_df_4_genes, aes(x =`alt final`, y = log2_mut_count)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(method='t.test')
+
 print(p)
 dev.off()
