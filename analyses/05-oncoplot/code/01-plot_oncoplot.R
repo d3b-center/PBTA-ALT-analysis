@@ -19,10 +19,27 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
   column_to_rownames("Tumor_Sample_Barcode") %>%
   mutate(`C-circle` = `CCA Sept 2021`)
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
+tmb <- read_tsv(file.path(input_dir,"pbta-snv-consensus-TMB_intarget.txt")) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
+  select(Kids_First_Biospecimen_ID_DNA, TMB)
 
+# mutate the hgat dataframe for plotting
+hgat <- hgat %>%
+  dplyr::left_join(tmb) %>%
+  dplyr::mutate(`C-circle` = case_when(
+    `C-circle` %in% c("POS", "NEG") ~ `C-circle`,
+    TRUE ~ "Not done"
+  )) %>%
+  dplyr::mutate(
+    mutation_status = case_when(
+      TMB < 10 ~ "Normal",
+      TMB >= 10 & TMB < 100 ~ "Hypermutant",
+      TMB>= 100 ~ "Ultra-hypermutant")
+  )
 # order columns for plotting
-hgat$`C-circle` <- factor(hgat$`C-circle`, levels = c("POS", "NEG"))
+hgat$`C-circle` <- factor(hgat$`C-circle`, levels = c("POS", "NEG", "Not done"))
 hgat$germline_sex_estimate <- factor(hgat$germline_sex_estimate, levels = c("Male", "Female"))
+hgat$mutation_status <- factor(hgat$mutation_status, levels = c("Ultra-hypermutant", "Hypermutant", "Normal"))
 
 #subset for what's in the meta file
 gene_matrix<- gene_matrix[goi.list$genes, colnames(gene_matrix) %in% hgat$Kids_First_Biospecimen_ID_DNA]
@@ -31,8 +48,9 @@ setdiff(hgat$Kids_First_Biospecimen_ID_DNA, colnames(gene_matrix))
 ## color for barplot
 col = colors
 names(hgat)
-df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle")]
-ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle")],
+df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle", "mutation_status")]
+
+ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle", "mutation_status")],
                        # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
                           "germline_sex_estimate" = c("Male" = "#CAE1FF",
@@ -44,8 +62,11 @@ ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate
                                                  "Second Malignancy" = "#CBAACB"),
                           "telomere_ratio" = colorRamp2(c(0, 1.05, 1.06), c("whitesmoke", "#CAE1FF","dodgerblue4")),
                           "C-circle" = c("POS"="dodgerblue4",
-                                           "NEG"="whitesmoke",
-                                           "NA" = "gainsboro")),
+                                         "NEG"="whitesmoke",
+                                         "Not done" = "gainsboro"),
+                          "mutation_status" = c("Ultra-hypermutant" = "#CAE1FF", 
+                                                "Hypermutant" = "#FFFFB5", 
+                                                "Normal" = "darkgrey")),
                       annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
                       na_col = "gainsboro")
 
