@@ -39,7 +39,7 @@ merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
   dplyr::left_join(tmb) %>%
   dplyr::filter(tmb < 10)
 
-
+################# Generate figures with combined mutation counts 
 # generate count dataframe
 count_df <- merged_dat %>%
   dplyr::group_by(Tumor_Sample_Barcode) %>%
@@ -86,3 +86,49 @@ p <- ggplot(count_df_4_genes, aes(x =`alt final`, y = log2_mut_count)) +
 
 print(p)
 dev.off()
+
+################# Generate figures mutation counts faceted by type
+# generate count dataframe
+count_df_facet <- merged_dat %>%
+  dplyr::group_by(Tumor_Sample_Barcode,
+                  Variant_Classification) %>%
+  dplyr::mutate(mut_count = sum(count)) %>%
+  dplyr::select(Tumor_Sample_Barcode, mut_count, Variant_Classification) %>%
+  distinct() %>%
+  dplyr::left_join(metadata) %>%
+  dplyr::mutate(log2_mut_count = log2(mut_count))
+count_df_facet$`alt final` <- factor(count_df_facet$`alt final`, levels = c("POS", "NEG"))
+
+# output plots
+pdf(file.path(plots_dir, "mut_count_alt_all_genes_faceted.pdf"))
+p <- ggplot(count_df_facet, aes(x =`alt final`, y = log2_mut_count)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test', label.y = 7) + 
+  facet_wrap( ~ Variant_Classification)
+
+print(p)
+dev.off()
+
+# generate count dataframe
+count_df_4_genes_faceted <- merged_dat_4_genes %>%
+  dplyr::group_by(Tumor_Sample_Barcode,
+                  Variant_Classification) %>%
+  dplyr::mutate(mut_count = sum(count)) %>%
+  dplyr::select(Tumor_Sample_Barcode, mut_count, Variant_Classification) %>%
+  distinct() %>%
+  dplyr::left_join(metadata) %>%
+  dplyr::mutate(log2_mut_count = log2(mut_count))
+count_df_4_genes_faceted$`alt final` <- factor(count_df_4_genes_faceted$`alt final`, levels = c("POS", "NEG"))
+
+# output plots
+pdf(file.path(plots_dir, "mut_count_alt_4_genes_faceted.pdf"))
+p <- ggplot(count_df_4_genes_faceted, aes(x =`alt final`, y = log2_mut_count)) +
+  geom_boxplot() +
+  geom_jitter() +
+  stat_compare_means(method='t.test') +
+  facet_wrap( ~ Variant_Classification)
+
+print(p)
+dev.off()
+
