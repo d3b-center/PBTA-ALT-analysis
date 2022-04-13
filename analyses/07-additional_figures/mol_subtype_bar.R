@@ -6,6 +6,10 @@ library(ggpubr)
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
+results_dir <- file.path(analysis_dir, "output")
+if(!dir.exists(results_dir){
+  dir.create(results_dir)
+})
 data_dir <- file.path(root_dir, "analyses", "02-add-histologies")
 
 # metadata read in
@@ -42,4 +46,7 @@ p <- ggplot(combined_df,
 print(p)
 dev.off()
 
-
+# generate chi square results
+sink(file = file.path(results_dir, "chi-sqaure-results.tsv"))
+chisq.test(table(combined_df$molecular_subtype, combined_df$`alt final`))
+sink()
