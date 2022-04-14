@@ -1,6 +1,0 @@
-
-	Pearson's Chi-squared test
-
-data:  table(combined_df$molecular_subtype, combined_df$`alt final`)
-X-squared = 19.298, df = 9, p-value = 0.02278
-
