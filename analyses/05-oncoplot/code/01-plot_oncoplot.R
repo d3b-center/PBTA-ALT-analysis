@@ -66,7 +66,7 @@ ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate
                                          "Not done" = "gainsboro"),
                           "mutation_status" = c("Ultra-hypermutant" = "#CAE1FF", 
                                                 "Hypermutant" = "#FFFFB5", 
-                                                "Normal" = "darkgrey")),
+                                                "Normal" = "whitesmoke")),
                       annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
                       na_col = "gainsboro")
 
