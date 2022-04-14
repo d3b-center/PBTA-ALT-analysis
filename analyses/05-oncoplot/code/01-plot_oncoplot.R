@@ -48,7 +48,7 @@ setdiff(hgat$Kids_First_Biospecimen_ID_DNA, colnames(gene_matrix))
 ## color for barplot
 col = colors
 names(hgat)
-df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle", "mutation_status")]
+df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle", "TMB")]
 
 ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("germline_sex_estimate","tumor_descriptor", "telomere_ratio","C-circle", "mutation_status")],
                        # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
