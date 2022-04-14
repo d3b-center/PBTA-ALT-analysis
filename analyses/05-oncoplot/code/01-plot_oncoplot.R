@@ -31,7 +31,7 @@ hgat <- hgat %>%
     TRUE ~ "Not done"
   )) %>%
   dplyr::mutate(
-    mutation_status = case_when(
+    TMB = case_when(
       tmb < 10 ~ "Normal",
       tmb >= 10 & tmb < 100 ~ "Hypermutant",
       tmb>= 100 ~ "Ultra-hypermutant")
