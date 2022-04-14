@@ -39,7 +39,7 @@ hgat <- hgat %>%
 # order columns for plotting
 hgat$`C-circle` <- factor(hgat$`C-circle`, levels = c("POS", "NEG", "Not done"))
 hgat$germline_sex_estimate <- factor(hgat$germline_sex_estimate, levels = c("Male", "Female"))
-hgat$mutation_status <- factor(hgat$mutation_status, levels = c("Ultra-hypermutant", "Hypermutant", "Normal"))
+hgat$TMB <- factor(hgat$TMB, levels = c("Ultra-hypermutant", "Hypermutant", "Normal"))
 
 #subset for what's in the meta file
 gene_matrix<- gene_matrix[goi.list$genes, colnames(gene_matrix) %in% hgat$Kids_First_Biospecimen_ID_DNA]
