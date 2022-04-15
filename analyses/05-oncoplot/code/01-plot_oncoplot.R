@@ -67,8 +67,8 @@ ha = HeatmapAnnotation( name = "annotation", df = hgat[,c("Sex","Phase of therap
                           "C-circle" = c("POS"="dodgerblue4",
                                          "NEG"="whitesmoke",
                                          "Not done" = "gainsboro"),
-                          "TMB" = c("Ultra-hypermutant" = "#CAE1FF", 
-                                                "Hypermutant" = "#FFFFB5", 
+                          "TMB" = c("Ultra-hypermutant" = "dodgerblue4", 
+                                                "Hypermutant" = "darkorange1", 
                                                 "Normal" = "whitesmoke")),
                       annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
                       na_col = "gainsboro")
