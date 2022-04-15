@@ -103,6 +103,8 @@ merged_dat <- merged_dat %>%
   mutate(Variant_Classification = case_when(
     count>1~"Multi_Hit",
     TRUE ~ Variant_Classification))
+merged_dat %>% 
+  saveRDS(file.path(input_dir, "merged_mut_data.RDS"))
 
 gene_matrix<-reshape2::acast(merged_dat,
                              Hugo_Symbol~Tumor_Sample_Barcode,value.var = "Variant_Classification")
