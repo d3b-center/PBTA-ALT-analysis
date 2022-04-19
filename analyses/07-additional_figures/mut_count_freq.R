@@ -6,6 +6,11 @@ library(ggpubr)
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
+results_dir <- file.path(analysis_dir, "results", "count_freq_4_genes_stats")
+if(!dir.exists(results_dir)){
+  dir.create(results_dir, recursive = TRUE)
+}
+
 input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 
 # metadata read in
@@ -73,4 +78,25 @@ p <- ggplot(data = count_df_4_genes, aes(x = Hugo_Symbol, y = freq, fill = `alt 
   geom_bar(stat = "identity", position = position_dodge(), alpha = 0.75)
 print(p)
 dev.off()
+
+# output the results 
+for(gene in c("TP53", "ATRX", "H3F3A", "NF1")){
+  count_each_gene <- count_df_4_genes %>%
+    dplyr::filter(Hugo_Symbol == gene)
+  
+  sink(file = file.path(results_dir, paste0("wilcoxon_rank_sum_freq_", gene, ".txt")))
+  print(pairwise.wilcox.test(count_each_gene$freq, 
+                             count_each_gene$`alt final`, 
+                             p.adjust.method = "bonf",
+                             paired = TRUE))
+  sink()
+  
+}
+# output all combined
+sink(file = file.path(results_dir, "wilcoxon_rank_sum_freq_all.txt"))
+print(pairwise.wilcox.test(count_df_4_genes$freq, 
+                           count_df_4_genes$`alt final`, 
+                           p.adjust.method = "bonf",
+                           paired = TRUE))
+sink()
 

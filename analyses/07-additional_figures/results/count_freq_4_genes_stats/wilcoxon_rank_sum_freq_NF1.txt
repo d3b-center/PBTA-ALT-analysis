@@ -1,0 +1,9 @@
+
+	Pairwise comparisons using Wilcoxon signed rank exact test 
+
+data:  count_each_gene$freq and count_each_gene$`alt final` 
+
+    POS
+NEG 1  
+
+P value adjustment method: bonferroni 
