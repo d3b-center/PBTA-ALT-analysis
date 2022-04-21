@@ -119,6 +119,7 @@ meta_formatted$telhunt_score <- as.numeric(meta_formatted$telhunt_score)
 meta_formatted_hgat <- meta_formatted %>%
   dplyr::filter(group == "HGAT")
 ```
+
 # A Run for all samples
 ## Log Rank analysis 
 ### Generate output for categorical files 
@@ -272,8 +273,8 @@ Multivariate analysis for HGAT samples only
 # define multi-variates that we are using for analyzing survival
 list_of_variates <- c("dmg_h3k28 + alt_final + telhunt_cat + germline_sex_estimate + atrx_mut",
                       "dmg_h3k28 + alt_final + telhunt_score + germline_sex_estimate + atrx_mut",
-                      "dmg_h3k28 + alt_final + telhunt_cat + germline_sex_estimate + atrx_mut + dmg_h3k28*group + dmg_h3k28*telhunt_cat",
-                      "dmg_h3k28 + alt_final + telhunt_score + germline_sex_estimate + atrx_mut + dmg_h3k28*group + dmg_h3k28*telhunt_score"
+                      "dmg_h3k28 + alt_final + telhunt_cat + germline_sex_estimate + atrx_mut + dmg_h3k28*telhunt_cat",
+                      "dmg_h3k28 + alt_final + telhunt_score + germline_sex_estimate + atrx_mut + dmg_h3k28*telhunt_score"
                        )
 
 # define model
@@ -302,3 +303,134 @@ for (ind_var in list_of_variates){
 }
 
 ```
+
+
+## Filter to DMG only and non DMG and run KM analysis 
+```{r}
+# filter samples 
+meta_formatted_dmg <- meta_formatted_hgat %>%
+  dplyr::filter(dmg_h3k28 == "DMG")
+meta_formatted_non_dmg <- meta_formatted_hgat %>%
+  dplyr::filter(dmg_h3k28 == "non-DMG")
+```
+
+### Run for DMG only 
+```{r}
+# define model
+model <- "survival::Surv(time = OS_years, event = OS_status_recoded) ~ alt_final"
+
+######## run for DMG
+# run survival analysis
+fit <- survival::survdiff(formula(model),
+                          data = meta_formatted_dmg)
+# Obtain p value for Chi-Squared stat
+fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
+
+# save the output
+saveRDS(fit, file.path(output_dir, "log_rank_survival_per_alt_os_only_dmg.RDS"))
+
+# generate plots fit
+fit_plot <- survfit(formula(model), data = meta_formatted_dmg)
+
+# output the plot
+plot_logrank <- survminer::ggsurvplot(fit_plot,
+                                      data=meta_formatted_dmg,
+                                      xlim = c(0, 14),
+                                      break.time.by = 1,
+                                      pval = TRUE, 
+                                      conf.int = TRUE,
+                                      risk.table = TRUE, # Add risk table
+                                      linetype = "strata", # Change line type by groups
+                                      surv.median.line = "hv", # Specify median survival
+                                      ggtheme = theme_bw())
+
+print(plot_logrank)
+# Make this plot a combined plot
+surv_plot_logrank <- cowplot::plot_grid(plot_logrank[[1]], 
+                                        plot_logrank[[2]], 
+                                        nrow = 2, 
+                                        rel_heights = c(2.5, 1))
+# Save the plot
+cowplot::save_plot(filename = file.path(plots_dir, 
+                                        "logrank_survival_by_alt_os_only_dmg.png"), 
+                   plot = surv_plot_logrank)
+
+# run cox-regression
+fit <- survival::coxph(
+        formula(model),
+        data = meta_formatted_dmg
+      )
+# generate output
+table <- broom::tidy(fit) 
+
+# Save the table data in a TSV
+readr::write_tsv(table, file.path(output_dir, "cox_reg_results_per_alt_os_only_dmg.tsv"))
+
+print(table)
+
+# printout the plot
+forest_coxph <- survminer::ggforest(fit, data = meta_formatted_dmg)
+print(forest_coxph)
+
+
+```
+
+### Run for non-DMG only 
+```{r}
+######## run for non-DMG
+# run survival analysis
+fit <- survival::survdiff(formula(model),
+                          data = meta_formatted_non_dmg)
+# Obtain p value for Chi-Squared stat
+fit$p.value <- pchisq(fit$chisq, df = length(fit$n) - 1, lower = FALSE)
+
+# save the output
+saveRDS(fit, file.path(output_dir, "log_rank_survival_per_alt_os_non_dmg.RDS"))
+
+# generate plots fit
+fit_plot <- survfit(formula(model), data = meta_formatted_non_dmg)
+
+# output the plot
+plot_logrank <- survminer::ggsurvplot(fit_plot,
+                                      data=meta_formatted_non_dmg,
+                                      xlim = c(0, 14),
+                                      break.time.by = 1,
+                                      pval = TRUE, 
+                                      conf.int = TRUE,
+                                      risk.table = TRUE, # Add risk table
+                                      linetype = "strata", # Change line type by groups
+                                      surv.median.line = "hv", # Specify median survival
+                                      ggtheme = theme_bw())
+
+print(plot_logrank)
+# Make this plot a combined plot
+surv_plot_logrank <- cowplot::plot_grid(plot_logrank[[1]], 
+                                        plot_logrank[[2]], 
+                                        nrow = 2, 
+                                        rel_heights = c(2.5, 1))
+# Save the plot
+cowplot::save_plot(filename = file.path(plots_dir, 
+                                        "logrank_survival_by_alt_os_only_non_dmg.png"), 
+                   plot = surv_plot_logrank)
+
+# run cox-regression
+fit <- survival::coxph(
+        formula(model),
+        data = meta_formatted_non_dmg
+      )
+# generate output
+table <- broom::tidy(fit) 
+
+# Save the table data in a TSV
+readr::write_tsv(table, file.path(output_dir, "cox_reg_results_per_alt_os_only_non_dmg.tsv"))
+
+print(table)
+
+# printout the plot
+forest_coxph <- survminer::ggforest(fit, data = meta_formatted_non_dmg)
+print(forest_coxph)
+
+
+```
+
+
