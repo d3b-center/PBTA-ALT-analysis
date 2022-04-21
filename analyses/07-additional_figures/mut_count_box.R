@@ -13,11 +13,15 @@ input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
                                "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
-  dplyr::select(Tumor_Sample_Barcode, `alt final`)
+  dplyr::mutate(atrx_mut = case_when(
+    !is.na(`ATRX Mutation`) ~ "ATRX_mut",
+    TRUE ~ "non_ATRX_mut"
+  )) %>%
+  dplyr::select(Tumor_Sample_Barcode, `alt final`, atrx_mut)
 
 # get TMB 
 tmb <- read_tsv(file.path(input_dir,"pbta-snv-mutation-tmb-coding.txt")) %>%
-  select(Tumor_Sample_Barcode, tmb)
+  dplyr::select(Tumor_Sample_Barcode, tmb)
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -74,6 +78,29 @@ p <- ggplot(count_df, aes(x =`alt final`, y = TMB)) +
 print(p)
 dev.off()
 
+# output plots for all mutation coutns
+pdf(file.path(plots_dir, "mut_count_alt_all_genes_atrx.pdf"))
+p <- ggplot(count_df, aes(x =`alt final`, y = log2_mut_count, color = atrx_mut)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test') +
+  theme_bw() + 
+  ylab("Log2 Mutation Count")
+
+print(p)
+dev.off()
+
+# output plots for TMB 
+pdf(file.path(plots_dir, "tmb_alt_all_genes_atrx.pdf"))
+p <- ggplot(count_df, aes(x =`alt final`, y = TMB, color = atrx_mut)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test') +
+  theme_bw()
+
+print(p)
+dev.off()
+
 
 ################# Generate figures mutation counts faceted by type
 # generate count dataframe
@@ -110,4 +137,33 @@ p <- ggplot(count_df_facet, aes(x =`alt final`, y = TMB)) +
 
 print(p)
 dev.off()
+
+######### filter to only output missense
+# output plots
+pdf(file.path(plots_dir, "mut_count_alt_missense_atrx.pdf"))
+p <- ggplot(count_df_facet %>%
+              dplyr::filter(Variant_Classification == "Missense_Mutation"), 
+            aes(x =`alt final`, y = log2_mut_count, color = atrx_mut)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test', label.y = 7) + 
+  theme_bw() + 
+  ylab("Log2 Mutation Count")
+
+print(p)
+dev.off()
+
+pdf(file.path(plots_dir, "tmb_alt_missense_atrx.pdf"))
+p <- ggplot(count_df_facet %>%
+              dplyr::filter(Variant_Classification == "Missense_Mutation"), 
+            aes(x =`alt final`, y = TMB, color = atrx_mut)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test', label.y = 7) + 
+  theme_bw()
+
+print(p)
+dev.off()
+
+
 
