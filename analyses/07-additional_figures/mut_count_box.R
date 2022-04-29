@@ -138,32 +138,5 @@ p <- ggplot(count_df_facet, aes(x =`alt final`, y = TMB)) +
 print(p)
 dev.off()
 
-######### filter to only output missense
-# output plots
-pdf(file.path(plots_dir, "mut_count_alt_missense_atrx.pdf"))
-p <- ggplot(count_df_facet %>%
-              dplyr::filter(Variant_Classification == "Missense_Mutation"), 
-            aes(x =`alt final`, y = log2_mut_count, color = atrx_mut)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test', label.y = 7) + 
-  theme_bw() + 
-  ylab("Log2 Mutation Count")
-
-print(p)
-dev.off()
-
-pdf(file.path(plots_dir, "tmb_alt_missense_atrx.pdf"))
-p <- ggplot(count_df_facet %>%
-              dplyr::filter(Variant_Classification == "Missense_Mutation"), 
-            aes(x =`alt final`, y = TMB, color = atrx_mut)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test', label.y = 7) + 
-  theme_bw()
-
-print(p)
-dev.off()
-
 
 
