@@ -78,18 +78,6 @@ p <- ggplot(count_df, aes(x =`alt final`, y = TMB)) +
 print(p)
 dev.off()
 
-# output plots for all mutation coutns
-pdf(file.path(plots_dir, "mut_count_alt_all_genes_atrx.pdf"))
-p <- ggplot(count_df, aes(x =`alt final`, y = log2_mut_count, color = atrx_mut)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test') +
-  theme_bw() + 
-  ylab("Log2 Mutation Count")
-
-print(p)
-dev.off()
-
 # output plots for TMB 
 pdf(file.path(plots_dir, "tmb_alt_all_genes_atrx.pdf"))
 p <- ggplot(count_df, aes(x =`alt final`, y = TMB, color = atrx_mut)) +
@@ -138,5 +126,6 @@ p <- ggplot(count_df_facet, aes(x =`alt final`, y = TMB)) +
 print(p)
 dev.off()
 
+# Only look at ATRX - not ALT differences
 
 
