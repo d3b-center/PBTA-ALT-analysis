@@ -13,11 +13,16 @@ input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
                                "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
-  dplyr::select(Tumor_Sample_Barcode, `alt final`)
+  dplyr::mutate(atrx_mut = case_when(
+    !is.na(`ATRX Mutation`) ~ "ATRX_mut",
+    TRUE ~ "non_ATRX_mut"
+  )) %>%
+  dplyr::select(Tumor_Sample_Barcode, `alt final`, atrx_mut)
 
 # get TMB 
-tmb <- read_tsv(file.path(input_dir,"pbta-snv-mutation-tmb-coding.txt")) %>%
-  select(Tumor_Sample_Barcode, tmb)
+tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
+  dplyr::select(Tumor_Sample_Barcode, tmb)
+
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -36,16 +41,16 @@ merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
                                               "Fusion",
                                               "Multi_Hit_Fusion",
                                               "Multi_Hit")) %>%
-  dplyr::left_join(tmb) %>%
+  dplyr::left_join(tmb_coding) %>%
   dplyr::filter(tmb < 10) %>%
-  dplyr::rename(TMB = tmb)
+  dplyr::rename(`TMB Coding` = tmb) 
 
 ################# Generate figures with combined mutation counts 
 # generate count dataframe
 count_df <- merged_dat %>%
   dplyr::group_by(Tumor_Sample_Barcode) %>%
   dplyr::mutate(mut_count = sum(count)) %>%
-  dplyr::select(Tumor_Sample_Barcode, mut_count, TMB) %>%
+  dplyr::select(Tumor_Sample_Barcode, mut_count, `TMB Coding`) %>%
   distinct() %>%
   dplyr::left_join(metadata) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
@@ -65,7 +70,28 @@ dev.off()
 
 # output plots for TMB 
 pdf(file.path(plots_dir, "tmb_alt_all_genes.pdf"))
-p <- ggplot(count_df, aes(x =`alt final`, y = TMB)) +
+p <- ggplot(count_df, aes(x =`alt final`, y = `TMB Coding`)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test') +
+  theme_bw()
+
+print(p)
+dev.off()
+
+pdf(file.path(plots_dir, "tmb_atrx_all_genes.pdf"))
+p <- ggplot(count_df, aes(x = atrx_mut, y = `TMB Coding`)) +
+  geom_boxplot() + 
+  geom_jitter() + 
+  stat_compare_means(method='t.test') +
+  theme_bw()
+
+print(p)
+dev.off()
+
+# output plots for TMB 
+pdf(file.path(plots_dir, "tmb_alt_all_genes_atrx.pdf"))
+p <- ggplot(count_df, aes(x =`alt final`, y = `TMB Coding`, color = atrx_mut)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test') +
@@ -81,7 +107,7 @@ count_df_facet <- merged_dat %>%
   dplyr::group_by(Tumor_Sample_Barcode,
                   Variant_Classification) %>%
   dplyr::mutate(mut_count = sum(count)) %>%
-  dplyr::select(Tumor_Sample_Barcode, mut_count, Variant_Classification, TMB) %>%
+  dplyr::select(Tumor_Sample_Barcode, mut_count, Variant_Classification, `TMB Coding`) %>%
   distinct() %>%
   dplyr::left_join(metadata) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
@@ -101,7 +127,7 @@ print(p)
 dev.off()
 
 pdf(file.path(plots_dir, "tmb_alt_all_genes_faceted.pdf"))
-p <- ggplot(count_df_facet, aes(x =`alt final`, y = TMB)) +
+p <- ggplot(count_df_facet, aes(x =`alt final`, y = `TMB Coding`)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test', label.y = 7) + 
@@ -110,4 +136,6 @@ p <- ggplot(count_df_facet, aes(x =`alt final`, y = TMB)) +
 
 print(p)
 dev.off()
+
+
 

@@ -1,0 +1,18 @@
+                                  
+                                   POS NEG
+  DMG, H3 K28                        4   9
+  DMG, H3 K28, TP53 activated        2   5
+  DMG, H3 K28, TP53 loss            10  10
+  HGG, H3 G35                        3   0
+  HGG, H3 G35, TP53 loss             1   0
+  HGG, H3 wildtype                   3  21
+  HGG, H3 wildtype, TP53 activated   2   3
+  HGG, H3 wildtype, TP53 loss        7   5
+  HGG, IDH, TP53 activated           1   0
+  HGG, IDH, TP53 loss                0   1
+
+	Pearson's Chi-squared test
+
+data:  table(combined_df$molecular_subtype, combined_df$`alt final`)
+X-squared = 19.298, df = 9, p-value = 0.02278
+
