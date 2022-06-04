@@ -96,6 +96,6 @@ jen_mer_alt_match <- jen_mer_alt_match %>%
 jen_mer_alt_match %>%
   dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>% 
   write_tsv(file.path(analysis_dir,
-                      "output/stundon_hgat_03312022_updated_hist_alt.tsv"))
+                      "output/stundon_hgat_updated_hist_alt.tsv"))
 
 
