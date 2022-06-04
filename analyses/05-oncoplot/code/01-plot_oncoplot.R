@@ -19,7 +19,7 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
   column_to_rownames("Tumor_Sample_Barcode") %>%
   mutate(`C-circle` = `CCA Sept 2021`)
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
-tmb <- read_tsv(file.path(input_dir,"pbta-snv-mutation-tmb-coding.txt")) %>%
+tmb <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
   select(Kids_First_Biospecimen_ID_DNA, tmb)
 
