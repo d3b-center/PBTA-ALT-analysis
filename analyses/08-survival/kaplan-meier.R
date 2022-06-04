@@ -5,7 +5,6 @@
 library(tidyverse)
 library(survival)
 library(patchwork)
-library(colorblindr)
 
 # Establish base dir
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))

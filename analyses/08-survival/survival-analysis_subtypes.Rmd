@@ -182,7 +182,7 @@ readr::write_rds(kap_fit, kap_meier_model_file)
 # Run model
 fit_save_model(meta_updated, 
                "alt_subtype",
-               file.path(results_dir, "cox_hgg_alt_subtype.RDS"))
+               file.path(results_dir, "cox_hgg_alt_subtype.RDS"), "cox")
 ```
 
 ## Multivariate analysis using molecular subtype and ALT subtypes
