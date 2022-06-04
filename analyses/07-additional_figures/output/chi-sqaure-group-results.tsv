@@ -3,10 +3,9 @@
   H3 G35-mutant   4   0
   H3 K28-mutant  16  24
   H3 Wild-type   12  29
-  IDH-mutant      1   1
 
 	Pearson's Chi-squared test
 
 data:  table(combined_df$mol_sub_group, combined_df$`alt final`)
-X-squared = 8.0488, df = 3, p-value = 0.04501
+X-squared = 7.9455, df = 2, p-value = 0.01882
 

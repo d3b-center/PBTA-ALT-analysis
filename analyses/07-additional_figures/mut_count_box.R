@@ -8,15 +8,19 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
 input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
-
+output_dir <- file.path(analysis_dir, "output")
 # metadata read in
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
-                               "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
+                               "stundon_hgat_updated_hist_alt.tsv")) %>%
+  filter(short_histology == "HGAT") %>%
   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
   dplyr::mutate(atrx_mut = case_when(
     !is.na(`ATRX Mutation`) ~ "ATRX_mut",
-    TRUE ~ "non_ATRX_mut"
-  )) %>%
+    TRUE ~ "non_ATRX_mut"),
+    `alt final` = case_when(`alt final` == "pos" ~ "POS",
+                            `alt final` == "neg" ~ "NEG",
+                            TRUE ~ as.character(`alt final`)) 
+  ) %>%
   dplyr::select(Tumor_Sample_Barcode, `alt final`, atrx_mut)
 
 # get TMB 
@@ -54,7 +58,9 @@ count_df <- merged_dat %>%
   distinct() %>%
   dplyr::left_join(metadata) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
-count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG"))
+count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG")) 
+count_df %>%
+  write_tsv(file.path(output_dir, "hgat_tmb_mut_counts_df.tsv"))
 
 # output plots for all mutation coutns
 pdf(file.path(plots_dir, "mut_count_alt_all_genes.pdf"))
