@@ -94,7 +94,8 @@ jen_mer_alt_match <- jen_mer_alt_match %>%
   dplyr::distinct(sample_id, .keep_all = TRUE)
 
 jen_mer_alt_match %>%
-  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>% 
+  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>%
+  arrange(Kids_First_Biospecimen_ID_DNA) %>%
   write_tsv(file.path(analysis_dir,
                       "output/stundon_hgat_updated_hist_alt.tsv"))
 
