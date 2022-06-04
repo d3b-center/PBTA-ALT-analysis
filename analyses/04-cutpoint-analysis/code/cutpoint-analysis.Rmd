@@ -15,7 +15,8 @@ output_dir <- file.path(analysis_dir, "output")
 
 #read in combined file
 meta <- read_tsv(file.path(input_dir, "stundon_hgat_updated_hist_alt.tsv"),
-         guess_max = 1000)
+         guess_max = 1000) %>%
+  filter(!is.na(`CCA Sept 2021`))
 
 #subset for HGG and non-HGG
 hgat <- meta %>%
