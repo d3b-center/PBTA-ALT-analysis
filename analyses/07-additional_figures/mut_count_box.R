@@ -2,6 +2,8 @@
 library(readr)
 library(tidyverse)
 library(ggpubr)
+library(openxlsx)
+
 
 # define directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
@@ -59,8 +61,12 @@ count_df <- merged_dat %>%
   dplyr::left_join(metadata) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
 count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG")) 
-count_df %>%
-  write_tsv(file.path(output_dir, "hgat_tmb_mut_counts_df.tsv"))
+
+write.xlsx(count_df, 
+           file.path(output_dir, "hgat_tmb_mut_counts_df.xlsx"), 
+             overwrite=TRUE, 
+             keepNA=TRUE)
+
 
 # output plots for all mutation coutns
 pdf(file.path(plots_dir, "mut_count_alt_all_genes.pdf"))
