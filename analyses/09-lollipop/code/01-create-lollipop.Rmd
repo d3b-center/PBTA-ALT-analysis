@@ -1,0 +1,111 @@
+---
+title: "ATRX lollipop plots"
+output: 
+  html_notebook:
+  toc: TRUE
+toc_float: TRUE
+author: Jo Lynne Rokita
+params:
+  maf_in:
+    label: "MAF input file"
+    value: data/snv-consensus-plus-hotspots.maf.tsv.gz
+    input: file
+  maf_atrx:
+    label: "HGAT ATRX MAF file"
+    value: output/hgat-atrx.maf.tsv
+    input: file
+  maf_out:
+    label: "MAF output file"
+    value: output/snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv
+    input: file
+  python_path:
+    label: "Python path"
+    value: /Users/harenzaj/miniconda3/bin/python
+    input: ""
+---
+
+```{r}
+# load libraries
+library(tidyverse)
+library(maftools)
+
+# define directories 
+root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
+analysis_dir <- file.path(root_dir, "analyses", "09-lollipop")
+input_dir <- file.path(analysis_dir, "input")
+output_dir <- file.path(analysis_dir, "output")
+# oncokb binary
+readRenviron("~/.Renviron")
+oncokb_token <- Sys.getenv("oncokb_token")
+oncokb_tool <- "~/oncokb-annotator"
+maf_annotator <- file.path(oncokb_tool, "MafAnnotator.py")
+
+# define file
+metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", "stundon_hgat_updated_hist_alt.tsv")
+
+```
+
+
+```{r load files}
+hist <- read_tsv(file.path(metadata_file), guess_max = 1000)
+keep_cols <- c("Tumor_Sample_Barcode",
+               "NCBI_Build",
+               "Hugo_Symbol",
+               "Transcript_ID",
+               "HGVSp_Short",
+               "HGVSp",
+               "Chromosome", 
+               "Start_Position", 
+               "End_Position", 
+               "Reference_Allele", 
+               "Tumor_Seq_Allele1",
+               "Tumor_Seq_Allele2", 
+               "Variant_Classification", 
+               "Variant_Type")
+
+maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
+  filter(Tumor_Sample_Barcode %in% hist$Kids_First_Biospecimen_ID_DNA,
+         Hugo_Symbol == "ATRX") %>%
+  unique() %>%
+  write_tsv(file.path(analysis_dir, params$maf_atrx))
+```
+
+```{r annotate maf}
+command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_atrx), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
+command
+
+system(command)
+```
+
+## [ENST00000373344](https://useast.ensembl.org/Homo_sapiens/Transcript/Summary?g=ENSG00000085224;r=X:77504880-77786216;t=ENST00000373344) is 2,492 residues, so same as the longer transcript chosen here by default
+
+```{r explore oncokb maf}
+oncokb_maf <- read_tsv(file.path(analysis_dir, params$maf_out))
+unique(oncokb_maf$Transcript_ID) #ENST00000373344 is 2,492 residues
+
+oncokb_maf_oncogenic <-  oncokb_maf %>%
+  filter(ONCOGENIC == "Likely Oncogenic")
+
+oncokb_maf_onco_obj <- maftools::read.maf(oncokb_maf_oncogenic)
+pdf(file = file.path(output_dir, "atrx-lollipop-oncogenic.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_onco_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+oncokb_maf_vus <-  oncokb_maf %>%
+  filter(ONCOGENIC == "Unknown")
+
+oncokb_maf_vus_obj <- maftools::read.maf(oncokb_maf_vus)
+pdf(file = file.path(output_dir, "atrx-lollipop-vus.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_vus_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+oncokb_maf_obj <- maftools::read.maf(oncokb_maf)
+pdf(file = file.path(output_dir, "atrx-lollipop-all.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+```
+
+
+
+            
