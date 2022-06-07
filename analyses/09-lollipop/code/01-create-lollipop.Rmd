@@ -114,6 +114,25 @@ alt <- hist %>%
   filter(`alt final` == "POS")
 non_alt <- hist %>%
   filter(`alt final` == "NEG")
+
+alt_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% alt$Kids_First_Biospecimen_ID_DNA)
+alt_maf_obj <- maftools::read.maf(alt_maf)
+
+pdf(file = file.path(output_dir, "atrx-lollipop-alt-pos.pdf"), width = 16, height = 6)
+lollipopPlot(alt_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+
+non_alt_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% non_alt$Kids_First_Biospecimen_ID_DNA)
+non_alt_maf_obj <- maftools::read.maf(non_alt_maf)
+
+pdf(file = file.path(output_dir, "atrx-lollipop-alt-neg.pdf"), width = 16, height = 6)
+lollipopPlot(non_alt_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+
 ```
 
 
