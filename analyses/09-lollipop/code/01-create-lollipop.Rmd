@@ -47,7 +47,8 @@ metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", 
 
 
 ```{r load files}
-hist <- read_tsv(file.path(metadata_file), guess_max = 1000)
+hist <- read_tsv(file.path(metadata_file), guess_max = 1000) %>%
+  filter(short_histology == "HGAT")
 keep_cols <- c("Tumor_Sample_Barcode",
                "NCBI_Build",
                "Hugo_Symbol",
@@ -79,7 +80,9 @@ system(command)
 
 ## [ENST00000373344](https://useast.ensembl.org/Homo_sapiens/Transcript/Summary?g=ENSG00000085224;r=X:77504880-77786216;t=ENST00000373344) is 2,492 residues, so same as the longer transcript chosen here by default
 
-```{r explore oncokb maf}
+Note: All VUS are missense mutations and no missense mutations are likely oncogenic
+
+```{r lollipop by oncogenic status}
 oncokb_maf <- read_tsv(file.path(analysis_dir, params$maf_out))
 unique(oncokb_maf$Transcript_ID) #ENST00000373344 is 2,492 residues
 
@@ -106,6 +109,12 @@ while (!is.null(dev.list()))  dev.off()
 
 ```
 
+```{r lollipop by ALT status}
+alt <- hist %>%
+  filter(`alt final` == "POS")
+non_alt <- hist %>%
+  filter(`alt final` == "NEG")
+```
 
 
             

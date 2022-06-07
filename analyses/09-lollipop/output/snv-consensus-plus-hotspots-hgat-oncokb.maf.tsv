@@ -1,99 +1,30 @@
 Tumor_Sample_Barcode	NCBI_Build	Hugo_Symbol	Transcript_ID	HGVSp_Short	HGVSp	Chromosome	Start_Position	End_Position	Reference_Allele	Tumor_Seq_Allele1	Tumor_Seq_Allele2	Variant_Classification	Variant_Type	ANNOTATED	GENE_IN_ONCOKB	VARIANT_IN_ONCOKB	MUTATION_EFFECT	MUTATION_EFFECT_CITATIONS	ONCOGENIC	LEVEL_1	LEVEL_2	LEVEL_3A	LEVEL_3B	LEVEL_4	LEVEL_R1	LEVEL_R2	HIGHEST_LEVEL	HIGHEST_SENSITIVE_LEVEL	HIGHEST_RESISTANCE_LEVEL	TX_CITATIONS	LEVEL_Dx1	LEVEL_Dx2	LEVEL_Dx3	HIGHEST_DX_LEVEL	DX_CITATIONS	LEVEL_Px1	LEVEL_Px2	LEVEL_Px3	HIGHEST_PX_LEVEL	PX_CITATIONS
-BS_ZZJF26C4	GRCh38	ATRX	ENST00000373344			chrX	77767397	77767398	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_ZPF89720	GRCh38	ATRX	ENST00000373344			chrX	77758522	77758522	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_ZECKZTFC	GRCh38	ATRX	ENST00000373344			chrX	77591154	77591154	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_ZECKZTFC	GRCh38	ATRX	ENST00000373344			chrX	77605383	77605383	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77554512	77554512	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77569042	77569042	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77576709	77576709	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77627247	77627247	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77657349	77657349	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_ZCY4ECNV	GRCh38	ATRX	ENST00000373344			chrX	77725106	77725106	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_Z5VJCFNP	GRCh38	ATRX	ENST00000373344			chrX	77615818	77615819	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_Z5VJCFNP	GRCh38	ATRX	ENST00000373344			chrX	77788530	77788530	A	A	G	5'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_Z4S81HG1	GRCh38	ATRX	ENST00000373344			chrX	77710891	77710891	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_Z4Q8RH5M	GRCh38	ATRX	ENST00000373344			chrX	77539560	77539561	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_Z4Q8RH5M	GRCh38	ATRX	ENST00000373344			chrX	77741450	77741450	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_Z1BBZ01F	GRCh38	ATRX	ENST00000373344			chrX	77725939	77725939	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_YXCVR90M	GRCh38	ATRX	ENST00000373344			chrX	77643930	77643930	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_YHXMYDBN	GRCh38	ATRX	ENST00000373344			chrX	77622480	77622480	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_YHXMYDBN	GRCh38	ATRX	ENST00000373344			chrX	77744194	77744194	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_YETTZ1NC	GRCh38	ATRX	ENST00000373344			chrX	77744041	77744041	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_Y4ZX0YX7	GRCh38	ATRX	ENST00000373344			chrX	77735910	77735910	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_XKP747AS	GRCh38	ATRX	ENST00000373344			chrX	77621274	77621274	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_XGVSX8BX	GRCh38	ATRX	ENST00000373344			chrX	77528581	77528581	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_XGVSX8BX	GRCh38	ATRX	ENST00000373344			chrX	77546121	77546121	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_XEVMEYFS	GRCh38	ATRX	ENST00000373344			chrX	77774830	77774830	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_XDY9BYRK	GRCh38	ATRX	ENST00000373344			chrX	77750521	77750521	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_XBE002WV	GRCh38	ATRX	ENST00000373344			chrX	77778416	77778417	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_MWKJF6XH	GRCh38	ATRX	ENST00000373344			chrX	77787336	77787336	T	T	C	5'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_0FQKT8EY	GRCh38	ATRX	ENST00000373344			chrX	77657129	77657129	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_QGX93WPF	GRCh38	ATRX	ENST00000373344			chrX	77743036	77743036	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_KYPMZZSY	GRCh38	ATRX	ENST00000373344			chrX	77636504	77636504	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_SQSH5G7A	GRCh38	ATRX	ENST00000373344			chrX	77514754	77514754	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_SQSH5G7A	GRCh38	ATRX	ENST00000373344			chrX	77554951	77554951	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_SQSH5G7A	GRCh38	ATRX	ENST00000373344			chrX	77722369	77722370	-	-	AT	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_MCM78YPC	GRCh38	ATRX	ENST00000373344			chrX	77592289	77592289	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_FK3B5SDH	GRCh38	ATRX	ENST00000373344			chrX	77790922	77790923	AT	AT	-	5'Flank	DEL	True	True	False	Unknown		Unknown																					
-BS_BSM3ZHW4	GRCh38	ATRX	ENST00000373344			chrX	77515425	77515425	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_11322HD1	GRCh38	ATRX	ENST00000373344			chrX	77610518	77610518	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_3A0CJMRH	GRCh38	ATRX	ENST00000373344			chrX	77790922	77790923	AT	AT	-	5'Flank	DEL	True	True	False	Unknown		Unknown																					
-BS_T8C13KNH	GRCh38	ATRX	ENST00000373344			chrX	77587357	77587358	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_EP25TTAG	GRCh38	ATRX	ENST00000373344	p.X2169_splice		chrX	77557646	77557646	C	C	T	Splice_Site	SNP	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_9M49SGAQ	GRCh38	ATRX	ENST00000373344			chrX	77644719	77644720	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_9M49SGAQ	GRCh38	ATRX	ENST00000373344			chrX	77754163	77754163	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_S7S6YEHA	GRCh38	ATRX	ENST00000373344			chrX	77574891	77574892	TG	TG	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_S7S6YEHA	GRCh38	ATRX	ENST00000373344			chrX	77596836	77596837	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_S7S6YEHA	GRCh38	ATRX	ENST00000373344			chrX	77681100	77681100	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_HBAKYKQM	GRCh38	ATRX	ENST00000373344			chrX	77513516	77513516	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_BWZTMWTM	GRCh38	ATRX	ENST00000373344			chrX	77648166	77648166	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_C9TNGEA0	GRCh38	ATRX	ENST00000373344			chrX	77553974	77553974	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_NS8G0465	GRCh38	ATRX	ENST00000373344			chrX	77532275	77532276	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_NS8G0465	GRCh38	ATRX	ENST00000373344			chrX	77750521	77750521	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_1RF75MK2	GRCh38	ATRX	ENST00000373344			chrX	77704898	77704898	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_3JE2T7AR	GRCh38	ATRX	ENST00000373344			chrX	77543957	77543958	-	-	AT	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_CKY2TTXG	GRCh38	ATRX	ENST00000373344			chrX	77647502	77647502	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_CKY2TTXG	GRCh38	ATRX	ENST00000373344			chrX	77647508	77647508	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_JB3J82ZK	GRCh38	ATRX	ENST00000373344			chrX	77618072	77618073	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_JB3J82ZK	GRCh38	ATRX	ENST00000373344			chrX	77644719	77644720	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_3E5C1PN1	GRCh38	ATRX	ENST00000373344	p.R1742G	p.Arg1742Gly	chrX	77620443	77620443	T	T	C	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
-BS_QM1Z8R38	GRCh38	ATRX	ENST00000373344			chrX	77545514	77545515	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_P8WN8XEQ	GRCh38	ATRX	ENST00000373344			chrX	77608645	77608645	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_P8WN8XEQ	GRCh38	ATRX	ENST00000373344	p.L413Kfs*20	p.Leu413LysfsTer20	chrX	77684018	77684019	AA	AA	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_MVC1NCZX	GRCh38	ATRX	ENST00000373344			chrX	77513463	77513463	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_EFBBP9H3	GRCh38	ATRX	ENST00000373344			chrX	77773753	77773754	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_W9P0PFDH	GRCh38	ATRX	ENST00000373344			chrX	77532275	77532276	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_742CDKAS	GRCh38	ATRX	ENST00000373344			chrX	77528040	77528040	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_742CDKAS	GRCh38	ATRX	ENST00000373344			chrX	77546262	77546262	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_742CDKAS	GRCh38	ATRX	ENST00000373344			chrX	77640474	77640474	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_742CDKAS	GRCh38	ATRX	ENST00000373344			chrX	77781748	77781748	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_WJF6ZXWN	GRCh38	ATRX	ENST00000373344			chrX	77737099	77737100	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77583521	77583522	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77600990	77600990	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77603369	77603370	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77609650	77609651	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77658210	77658211	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77671121	77671121	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77706742	77706742	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77710933	77710934	-	-	ACACAC	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77722369	77722369	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_1S2BHJ8K	GRCh38	ATRX	ENST00000373344			chrX	77754163	77754163	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_KAD49R68	GRCh38	ATRX	ENST00000373344			chrX	77627232	77627233	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_KAD49R68	GRCh38	ATRX	ENST00000373344			chrX	77720156	77720156	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_45913DTA	GRCh38	ATRX	ENST00000373344			chrX	77569914	77569914	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_2F70R10Z	GRCh38	ATRX	ENST00000373344			chrX	77643930	77643930	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_NWYBD9CA	GRCh38	ATRX	ENST00000373344			chrX	77667176	77667177	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_AYPBAHJ6	GRCh38	ATRX	ENST00000373344			chrX	77689705	77689705	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_T9T3R2J0	GRCh38	ATRX	ENST00000373344			chrX	77735708	77735708	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_HYGK88B0	GRCh38	ATRX	ENST00000373344			chrX	77515425	77515425	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_HYGK88B0	GRCh38	ATRX	ENST00000373344			chrX	77643930	77643930	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_5Z4XQC9X	GRCh38	ATRX	ENST00000373344			chrX	77594601	77594601	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_5Z4XQC9X	GRCh38	ATRX	ENST00000373344			chrX	77702730	77702731	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_JC8YV5V9	GRCh38	ATRX	ENST00000373344			chrX	77739326	77739326	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_CPZZR2R7	GRCh38	ATRX	ENST00000373344			chrX	77737099	77737100	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_TE8QFF7T	GRCh38	ATRX	ENST00000373344			chrX	77731599	77731600	CC	CC	AA	Intron	DNP	True	True	False	Unknown		Unknown																					
-BS_G12HNXYX	GRCh38	ATRX	ENST00000373344			chrX	77781573	77781573	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_S88G7BXH	GRCh38	ATRX	ENST00000373344			chrX	77772643	77772644	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77500757	77500757	G	G	A	3'Flank	SNP	True	True	False	Unknown		Unknown																					
 BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77505670	77505670	T	T	C	3'UTR	SNP	True	True	False	Unknown		Unknown																					
 BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77508988	77508988	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
@@ -221,7 +152,6 @@ BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77788802	77788802	C	C	T	5'Flank	S
 BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77789148	77789148	C	C	T	5'Flank	SNP	True	True	False	Unknown		Unknown																					
 BS_02YBZSBY	GRCh38	ATRX	ENST00000373344			chrX	77789801	77789802	-	-	A	5'Flank	INS	True	True	False	Unknown		Unknown																					
 BS_PPY0EWPG	GRCh38	ATRX	ENST00000373344			chrX	77615942	77615942	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_KT9H4B1N	GRCh38	ATRX	ENST00000373344			chrX	77515425	77515425	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_872Q3FK2	GRCh38	ATRX	ENST00000373344			chrX	77605550	77605550	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_872Q3FK2	GRCh38	ATRX	ENST00000373344			chrX	77615824	77615824	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_872Q3FK2	GRCh38	ATRX	ENST00000373344	p.D1714V	p.Asp1714Val	chrX	77620526	77620526	T	T	A	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
@@ -262,61 +192,17 @@ BS_VW4XN9Y7	GRCh38	ATRX	ENST00000373344			chrX	77776612	77776612	A	A	G	Intron	SN
 BS_VW4XN9Y7	GRCh38	ATRX	ENST00000373344			chrX	77778652	77778652	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_VW4XN9Y7	GRCh38	ATRX	ENST00000373344			chrX	77779685	77779685	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_VW4XN9Y7	GRCh38	ATRX	ENST00000373344			chrX	77781298	77781298	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_VF099E8S	GRCh38	ATRX	ENST00000373344	p.Q539Rfs*23	p.Gln539ArgfsTer23	chrX	77683641	77683641	G	G	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77502152	77502152	G	G	A	3'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77513609	77513609	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77516005	77516005	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77533255	77533255	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77555884	77555884	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77604766	77604766	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77622273	77622273	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77625216	77625216	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77645119	77645119	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77650016	77650016	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77654605	77654605	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77666931	77666931	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77670755	77670755	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77695414	77695414	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77696844	77696844	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77716323	77716323	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77722361	77722361	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77740077	77740077	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77740404	77740404	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77768369	77768369	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77785766	77785766	C	C	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_F0GNWEJJ	GRCh38	ATRX	ENST00000373344			chrX	77790798	77790798	G	G	A	5'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_4ZKN0WGS	GRCh38	ATRX	ENST00000373344			chrX	77543957	77543958	-	-	AT	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_4ZKN0WGS	GRCh38	ATRX	ENST00000373344			chrX	77734297	77734297	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_A4KYP5H0	GRCh38	ATRX	ENST00000373344			chrX	77511555	77511555	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_FKQ7F6D1	GRCh38	ATRX	ENST00000373344	p.L691Qfs*4	p.Leu691GlnfsTer4	chrX	77683181	77683184	GATA	GATA	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_R6CKWZW6	GRCh38	ATRX	ENST00000373344	p.K1357Dfs*4	p.Lys1357AspfsTer4	chrX	77663432	77663433	TT	TT	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_8BD8WD38	GRCh38	ATRX	ENST00000373344			chrX	77693319	77693319	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_WPCBK1EG	GRCh38	ATRX	ENST00000373344			chrX	77626898	77626898	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_J6VRW67C	GRCh38	ATRX	ENST00000373344			chrX	77706786	77706786	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_J6VRW67C	GRCh38	ATRX	ENST00000373344			chrX	77790922	77790923	AT	AT	-	5'Flank	DEL	True	True	False	Unknown		Unknown																					
-BS_HN8DE43A	GRCh38	ATRX	ENST00000373344			chrX	77597400	77597400	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_TQ0J7WJQ	GRCh38	ATRX	ENST00000373344	p.A1812P	p.Ala1812Pro	chrX	77618820	77618820	C	C	G	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
 BS_TQ0J7WJQ	GRCh38	ATRX	ENST00000373344			chrX	77704705	77704705	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_Q9NHTR7G	GRCh38	ATRX	ENST00000373344			chrX	77750521	77750521	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_Q9NHTR7G	GRCh38	ATRX	ENST00000373344			chrX	77763119	77763120	-	-	TA	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_VKH9KYDB	GRCh38	ATRX	ENST00000373344			chrX	77766976	77766976	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_HTGDSPQA	GRCh38	ATRX	ENST00000373344			chrX	77660331	77660331	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_H1MNXNHB	GRCh38	ATRX	ENST00000373344			chrX	77668832	77668832	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_3Y44RJXS	GRCh38	ATRX	ENST00000373344			chrX	77667365	77667365	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_JJNSP29S	GRCh38	ATRX	ENST00000373344			chrX	77570185	77570185	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_NDSWS9TS	GRCh38	ATRX	ENST00000373344			chrX	77710891	77710891	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_BR1X3R68	GRCh38	ATRX	ENST00000373344			chrX	77782747	77782748	CA	CA	TG	Intron	DNP	True	True	False	Unknown		Unknown																					
-BS_1JGQPJH3	GRCh38	ATRX	ENST00000373344			chrX	77669813	77669813	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344	p.R2197C	p.Arg2197Cys	chrX	77557561	77557561	G	G	A	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344			chrX	77592813	77592813	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344			chrX	77627700	77627701	AA	AA	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344			chrX	77643262	77643263	-	-	AC	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344			chrX	77731086	77731086	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_85Q5P8GF	GRCh38	ATRX	ENST00000373344			chrX	77740077	77740077	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_KFRBXXV7	GRCh38	ATRX	ENST00000373344			chrX	77542564	77542564	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_WYF8NGSD	GRCh38	ATRX	ENST00000373344			chrX	77680873	77680873	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_895FJ34T	GRCh38	ATRX	ENST00000373344			chrX	77766776	77766777	AT	AT	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_9E6Q11G2	GRCh38	ATRX	ENST00000373344			chrX	77671294	77671295	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77505491	77505491	C	C	T	3'UTR	SNP	True	True	False	Unknown		Unknown																					
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344	p.Q2453=	p.Gln2453=	chrX	77508471	77508471	C	C	T	Silent	SNP	True	True	False	Unknown		Unknown																					
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77510903	77510903	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
@@ -411,16 +297,10 @@ BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77776711	77776711	C	C	T	Intron	SN
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77777981	77777981	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77780798	77780798	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_20TBZG09	GRCh38	ATRX	ENST00000373344			chrX	77783896	77783896	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_9YPJANGX	GRCh38	ATRX	ENST00000373344			chrX	77622507	77622507	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_80078QDG	GRCh38	ATRX	ENST00000373344			chrX	77567950	77567950	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_80078QDG	GRCh38	ATRX	ENST00000373344			chrX	77669696	77669697	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_M4E4H6NG	GRCh38	ATRX	ENST00000373344			chrX	77765298	77765298	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_P0KQFXNC	GRCh38	ATRX	ENST00000373344			chrX	77717076	77717077	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_KP0YNTAK	GRCh38	ATRX	ENST00000373344			chrX	77615818	77615819	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_MWXDJFWW	GRCh38	ATRX	ENST00000373344			chrX	77507004	77507004	A	A	-	3'UTR	DEL	True	True	False	Unknown		Unknown																					
 BS_7GKF6M85	GRCh38	ATRX	ENST00000373344			chrX	77616031	77616031	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_SWHQ8FDW	GRCh38	ATRX	ENST00000373344			chrX	77630473	77630473	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_10HD18B8	GRCh38	ATRX	ENST00000373344			chrX	77772643	77772644	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77522585	77522585	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77546498	77546498	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77559739	77559739	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
@@ -438,39 +318,11 @@ BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77754163	77754163	T	T	-	Intron	DE
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77758394	77758395	AA	AA	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77770107	77770107	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_S0T3CQ97	GRCh38	ATRX	ENST00000373344			chrX	77787336	77787336	T	T	C	5'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_A9S5HT6P	GRCh38	ATRX	ENST00000373344			chrX	77766987	77766987	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_JX1PK0VW	GRCh38	ATRX	ENST00000373344			chrX	77755526	77755526	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_W3R2DQ86	GRCh38	ATRX	ENST00000373344			chrX	77616014	77616015	AC	AC	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_R726FKHP	GRCh38	ATRX	ENST00000373344			chrX	77744595	77744595	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_HZHEF797	GRCh38	ATRX	ENST00000373344			chrX	77705993	77705994	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_GFS9JEE6	GRCh38	ATRX	ENST00000373344			chrX	77735599	77735606	TAAATAAA	TAAATAAA	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_B9QP40ER	GRCh38	ATRX	ENST00000373344	p.V1002*	p.Val1002Ter	chrX	77682259	77682259	C	C	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_3BMGF6GN	GRCh38	ATRX	ENST00000373344			chrX	77662114	77662120	AAGAAGC	AAGAAGC	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_QYWGB52C	GRCh38	ATRX	ENST00000373344			chrX	77559373	77559374	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_P3KD5EQG	GRCh38	ATRX	ENST00000373344			chrX	77609229	77609229	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_C3KDA5ZC	GRCh38	ATRX	ENST00000373344			chrX	77717076	77717077	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_5BNV7MCF	GRCh38	ATRX	ENST00000373344			chrX	77609650	77609651	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_SSYNTXDC	GRCh38	ATRX	ENST00000373344			chrX	77722361	77722361	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_WJB33V17	GRCh38	ATRX	ENST00000373344			chrX	77775751	77775751	T	T	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_1MME7FBS	GRCh38	ATRX	ENST00000373344	p.W2001*	p.Trp2001Ter	chrX	77593804	77593804	C	C	T	Nonsense_Mutation	SNP	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_RR3DKGKY	GRCh38	ATRX	ENST00000373344			chrX	77650590	77650590	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_6X2BQQGE	GRCh38	ATRX	ENST00000373344			chrX	77510699	77510699	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_6X2BQQGE	GRCh38	ATRX	ENST00000373344	p.R1426*	p.Arg1426Ter	chrX	77654139	77654139	G	G	A	Nonsense_Mutation	SNP	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
-BS_1AZ8YJSH	GRCh38	ATRX	ENST00000373344			chrX	77790922	77790923	AT	AT	-	5'Flank	DEL	True	True	False	Unknown		Unknown																					
-BS_5KK9P7XD	GRCh38	ATRX	ENST00000373344			chrX	77686936	77686936	T	T	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_WRJNMEX2	GRCh38	ATRX	ENST00000373344			chrX	77613261	77613261	T	T	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_41TD9XET	GRCh38	ATRX	ENST00000373344			chrX	77672224	77672225	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_KB9GJDCS	GRCh38	ATRX	ENST00000373344			chrX	77587357	77587358	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_VXNT1TDB	GRCh38	ATRX	ENST00000373344			chrX	77644719	77644720	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_PEDGRK8S	GRCh38	ATRX	ENST00000373344			chrX	77567662	77567662	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_HZNKSQ17	GRCh38	ATRX	ENST00000373344			chrX	77643930	77643930	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_VQEPFE1P	GRCh38	ATRX	ENST00000373344			chrX	77760260	77760260	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_VQEPFE1P	GRCh38	ATRX	ENST00000373344			chrX	77791186	77791186	G	G	C	5'Flank	SNP	True	True	False	Unknown		Unknown																					
-BS_K3PPH522	GRCh38	ATRX	ENST00000373344			chrX	77532275	77532276	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_797V83YM	GRCh38	ATRX	ENST00000373344			chrX	77731099	77731100	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_3NX3RBCX	GRCh38	ATRX	ENST00000373344			chrX	77560792	77560792	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_40SJZGT2	GRCh38	ATRX	ENST00000373344			chrX	77583521	77583522	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_EJ1H9PZY	GRCh38	ATRX	ENST00000373344			chrX	77741503	77741504	CC	CC	TG	Intron	DNP	True	True	False	Unknown		Unknown																					
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77528871	77528871	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77535018	77535018	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77598254	77598256	GAG	GAG	-	Intron	DEL	True	True	False	Unknown		Unknown																					
@@ -488,30 +340,11 @@ BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77740082	77740083	-	-	A	Intron	IN
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77762165	77762165	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77762725	77762726	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_P3PF53V8	GRCh38	ATRX	ENST00000373344			chrX	77772468	77772469	AA	AA	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_WP2D11SK	GRCh38	ATRX	ENST00000373344			chrX	77597484	77597485	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_BZ4GKDP4	GRCh38	ATRX	ENST00000373344			chrX	77760260	77760260	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
-BS_FBJ516WW	GRCh38	ATRX	ENST00000373344			chrX	77617035	77617036	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_17AXPP1Y	GRCh38	ATRX	ENST00000373344			chrX	77699093	77699094	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_P3P96WCD	GRCh38	ATRX	ENST00000373344			chrX	77532275	77532276	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_P3P96WCD	GRCh38	ATRX	ENST00000373344			chrX	77622667	77622667	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_MGBEMNYR	GRCh38	ATRX	ENST00000373344			chrX	77772643	77772644	-	-	T	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_928HWFFM	GRCh38	ATRX	ENST00000373344	p.H2254R	p.His2254Arg	chrX	77523340	77523340	T	T	C	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
-BS_H174820R	GRCh38	ATRX	ENST00000373344			chrX	77686613	77686613	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_25VZM81R	GRCh38	ATRX	ENST00000373344			chrX	77644733	77644733	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_185Q218S	GRCh38	ATRX	ENST00000373344			chrX	77689557	77689557	G	G	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_AG6M7TJE	GRCh38	ATRX	ENST00000373344			chrX	77552697	77552697	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_NJFK43N3	GRCh38	ATRX	ENST00000373344			chrX	77644719	77644720	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_DH86PF5A	GRCh38	ATRX	ENST00000373344			chrX	77676684	77676684	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_DH86PF5A	GRCh38	ATRX	ENST00000373344			chrX	77709830	77709830	A	A	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_59FR1NC2	GRCh38	ATRX	ENST00000373344			chrX	77582409	77582410	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_16FT8V4B	GRCh38	ATRX	ENST00000373344	p.D214Rfs*5	p.Asp214ArgfsTer5	chrX	77684961	77684962	-	-	T	Frame_Shift_Ins	INS	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_BFDEZK1C	GRCh38	ATRX	ENST00000373344			chrX	77663994	77663994	G	G	C	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_0EN5R1AP	GRCh38	ATRX	ENST00000373344			chrX	77773753	77773754	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_4QFSH7C4	GRCh38	ATRX	ENST00000373344			chrX	77510945	77510945	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_4QFSH7C4	GRCh38	ATRX	ENST00000373344			chrX	77521828	77521828	A	A	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_4QFSH7C4	GRCh38	ATRX	ENST00000373344			chrX	77660269	77660269	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_WP9J88EB	GRCh38	ATRX	ENST00000373344			chrX	77593552	77593552	G	G	A	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_J33YVP27	GRCh38	ATRX	ENST00000373344			chrX	77748593	77748594	TT	TT	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_TRGECFNP	GRCh38	ATRX	ENST00000373344	p.I1756S	p.Ile1756Ser	chrX	77620400	77620400	A	A	C	Missense_Mutation	SNP	True	True	False	Unknown		Unknown																					
 BS_TRGECFNP	GRCh38	ATRX	ENST00000373344			chrX	77643930	77643930	A	A	-	Intron	DEL	True	True	False	Unknown		Unknown																					
 BS_S791VC80	GRCh38	ATRX	ENST00000373344			chrX	77539560	77539561	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
@@ -521,11 +354,8 @@ BS_230S192D	GRCh38	ATRX	ENST00000373344			chrX	77672562	77672562	C	C	T	Intron	SN
 BS_230S192D	GRCh38	ATRX	ENST00000373344	p.X199_splice		chrX	77685007	77685007	C	C	T	Splice_Site	SNP	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_230S192D	GRCh38	ATRX	ENST00000373344			chrX	77759358	77759359	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
 BS_23ZE42Q3	GRCh38	ATRX	ENST00000373344			chrX	77754665	77754665	C	C	T	Intron	SNP	True	True	False	Unknown		Unknown																					
-BS_NG0CR0EP	GRCh38	ATRX	ENST00000373344			chrX	77592962	77592962	A	A	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_RG6JK7ZN	GRCh38	ATRX	ENST00000373344			chrX	77531923	77531923	C	C	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_RG6JK7ZN	GRCh38	ATRX	ENST00000373344	p.X1520_splice		chrX	77636058	77636058	T	T	A	Splice_Site	SNP	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_RG6JK7ZN	GRCh38	ATRX	ENST00000373344			chrX	77717076	77717077	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_9CMJ3QF6	GRCh38	ATRX	ENST00000373344			chrX	77532275	77532276	-	-	A	Intron	INS	True	True	False	Unknown		Unknown																					
-BS_01DQH017	GRCh38	ATRX	ENST00000373344			chrX	77589682	77589682	T	T	G	Intron	SNP	True	True	False	Unknown		Unknown																					
 BS_C19DFVR5	GRCh38	ATRX	ENST00000373344	p.G1964Efs*18	p.Gly1964GlufsTer18	chrX	77599476	77599476	C	C	-	Frame_Shift_Del	DEL	True	True	False	Likely Loss-of-function	21719641;8968741;24148618;15591283;14592816;18409179;17609377	Likely Oncogenic																					
 BS_C19DFVR5	GRCh38	ATRX	ENST00000373344			chrX	77750298	77750298	C	C	A	Intron	SNP	True	True	False	Unknown		Unknown																					
