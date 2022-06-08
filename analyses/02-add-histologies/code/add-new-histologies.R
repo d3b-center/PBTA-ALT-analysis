@@ -10,11 +10,20 @@ hist <- read_tsv(file.path(analysis_dir,
                            "pbta-histologies.tsv"))
 
 # read in file from jenny
-jen <- readxl::read_excel(file.path(analysis_dir, 
+jen_hgat <- readxl::read_excel(file.path(analysis_dir, 
                                     "input-jenny",
-                                    "Stundon_HGAT_One_Sample_Per_Pt.xlsx"),
+                                    "Stundon_HGAT_One_Sample_Per_Pt_adults_removed.xlsx"),
                           .name_repair = "unique") %>%
-  dplyr::rename(Sample_id = sample_id)
+  mutate(age_last_update_days = as.numeric(age_last_update_days))
+
+jen_nonhgat <- readxl::read_excel(file.path(analysis_dir, 
+                                         "input-jenny",
+                                         "non_HGAT_4.21.22.xlsx"),
+                               .name_repair = "unique") %>%
+  dplyr::rename(`alt final` = `FINAL ALT`)
+
+jen <- jen_hgat %>%
+  bind_rows(jen_nonhgat)
 
 # read in alterations file
 alt <- read_tsv(file.path(root_dir, 
@@ -33,10 +42,8 @@ hist_subset <- hist %>%
   dplyr::select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
 
 jen_mer <- jen.new %>%
-  dplyr::rename(sample_id = Sample_id,
-        # Kids_First_Participant_ID = pt_id,
-         Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
-  dplyr::left_join(hist_subset, by = c("Kids_First_Biospecimen_ID", "sample_id")) %>%
+  dplyr::rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
+  dplyr::left_join(hist_subset, by = c("Kids_First_Biospecimen_ID")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
   distinct() 
 jen_mer$phenotype <- ifelse(jen_mer$`CCA Sept 2021` == "POS", "ALT", 
@@ -47,14 +54,13 @@ jen_mer$group <- ifelse(jen_mer$short_histology == "HGAT", "HGAT", "non-HGAT")
 jen_mer$telomere_ratio <- jen_mer$tel_content_tumor/jen_mer$tel_content_normal
 
 # update tel analysis
-rm_alt_cols <- intersect(names(jen_mer), names(alt))
-rm_alt_cols <- rm_alt_cols[-c(1,29)]
-rm_alt_cols
+names(alt)
+rm_alt_cols <- names(alt[,c(4:ncol(alt))])
 
 # columns which are not in alt
 jen_mer_rm <- jen_mer[,!colnames(jen_mer) %in% rm_alt_cols]
 names(jen_mer_rm)
-names(jen_mer)
+
 # merge back cols
 jen_mer_alt <- jen_mer_rm %>%
   dplyr::rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
@@ -88,8 +94,9 @@ jen_mer_alt_match <- jen_mer_alt_match %>%
   dplyr::distinct(sample_id, .keep_all = TRUE)
 
 jen_mer_alt_match %>%
-  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>% 
+  dplyr::select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, colnames(jen_mer_alt_match)[2:114]) %>%
+  arrange(Kids_First_Biospecimen_ID_DNA) %>%
   write_tsv(file.path(analysis_dir,
-                      "output/stundon_hgat_03312022_updated_hist_alt.tsv"))
+                      "output/stundon_hgat_updated_hist_alt.tsv"))
 
 
