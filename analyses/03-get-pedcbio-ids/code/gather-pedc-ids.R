@@ -10,7 +10,7 @@ output_dir <- file.path(analysis_dir, "output")
 
 meta<- read_tsv(file.path(input_dir, 
                          "output",
-                         "stundon_hgat_03312022_updated_hist_alt.tsv"))
+                         "stundon_hgat_updated_hist_alt.tsv"))
 
 meta %>%
   dplyr::group_by(phenotype, group) %>%
