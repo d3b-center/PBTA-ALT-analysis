@@ -10,9 +10,9 @@ params:
     label: "MAF input file"
     value: data/snv-consensus-plus-hotspots.maf.tsv.gz
     input: file
-  maf_atrx:
-    label: "HGAT ATRX MAF file"
-    value: output/hgat-atrx.maf.tsv
+  maf_goi:
+    label: "HGAT goi MAF file"
+    value: output/hgat-goi.maf.tsv
     input: file
   maf_out:
     label: "MAF output file"
@@ -43,6 +43,8 @@ maf_annotator <- file.path(oncokb_tool, "MafAnnotator.py")
 # define file
 metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", "stundon_hgat_updated_hist_alt.tsv")
 
+# goi file
+goi_file <- file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations")
 ```
 
 
@@ -63,16 +65,17 @@ keep_cols <- c("Tumor_Sample_Barcode",
                "Tumor_Seq_Allele2", 
                "Variant_Classification", 
                "Variant_Type")
+goi <- read_tsv(goi_file, col_names = "genes")
 
 maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
   filter(Tumor_Sample_Barcode %in% hist$Kids_First_Biospecimen_ID_DNA,
-         Hugo_Symbol == "ATRX") %>%
+         Hugo_Symbol %in% goi$genes) %>%
   unique() %>%
-  write_tsv(file.path(analysis_dir, params$maf_atrx))
+  write_tsv(file.path(analysis_dir, params$maf_goi))
 ```
 
 ```{r annotate maf}
-command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_atrx), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
+command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_goi), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
 command
 
 system(command)
