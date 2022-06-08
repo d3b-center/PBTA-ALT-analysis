@@ -48,7 +48,6 @@ merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
                                               "Multi_Hit_Fusion",
                                               "Multi_Hit")) %>%
   dplyr::left_join(tmb_coding) %>%
-  dplyr::filter(tmb < 10) %>%
   dplyr::rename(`TMB Coding` = tmb) 
 
 ################# Generate figures with combined mutation counts 
@@ -67,10 +66,12 @@ write.xlsx(count_df,
              overwrite=TRUE, 
              keepNA=TRUE)
 
-
+# Remove hypermutant for plots
+count_df_for_plots <- count_df %>%
+  filter(`TMB Coding` < 10)
 # output plots for all mutation coutns
 pdf(file.path(plots_dir, "mut_count_alt_all_genes.pdf"))
-p <- ggplot(count_df, aes(x =`alt final`, y = log2_mut_count)) +
+p <- ggplot(count_df_for_plots, aes(x =`alt final`, y = log2_mut_count)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test') +
@@ -82,7 +83,7 @@ dev.off()
 
 # output plots for TMB 
 pdf(file.path(plots_dir, "tmb_alt_all_genes.pdf"))
-p <- ggplot(count_df, aes(x =`alt final`, y = `TMB Coding`)) +
+p <- ggplot(count_df_for_plots, aes(x =`alt final`, y = `TMB Coding`)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test') +
@@ -92,7 +93,7 @@ print(p)
 dev.off()
 
 pdf(file.path(plots_dir, "tmb_atrx_all_genes.pdf"))
-p <- ggplot(count_df, aes(x = atrx_mut, y = `TMB Coding`)) +
+p <- ggplot(count_df_for_plots, aes(x = atrx_mut, y = `TMB Coding`)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test') +
@@ -103,7 +104,7 @@ dev.off()
 
 # output plots for TMB 
 pdf(file.path(plots_dir, "tmb_alt_all_genes_atrx.pdf"))
-p <- ggplot(count_df, aes(x =`alt final`, y = `TMB Coding`, color = atrx_mut)) +
+p <- ggplot(count_df_for_plots, aes(x =`alt final`, y = `TMB Coding`, color = atrx_mut)) +
   geom_boxplot() + 
   geom_jitter() + 
   stat_compare_means(method='t.test') +
@@ -116,6 +117,7 @@ dev.off()
 ################# Generate figures mutation counts faceted by type
 # generate count dataframe
 count_df_facet <- merged_dat %>%
+  filter(`TMB Coding` < 10) %>%
   dplyr::group_by(Tumor_Sample_Barcode,
                   Variant_Classification) %>%
   dplyr::mutate(mut_count = sum(count)) %>%
