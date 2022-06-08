@@ -32,10 +32,6 @@ meta %>%
 
 #run optimal cutpoint by group
 ```{r}
-# remove NA becuase those were being counted as negatives
-meta <- meta %>%
-  filter(!is.na(alt_final))
-
 #how many per group?
 meta %>%
   group_by(group, alt_final) %>%
