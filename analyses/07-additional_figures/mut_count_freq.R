@@ -15,7 +15,11 @@ input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 
 # metadata read in
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
-                               "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
+                               "stundon_hgat_updated_hist_alt.tsv")) %>%
+  filter(short_histology == "HGAT") %>%
+  mutate(`alt final` = case_when(`alt final` == "pos" ~ "POS",
+                                 `alt final` == "neg" ~ "NEG",
+                                 TRUE ~ as.character(`alt final`))) %>%
   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
   dplyr::select(Tumor_Sample_Barcode, `alt final`)
 

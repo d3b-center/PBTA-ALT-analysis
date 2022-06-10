@@ -15,8 +15,12 @@ data_dir <- file.path(root_dir, "analyses", "02-add-histologies")
 # metadata read in
 metadata <- read_tsv(file.path(data_dir,
                                "output",
-                               "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
-  dplyr::select(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA, `alt final`)
+                               "stundon_hgat_updated_hist_alt.tsv")) %>%
+  filter(short_histology == "HGAT") %>%
+  mutate(`alt final` = case_when(`alt final` == "pos" ~ "POS",
+                                 `alt final` == "neg" ~ "NEG",
+                                 TRUE ~ as.character(`alt final`))) %>%
+  dplyr::select(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA, short_histology, `alt final`)
 
 histology_pbta <- read_tsv(file.path(data_dir,
                                      "input-v21",
