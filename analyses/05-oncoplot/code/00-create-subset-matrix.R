@@ -28,7 +28,7 @@ hgat <- read_tsv(file.path(root_dir,
                            "analyses",
                            "02-add-histologies",
                            "output",
-                           "stundon_hgat_03312022_updated_hist_alt.tsv")) %>%
+                           "stundon_hgat_updated_hist_alt.tsv")) %>%
   mutate(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
   filter(short_histology == "HGAT")
 
