@@ -20,7 +20,7 @@ params:
     input: file
   python_path:
     label: "Python path"
-    value: /Users/harenzaj/miniconda3/bin/python
+    value: /usr/bin/python
     input: ""
 ---
 
