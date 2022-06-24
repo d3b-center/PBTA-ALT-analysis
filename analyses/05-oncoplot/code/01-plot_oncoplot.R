@@ -2,6 +2,7 @@
 library(tidyverse)
 library(ComplexHeatmap)
 library(circlize)
+library(openxlsx)
 
 # define directories 
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
@@ -13,10 +14,22 @@ output_dir <- file.path(analysis_dir, "output")
 source(file.path(input_dir, "mutation-colors.R"))
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 germline <- read_tsv(file.path(input_dir, "germline_variants_meta_format.tsv"))
+ihc <- readxl::read_excel(file.path(input_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
+  rename(sample_id = ID,
+         `ATRX IHC` = `ATRX IHC (Pathology)`,
+         UBTF = `Presence of UBTF`) %>%
+  mutate(`ATRX IHC` = case_when(`ATRX IHC` == 1 ~ "POS",
+                                `ATRX IHC` == 0 ~ "NEG",
+                                TRUE ~ "Not done"),
+         UBTF = case_when(UBTF == 1 ~ "POS",
+                          UBTF == 0 ~ "NEG",
+                                TRUE ~ "Not done"))
 
 # read processed files
 hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>% 
-  left_join(germline) %>%
+  select(-`ATRX IHC`) %>%
+  left_join(germline, by = "sample_id") %>%
+  left_join(ihc, by = "sample_id") %>%
   arrange(telomere_ratio) %>% 
   column_to_rownames("Tumor_Sample_Barcode") %>%
   mutate(`C-circle` = `CCA Sept 2021`)
@@ -55,7 +68,7 @@ hgat$TMB <- factor(hgat$TMB, levels = c("Ultra-hypermutant", "Hypermutant", "Nor
 
 ## color for barplot
 col = colors
-df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio","C-circle", "TMB", "Germline MMR", "Somatic MMR")]
+df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio","C-circle", "ATRX IHC", "UBTF", "TMB", "Germline MMR", "Somatic MMR")]
 
 colorder <- df$Kids_First_Biospecimen_ID_DNA
 
@@ -73,7 +86,7 @@ palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D
 
 
 # match annotations and gene matrix by bs_id with 
-ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "TMB", "Germline MMR", "Somatic MMR")],
+ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "UBTF", "ATRX IHC", "TMB", "Germline MMR", "Somatic MMR")],
                        # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
                           "Sex" = c("Male" = "#56B4E9",
@@ -92,13 +105,20 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                           "C-circle" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
+                          "ATRX IHC" = c("POS"="#0072B2",
+                                         "NEG"="lightsteelblue1",
+                                         "Not done" = "whitesmoke"),
+                          "UBTF" = c("POS"="#0072B2",
+                                         "NEG"="lightsteelblue1",
+                                         "Not done" = "whitesmoke"),
                           "Germline MMR" = c("yes" = "#56B4E9"),
                           "Somatic MMR" = c("yes" = "#56B4E9"),
                           "TMB" = c("Ultra-hypermutant" = "#CC79A7", 
                                                 "Hypermutant" = "#009E73", 
                                                 "Normal" = "whitesmoke")),
-                       annotation_name_side = "right", annotation_name_gp = gpar(fontsize = 9),
-                      na_col = "whitesmoke")
+                       annotation_name_side = "right", 
+                       annotation_name_gp = gpar(fontsize = 9),
+                       na_col = "whitesmoke")
 
 #hgat_bt_anno = hgat[,c("ATRX_fpkm","DAXX_fpkm","TERT_fpkm")] %>%
  # mutate("zscore_ATRX_fpkm" = scale(ATRX_fpkm),
@@ -117,7 +137,7 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
         #                na_col = "gainsboro")
 
 
-pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 2.8, width = 15, onefile = FALSE)
+pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 3, width = 15, onefile = FALSE)
 # global option to increase space between heatmap and annotations
 ht_opt$ROW_ANNO_PADDING = unit(1, "cm")
 oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
