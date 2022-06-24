@@ -20,10 +20,8 @@ input_dir <- file.path(analysis_dir, "input")
 output_dir <- file.path(analysis_dir, "output")
 
 ##read in input
-source(file.path(input_dir, "mutation-colors.R"))
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 
-# https://chopri.box.com/s/pjfwokqko90onbc9zosujtlikdd3r9iq
 hgat <- read_tsv(file.path(root_dir,
                            "analyses",
                            "02-add-histologies",
@@ -37,6 +35,9 @@ hgat <- read_tsv(file.path(root_dir,
 #hgat <- hgat %>%
 #  left_join(tmb,by=c("Tumor_Sample_Barcode"))
 
+
+# format for MAF
+
 ###read in maf - we don't have VAF??
 keep_cols <- c("Hugo_Symbol", 
                "Chromosome", 
@@ -49,10 +50,10 @@ keep_cols <- c("Hugo_Symbol",
                "Tumor_Sample_Barcode")
 
 consensus <- data.table::fread(file.path(data_dir, "snv-consensus-plus-hotspots.maf.tsv.gz"),
-                      select = keep_cols, data.table = FALSE) %>%
-  # filter for HGAT
-  filter(Tumor_Sample_Barcode %in% hgat$Tumor_Sample_Barcode) %>%
+                      select = keep_cols, data.table = FALSE) %>% 
+  filter(Tumor_Sample_Barcode %in% hgat$Tumor_Sample_Barcode) %>% # filter for HGAT
   unique()
+
 
 ##read in cnv copied over from OpenPedCan v9
 cnv_df <- readr::read_tsv(file.path(data_dir, "consensus_wgs_plus_cnvkit_wxs.tsv.gz")) %>%
