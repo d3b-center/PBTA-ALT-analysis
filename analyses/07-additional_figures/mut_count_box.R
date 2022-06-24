@@ -25,7 +25,7 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
                             `alt final` == "neg" ~ "NEG",
                             TRUE ~ as.character(`alt final`)) 
   ) %>%
-  dplyr::select(Tumor_Sample_Barcode, `alt final`, atrx_mut)
+  dplyr::select(Tumor_Sample_Barcode, sample_id, `alt final`, atrx_mut)
 
 # get TMB 
 tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
@@ -48,9 +48,15 @@ atrx_onco <- maf_atrx %>%
 
 metadata_atrx <- metadata %>%
   left_join(atrx_onco) %>%
-  select(Tumor_Sample_Barcode, `alt final`, ONCOGENIC) %>%
+  select(Tumor_Sample_Barcode, sample_id, `alt final`, ONCOGENIC, atrx_mut) %>%
   mutate(ONCOGENIC = case_when(is.na(ONCOGENIC) ~ "Not mutated",
                                TRUE ~ as.character(ONCOGENIC)))
+
+# check mutations from maf compared to what is annotated in meta file
+metadata_atrx <- metadata_atrx %>%
+  mutate(atrx_mut_updated = case_when(ONCOGENIC == "Not mutated" ~ "non_ATRX_mut",
+                                 TRUE ~ "ATRX_mut")) %>%
+  select(-atrx_mut)
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -80,7 +86,7 @@ count_df <- merged_dat %>%
   dplyr::mutate(mut_count = sum(count)) %>%
   dplyr::select(Tumor_Sample_Barcode, mut_count, `TMB Coding`) %>%
   distinct() %>%
-  dplyr::left_join(metadata) %>%
+  dplyr::left_join(metadata_atrx) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
 count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG")) 
 
@@ -147,7 +153,6 @@ p <- ggplot(atrx_df_all_mut, aes(x = ALT, y = Count, fill = `Mutation Type`)) +
   geom_bar(stat = "identity") +
   facet_wrap(~`Mutation Type`)+
   scale_fill_brewer(palette="Paired")+
-  stat_compare_means(method='t.test') +
   theme_bw() +
   ylab("Number of tumors") +
   xlab("ALT status")
