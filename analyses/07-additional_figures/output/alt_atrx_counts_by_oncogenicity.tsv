@@ -1,0 +1,7 @@
+ALT	Mutation Type	Count
+NEG	Likely Oncogenic	2
+POS	Likely Oncogenic	13
+NEG	Not mutated	32
+POS	Not mutated	9
+NEG	VUS	19
+POS	VUS	10

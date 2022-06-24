@@ -58,7 +58,6 @@ metadata_atrx <- metadata_atrx %>%
                                  TRUE ~ "ATRX_mut")) %>%
   select(-atrx_mut)
 
-
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
   dplyr::mutate(Variant_Classification = gsub(",", "", Variant_Classification)) %>%
