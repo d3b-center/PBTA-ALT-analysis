@@ -7,6 +7,8 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
 results_dir <- file.path(analysis_dir, "results", "count_freq_4_genes_stats")
+maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
+
 if(!dir.exists(results_dir)){
   dir.create(results_dir, recursive = TRUE)
 }
