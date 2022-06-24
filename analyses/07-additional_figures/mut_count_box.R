@@ -11,6 +11,8 @@ analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
 input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 output_dir <- file.path(analysis_dir, "output")
+maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
+
 # metadata read in
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
                                "stundon_hgat_updated_hist_alt.tsv")) %>%
@@ -29,6 +31,26 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
 tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
   dplyr::select(Tumor_Sample_Barcode, tmb)
 
+# read in annotated MAF
+maf_atrx <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
+  filter(Hugo_Symbol == "ATRX")
+
+atrx_onco <- maf_atrx %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
+  unique() %>%
+  # pull together if multiple annotations per TSB
+  group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
+  summarise(ONCOGENIC = str_c(unique(ONCOGENIC), collapse=";")) %>%
+  # recode as likely oncogenic for those with both
+  mutate(ONCOGENIC = case_when(grepl(";", ONCOGENIC) ~ "Likely Oncogenic",
+                               ONCOGENIC == "Unknown" ~ "VUS",
+                               TRUE ~ as.character(ONCOGENIC)))
+
+metadata_atrx <- metadata %>%
+  left_join(atrx_onco) %>%
+  select(Tumor_Sample_Barcode, `alt final`, ONCOGENIC) %>%
+  mutate(ONCOGENIC = case_when(is.na(ONCOGENIC) ~ "Not mutated",
+                               TRUE ~ as.character(ONCOGENIC)))
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -49,6 +71,7 @@ merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
                                               "Multi_Hit")) %>%
   dplyr::left_join(tmb_coding) %>%
   dplyr::rename(`TMB Coding` = tmb) 
+
 
 ################# Generate figures with combined mutation counts 
 # generate count dataframe
@@ -101,6 +124,36 @@ p <- ggplot(count_df_for_plots, aes(x = atrx_mut, y = `TMB Coding`)) +
 
 print(p)
 dev.off()
+
+atrx_df <- as.data.frame(table(metadata_atrx$`alt final`, metadata_atrx$ONCOGENIC)) 
+colnames(atrx_df) <- c("ALT", "Mutation Type", "Count")
+write_tsv(atrx_df, file.path(output_dir, "alt_atrx_counts_by_oncogenicity.tsv"))
+
+atrx_df_all_mut <- atrx_df %>%
+  filter(`Mutation Type` != "Not mutated")
+
+pdf(file.path(plots_dir, "atrx_alt_stacked_by_oncogenicity.pdf"))
+p <- ggplot(atrx_df_all_mut, aes(x = ALT, y = Count, fill = `Mutation Type`)) +
+  geom_bar(stat = "identity") + 
+  scale_fill_brewer(palette="Paired") +
+  theme_bw() +
+  ylab("Number of tumors") +
+  xlab("ALT status")
+print(p)
+dev.off()
+
+pdf(file.path(plots_dir, "atrx_alt_faceted_by_oncogenicity.pdf"))
+p <- ggplot(atrx_df_all_mut, aes(x = ALT, y = Count, fill = `Mutation Type`)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~`Mutation Type`)+
+  scale_fill_brewer(palette="Paired")+
+  theme_bw() +
+  ylab("Number of tumors") +
+  xlab("ALT status")
+print(p)
+dev.off()
+
+
 
 # output plots for TMB 
 pdf(file.path(plots_dir, "tmb_alt_all_genes_atrx.pdf"))
