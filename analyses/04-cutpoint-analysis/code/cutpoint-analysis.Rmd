@@ -6,6 +6,7 @@ output: html_notebook
 ```{r}
 library(cutpointr)
 library(tidyverse)
+library(ggpubr)
 
 # define directories 
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
@@ -13,6 +14,8 @@ analysis_dir <- file.path(root_dir, "analyses", "04-cutpoint-analysis")
 input_dir <- file.path(root_dir, "analyses", "02-add-histologies", "output")
 output_dir <- file.path(analysis_dir, "output")
 
+source(file.path(analysis_dir, "code", "theme.R"))
+       
 #read in combined file
 meta <- read_tsv(file.path(input_dir, "stundon_hgat_updated_hist_alt.tsv"),
          guess_max = 1000) %>%
@@ -43,11 +46,11 @@ summary(opt_cut)
 ```
 
 #plot by group
-```{r}
-plot_metric(opt_cut)
+```{r fig.height=4, fig.width=6}
 #save as PDF
-pdf(file.path(analysis_dir, "plots", "all-pbta-by-subgroup.pdf"), height = 4, width = 6, onefile=FALSE)
-plot_metric(opt_cut)
+tiff(file.path(analysis_dir, "plots", "all-pbta-by-subgroup.tiff"), height = 1200, width = 1800, res = 300)
+plot_metric(opt_cut) +
+  theme_Publication()
 invisible(dev.off())
 ```
 #subset and plot - HGAT
@@ -75,12 +78,19 @@ cp <- cutpointr(meta, telomere_ratio, alt_final,
 summary(cp)
 ```
 # all samples together - plot
-```{r}
-plot(cp)
-pdf(file.path(analysis_dir, "plots", "all-pbta.pdf"), height = 4, width = 8, onefile=FALSE)
-plot(cp)
-invisible(dev.off())
+```{r all pbta roc, fig.height=4, fig.width=8}
+p1 <- plot_x(cp, display_cutpoint = TRUE) + 
+   theme_Publication()
+p2 <- plot_roc(cp) + 
+  theme_Publication()
+tiff(file.path(analysis_dir, "plots", "all-pbta.tiff"), height = 1200, width = 2400, res = 300)
+p <- ggarrange(p1, p2, widths = c(1500, 900), height = c(1200, 600), align = "h",
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+p$`1`
+dev.off()
 ```
+
 #hgat alone - cutpoint
 ```{r}
 cp <- cutpointr(hgat, telomere_ratio, alt_final,
@@ -89,10 +99,18 @@ summary(cp)
 ```
 
 #hgat alone - plot
-```{r}
-plot(cp)
-pdf(file.path(analysis_dir, "plots", "hgat.pdf"), height = 4, width = 8, onefile=FALSE)
-plot(cp)
+```{r roc hgat, fig.height=4, fig.width=8}
+tiff(file.path(analysis_dir, "plots", "hgat.tiff"), height = 1200, width = 2400, res = 300)
+
+p1_2 <- plot_x(cp, display_cutpoint = TRUE) + 
+   theme_Publication()
+p3 <- plot_roc(cp) + 
+theme_Publication()
+
+p <- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+p$`1`
 invisible(dev.off())
 ```
 
@@ -104,9 +122,17 @@ invisible(dev.off())
 ```
 
 #non-hgat alone plot
-```{r}
- plot(cp)
- pdf(file.path(analysis_dir, "plots", "non-hgat.pdf"), height = 4, width = 8, onefile=FALSE)
- plot(cp)
- invisible(dev.off())
+```{r roc non-hgat, fig.height=4, fig.width=8}
+tiff(file.path(analysis_dir, "plots", "non-hgat.tiff"), height = 1200, width = 2400, res = 300)
+
+p1_2 <- plot_x(cp, display_cutpoint = TRUE) + 
+   theme_Publication()
+p3 <- plot_roc(cp) + 
+theme_Publication()
+
+p <- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
+          labels = c("C", "D"),
+          ncol = 2, nrow = 1)
+p$`1`
+invisible(dev.off())
 ```

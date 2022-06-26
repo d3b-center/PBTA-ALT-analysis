@@ -7,6 +7,7 @@ library(openxlsx)
 
 # define directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
+data_dir <- file.path(root_dir, "data")
 analysis_dir <- file.path(root_dir, "analyses", "07-additional_figures")
 plots_dir <- file.path(analysis_dir, "plots")
 input_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
@@ -25,7 +26,7 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
                             `alt final` == "neg" ~ "NEG",
                             TRUE ~ as.character(`alt final`)) 
   ) %>%
-  dplyr::select(Tumor_Sample_Barcode, sample_id, `alt final`, atrx_mut)
+  dplyr::select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, `alt final`, atrx_mut, telomere_ratio)
 
 # get TMB 
 tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
@@ -34,6 +35,17 @@ tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-codi
 # read in annotated MAF
 maf_atrx <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
   filter(Hugo_Symbol == "ATRX")
+
+# read in mut sigs
+sigs <- readxl::read_excel(file.path(data_dir, "TableS2-DNA-results-table.xlsx"), sheet = 2) %>%
+  rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID)
+
+# read in telomerase scores
+tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"), sheet = 2) %>%
+  rename(telomerase_score = NormEXTENDScores_fpkm) %>%
+  select(Kids_First_Biospecimen_ID_RNA, telomerase_score)
+
+names(tel)
 
 atrx_onco <- maf_atrx %>%
   select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
@@ -48,7 +60,7 @@ atrx_onco <- maf_atrx %>%
 
 metadata_atrx <- metadata %>%
   left_join(atrx_onco) %>%
-  select(Tumor_Sample_Barcode, sample_id, `alt final`, ONCOGENIC, atrx_mut) %>%
+  select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, telomere_ratio, `alt final`, ONCOGENIC, atrx_mut) %>%
   mutate(ONCOGENIC = case_when(is.na(ONCOGENIC) ~ "Not mutated",
                                TRUE ~ as.character(ONCOGENIC)))
 
@@ -56,7 +68,9 @@ metadata_atrx <- metadata %>%
 metadata_atrx <- metadata_atrx %>%
   mutate(atrx_mut_updated = case_when(ONCOGENIC == "Not mutated" ~ "non_ATRX_mut",
                                  TRUE ~ "ATRX_mut")) %>%
-  select(-atrx_mut)
+  select(-atrx_mut) %>%
+  left_join(sigs) %>%
+  left_join(tel)
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -88,10 +102,12 @@ count_df <- merged_dat %>%
   distinct() %>%
   dplyr::left_join(metadata_atrx) %>%
   dplyr::mutate(log2_mut_count = log2(mut_count))
+
 count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG")) 
 
+
 write.xlsx(count_df, 
-           file.path(output_dir, "hgat_tmb_mut_counts_df.xlsx"), 
+           file.path(output_dir, "hgat_tmb_mut_counts_sigs_tel_df.xlsx"), 
              overwrite=TRUE, 
              keepNA=TRUE)
 
@@ -211,4 +227,15 @@ print(p)
 dev.off()
 
 
+pdf(file.path(plots_dir, "alt_tel_cor.pdf"))
+p <- ggplot(count_df, aes(x = telomere_ratio, y = telomerase_score)) +
+  geom_jitter() + 
+  stat_summary(fun.data=mean_cl_normal) + 
+  geom_smooth(method='lm', formula= y~x)  +
+  theme_bw()
+
+print(p)
+dev.off()
+
+cor.test(count_df$telomere_ratio, count_df$telomerase_score)
 

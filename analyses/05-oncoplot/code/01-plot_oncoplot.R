@@ -9,6 +9,7 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "05-oncoplot")
 input_dir <- file.path(analysis_dir, "input")
 output_dir <- file.path(analysis_dir, "output")
+data_dir <- file.path(root_dir, "data")
 
 ##read in input
 source(file.path(input_dir, "mutation-colors.R"))
@@ -24,15 +25,26 @@ ihc <- readxl::read_excel(file.path(input_dir, "TMA table for HGAT paper_052722_
          `Telomeric foci` = case_when(`Telomeric foci` == 1 ~ "POS",
                                         `Telomeric foci` == 0 ~ "NEG",
                                 TRUE ~ "Not done"))
+# read in telomerase scores
+tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"), sheet = 2) %>%
+  rename(`Telomerase score` = NormEXTENDScores_fpkm) %>%
+  select(Kids_First_Biospecimen_ID_RNA, `Telomerase score`)
+
 
 # read processed files
 hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>% 
   select(-`ATRX IHC`) %>%
   left_join(germline, by = "sample_id") %>%
+  mutate(`Germline MMR` = case_when(is.na(`Germline MMR`) ~ "no",
+                                    TRUE ~ as.character(`Germline MMR`)),
+         `Somatic MMR` = case_when(is.na(`Somatic MMR`) ~ "no",
+                                   TRUE ~ as.character(`Somatic MMR`))
+         ) %>%
   left_join(ihc, by = "sample_id") %>%
-  arrange(telomere_ratio) %>% 
+  left_join(tel, by = "Kids_First_Biospecimen_ID_RNA") %>%
+  dplyr::rename(`C-circle` = `CCA Sept 2021`) %>%
   column_to_rownames("Tumor_Sample_Barcode") %>%
-  mutate(`C-circle` = `CCA Sept 2021`)
+  arrange(telomere_ratio)
 
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
 gene_matrix <- gene_matrix[goi.list$genes,]
@@ -68,7 +80,7 @@ hgat$TMB <- factor(hgat$TMB, levels = c("Ultra-hypermutant", "Hypermutant", "Nor
 
 ## color for barplot
 col = colors
-df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio","C-circle", "ATRX IHC", "Telomeric foci", "TMB", "Germline MMR", "Somatic MMR")]
+df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio", "C-circle", "ATRX IHC", "Telomeric foci", "TMB", "Germline MMR", "Somatic MMR")]
 
 colorder <- df$Kids_First_Biospecimen_ID_DNA
 
@@ -102,6 +114,7 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                           #                       "Recurrence" = "#ABDEE6",
                           #                       "Second Malignancy" = "#CBAACB"),
                           "Telomere ratio" = colorRamp2(c(0, 1.05, 1.06), c("whitesmoke", "#CAE1FF","#0072B2")),
+                         # "Telomerase score" = colorRamp2(c(0, 0.5, 1.0), c("whitesmoke", "#E69F00", "#0072B2")),
                           "C-circle" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
@@ -111,8 +124,10 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                           "Telomeric foci" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
-                          "Germline MMR" = c("yes" = "#56B4E9"),
-                          "Somatic MMR" = c("yes" = "#56B4E9"),
+                          "Germline MMR" = c("yes" = "#56B4E9",
+                                             "no" = "whitesmoke"),
+                          "Somatic MMR" = c("yes" = "#56B4E9",
+                                            "no" = "whitesmoke"),
                           "TMB" = c("Ultra-hypermutant" = "#CC79A7", 
                                                 "Hypermutant" = "#009E73", 
                                                 "Normal" = "whitesmoke")),
@@ -137,7 +152,8 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
         #                na_col = "gainsboro")
 
 
-pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 3, width = 15, onefile = FALSE)
+#pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 3, width = 15, onefile = FALSE)
+tiff(file.path(output_dir, "oncoprint_hgat.tiff"), height = 900, width = 4500, units = "px", res = 300)
 # global option to increase space between heatmap and annotations
 ht_opt$ROW_ANNO_PADDING = unit(1, "cm")
 oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
@@ -165,6 +181,5 @@ oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
           #bottom_annotation = ha1,
           column_order =  colnames(gene_matrix_ordered)
           )
-
 dev.off()
 

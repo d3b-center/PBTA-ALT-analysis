@@ -53,11 +53,11 @@ km_plot <- survminer::ggsurvplot(fit = km_result$model,
                        legend = "right",
                        xlab = "Time (days)",
                        legend.title = "ALT subtype",
-                       legend.labs = c("H3 G35, ALT +", 
-                                       "H3 K28, ALT −", 
-                                       "H3 K28, ALT +",
-                                       "H3 WT, ALT −",
-                                       "H3 WT, ALT +"),
+                       legend.labs = c( "H3 WT, ALT-",
+                                        "H3 WT, ALT+",
+                                        "H3 K28, ALT-",
+                                        "H3 K28, ALT+",
+                                        "H3 G35, ALT+"),
                        risk.table.y.text.col = TRUE,
                        risk.table.y.text = FALSE
 ) 
@@ -72,5 +72,7 @@ km_final <- km_plot_graph/km_plot_table +
 
 
 # Save
-ggsave(km_output_pdf, km_final, width = 12, height = 6)
+pdf(km_output_pdf, width = 10, height = 6)
+km_final
+invisible(dev.off())
 

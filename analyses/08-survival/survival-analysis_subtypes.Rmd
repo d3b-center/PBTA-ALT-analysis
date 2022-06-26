@@ -117,6 +117,18 @@ as.data.frame(table(meta_updated$mol_sub_group))
 meta_updated$alt_subtype <- paste(meta_updated$mol_sub_group, meta_updated$ALT_status, sep = ", ")
 
 as.data.frame(table(meta_updated$alt_subtype))
+
+# re-level to make H3K28 WT ALT - reference
+
+meta_updated <- meta_updated %>%
+   mutate(alt_subtype = factor(alt_subtype)) %>% 
+   mutate(alt_subtype = fct_relevel(alt_subtype, c("H3 WT, ALT -",
+                                                   "H3 WT, ALT +",
+                                                   "H3 K28, ALT -",
+                                                   "H3 K28, ALT +",
+                                                   "H3 G35, ALT +"))) %>%
+ arrange(alt_subtype)
+
 ```
 
 ## Kaplan-Meier for all HGG/DMG subtypes
