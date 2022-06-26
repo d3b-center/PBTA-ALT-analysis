@@ -144,7 +144,7 @@ survival_df_spread <- survival_df %>%
   # format tibble for plotting
   gather(hr_ci:p_string, key = "name", value = "value") %>%
   #remove values for reference
-  mutate(value = ifelse(term == "H3 WT, ALT - (ref)", NA, value))
+  mutate(value = ifelse(term == "H3 WT, ALT- (ref)", NA, value))
 
 labels_panel <- ggplot(survival_df_spread) +
   aes(x = name, y = term, label = value) + 
