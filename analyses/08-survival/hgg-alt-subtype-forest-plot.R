@@ -10,9 +10,6 @@ library(tidyverse)
 # Establish base dir
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 
-# Establish base dir
-root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
-
 # Declare output directory
 output_dir <- file.path(root_dir, "analyses", "08-survival", "plots")
 if (!dir.exists(output_dir)) {
@@ -34,20 +31,20 @@ survival_result <- read_rds(
 forest_pdf <- file.path(output_dir, "forest_hgg_alt_subtypes.pdf")
 
 ## Make plot --------------------------------------------------
-ref_term <- "molecular_subtypeH3 H35, ALT +"
+ref_term <- "molecular_subtypeH3 WT, ALT -"
 
 # Set up ordering and labels for y-axis
-term_order <- rev(c("alt_subtypeH3 K28, ALT -",
+term_order <- rev(c("alt_subtypeH3 G35, ALT +",
+                    "alt_subtypeH3 K28, ALT -",
                     "alt_subtypeH3 K28, ALT +",
-                    "alt_subtypeH3 WT, ALT -",
                     "alt_subtypeH3 WT, ALT +",
                     ref_term))
 
-term_labels <- rev(c("H3 K28, ALT -",
+term_labels <- rev(c("H3 G35, ALT +",
+                     "H3 K28, ALT -",
                      "H3 K28, ALT +",
-                     "H3 WT, ALT -",
                      "H3 WT, ALT +",
-                     "H3 H35, ALT + (ref)"))
+                     "H3 WT, ALT - (ref)"))
 
 
 # Get n and event info from glance output
@@ -147,7 +144,7 @@ survival_df_spread <- survival_df %>%
   # format tibble for plotting
   gather(hr_ci:p_string, key = "name", value = "value") %>%
   #remove values for reference
-  mutate(value = ifelse(term == "H3 H35, ALT + (ref)", NA, value))
+  mutate(value = ifelse(term == "H3 WT, ALT - (ref)", NA, value))
 
 labels_panel <- ggplot(survival_df_spread) +
   aes(x = name, y = term, label = value) + 
