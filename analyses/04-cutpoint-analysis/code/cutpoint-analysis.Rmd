@@ -87,14 +87,10 @@ tiff(file.path(analysis_dir, "plots", "all-pbta.tiff"), height = 1200, width = 2
 p <- ggarrange(p1, p2, widths = c(1500, 900), height = c(1200, 600), align = "h",
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
+p$`1`
+dev.off()
 ```
 
-```{r test, fig.height=4, fig.width=8}
-pdf(file.path(analysis_dir, "plots", "all-pbta.tiff"), onefile = FALSE)
-p
-while (!is.null(dev.list()))  dev.off()
-
-```
 #hgat alone - cutpoint
 ```{r}
 cp <- cutpointr(hgat, telomere_ratio, alt_final,
@@ -111,10 +107,10 @@ p1_2 <- plot_x(cp, display_cutpoint = TRUE) +
 p3 <- plot_roc(cp) + 
 theme_Publication()
 
-ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
+p <- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
-
+p$`1`
 invisible(dev.off())
 ```
 
@@ -134,10 +130,9 @@ p1_2 <- plot_x(cp, display_cutpoint = TRUE) +
 p3 <- plot_roc(cp) + 
 theme_Publication()
 
-ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
+p <- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
           labels = c("C", "D"),
           ncol = 2, nrow = 1)
-
-
+p$`1`
 invisible(dev.off())
 ```
