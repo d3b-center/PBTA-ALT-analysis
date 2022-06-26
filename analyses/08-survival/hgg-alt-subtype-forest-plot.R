@@ -40,11 +40,11 @@ term_order <- rev(c("alt_subtypeH3 G35, ALT +",
                     "alt_subtypeH3 WT, ALT +",
                     ref_term))
 
-term_labels <- rev(c("H3 G35, ALT +",
-                     "H3 K28, ALT -",
-                     "H3 K28, ALT +",
-                     "H3 WT, ALT +",
-                     "H3 WT, ALT - (ref)"))
+term_labels <- rev(c("H3 G35, ALT+",
+                     "H3 K28, ALT-",
+                     "H3 K28, ALT+",
+                     "H3 WT, ALT+",
+                     "H3 WT, ALT- (ref)"))
 
 
 # Get n and event info from glance output
