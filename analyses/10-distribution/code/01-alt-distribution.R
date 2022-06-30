@@ -48,17 +48,6 @@ tel_df <- tel_df %>%
   # reverse order levels to alphabetize when flipping coordinates
   mutate(cancer_group_display_n = fct_rev(cancer_group_display_n))
 
-
-# metadata read in
-#metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
-                           #    "stundon_hgat_updated_hist_alt.tsv")) %>%
-#  select(-molecular_subtype) %>%
-#  left_join(v22, by = "sample_id") %>%
-#    select(sample_id, telomere_ratio, cancer_group, short_histology, cancer_group_display) %>%
-  # reverse order levels to alphabetize when flipping coordinates
-#  mutate(cancer_group_display = fct_rev(cancer_group_display))
-
-
 # plot
 tiff(file.path(output_dir, "telhunt-distributions.tiff"), height = 1800, width = 4200, res = 300)
 p <- ggplot(tel_df, aes(x = cancer_group_display_n, y = ratio)) +
@@ -75,29 +64,3 @@ scale_linetype_manual(name = "ALT+ cutpoint", values = c(2, 2),
 
 p
 dev.off()
-
-
-
-hg <- metadata %>%
-  filter(short_histology == "HGAT")
-
-sharon <- read_tsv("~/Downloads/pbta_hgat_tumor_normal_ids_SJD.txt") 
-setdiff(hg$sample_id, sharon$sample_id)
-setdiff(sharon$sample_id, hg$sample_id)
-
-# 
-v22_norm_wgs <- read_tsv(file.path(hist_dir, "pbta-histologies.tsv"), guess_max = 3000) %>%
-  filter(sample_type == "Normal" & experimental_strategy == "WGS") %>%
-  select(Kids_First_Biospecimen_ID) %>%
-  unique() %>%
-  write_tsv("~/Downloads/all-pbta-wgs-normal-v22.txt")
-
-
-v11_norm <- read_tsv("~/Documents/GitHub/ped-ot/OpenPedCan-analysis/data/v11/histologies-base.tsv", guess_max = 100000) %>%
-  filter(sample_type == "Normal", experimental_strategy != "Targeted Sequencing", cohort == "PBTA") %>%
-  select(Kids_First_Biospecimen_ID) %>%
-  unique() %>%
-  write_tsv("~/Downloads/all-pbta-wgs-wxs-normal-v11.txt")
-
-
-  
