@@ -28,7 +28,8 @@ v22 <- read_tsv(file.path(hist_dir, "pbta-histologies.tsv"), guess_max = 3000) %
                                sample_id == "7316-3214-A07082" ~ "7316-3214",
                                TRUE ~ as.character(sample_id))) 
 tel_df <- v22 %>%
-  right_join(telhunt, by = "Kids_First_Biospecimen_ID") %>%
+  filter(Kids_First_Biospecimen_ID %in% telhunt$Kids_First_Biospecimen_ID) %>%
+  left_join(telhunt, by = "Kids_First_Biospecimen_ID") %>%
   select(sample_id, broad_histology, cancer_group, ratio) %>%
   unique() %>%
   left_join(palette, by = c("broad_histology", "cancer_group"))
@@ -43,6 +44,7 @@ tel_df <- tel_df %>%
   # Create wrapped with (n=X) factor column for cancer groups
   dplyr::mutate(cancer_group_display_n = glue::glue("{cancer_group_display} (N={n})")) %>%
   dplyr::inner_join(tel_df) %>%
+  unique() %>%
   # reverse order levels to alphabetize when flipping coordinates
   mutate(cancer_group_display_n = fct_rev(cancer_group_display_n))
 
