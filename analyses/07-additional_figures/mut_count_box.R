@@ -15,6 +15,8 @@ output_dir <- file.path(analysis_dir, "output")
 maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 
 # metadata read in
+goi <- read_table(file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations"), col_names = F)
+  
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
                                "stundon_hgat_updated_hist_alt.tsv")) %>%
   filter(short_histology == "HGAT") %>%
@@ -33,8 +35,8 @@ tmb_coding <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-codi
   dplyr::select(Tumor_Sample_Barcode, tmb)
 
 # read in annotated MAF
-maf_atrx <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
-  filter(Hugo_Symbol == "ATRX")
+maf <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv"))
+
 
 # read in mut sigs
 sigs <- readxl::read_excel(file.path(data_dir, "TableS2-DNA-results-table.xlsx"), sheet = 2) %>%
@@ -47,30 +49,45 @@ tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"),
 
 names(tel)
 
-atrx_onco <- maf_atrx %>%
+maf_reanno <- maf %>%
   select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
   unique() %>%
   # pull together if multiple annotations per TSB
   group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
   summarise(ONCOGENIC = str_c(unique(ONCOGENIC), collapse=";")) %>%
   # recode as likely oncogenic for those with both
-  mutate(ONCOGENIC = case_when(grepl(";", ONCOGENIC) ~ "Likely Oncogenic",
+  mutate(ONCOGENIC = case_when(grepl(";", ONCOGENIC) ~ "Oncogenic or Likely Oncogenic",
                                ONCOGENIC == "Unknown" ~ "VUS",
+                               ONCOGENIC == "Likely Oncogenic" ~ "Oncogenic or Likely Oncogenic",
+                               ONCOGENIC == "Oncogenic" ~ "Oncogenic or Likely Oncogenic",
                                TRUE ~ as.character(ONCOGENIC)))
 
-metadata_atrx <- metadata %>%
-  left_join(atrx_onco) %>%
-  select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, telomere_ratio, `alt final`, ONCOGENIC, atrx_mut) %>%
-  mutate(ONCOGENIC = case_when(is.na(ONCOGENIC) ~ "Not mutated",
-                               TRUE ~ as.character(ONCOGENIC)))
 
-# check mutations from maf compared to what is annotated in meta file
-metadata_atrx <- metadata_atrx %>%
-  mutate(atrx_mut_updated = case_when(ONCOGENIC == "Not mutated" ~ "non_ATRX_mut",
-                                 TRUE ~ "ATRX_mut")) %>%
-  select(-atrx_mut) %>%
-  left_join(sigs) %>%
-  left_join(tel)
+alt_pos <- metadata %>% filter(`alt final` == "POS") %>% nrow()
+alt_neg <- metadata %>% filter(`alt final` == "NEG") %>% nrow()
+
+for (gene in goi$X1) {
+  maf_reanno_goi <- maf_reanno %>%
+  filter(Hugo_Symbol == gene)
+  
+  # add non-mutated
+  metadata_maf <- metadata %>%
+    left_join(maf_reanno_goi) %>%
+    mutate(ONCOGENIC = case_when(is.na(ONCOGENIC) ~ "Not mutated",
+                                 TRUE ~ as.character(ONCOGENIC))) 
+  
+  table_df <- as.data.frame(table(metadata_maf$`alt final`, metadata_maf$ONCOGENIC)) 
+  colnames(table_df) <- c("ALT", "Mutation Type", "Count")
+  
+  # add freq
+  table_df <- table_df %>%
+    mutate(Frequency = case_when(ALT == "POS" ~ Count/alt_pos,
+                                 ALT == "NEG" ~ Count/alt_neg))
+  
+  write_tsv(table_df, file.path(output_dir, paste0("alt_", gene, "_counts_by_oncogenicity.tsv")))
+}
+
+
 
 # merged mutation matrix read in
 merged_dat <- readRDS(file.path(input_dir, "merged_mut_data.RDS")) %>%
@@ -146,6 +163,7 @@ p <- ggplot(count_df_for_plots, aes(x = atrx_mut, y = `TMB Coding`)) +
 
 print(p)
 dev.off()
+
 
 atrx_df <- as.data.frame(table(metadata_atrx$`alt final`, metadata_atrx$ONCOGENIC)) 
 colnames(atrx_df) <- c("ALT", "Mutation Type", "Count")
