@@ -12,7 +12,8 @@ RUN apt update && apt install -y zlib1g-dev \
 
 # Install java
 RUN apt-get update && apt-get -y --no-install-recommends install \
-   default-jdk
+   default-jdk \
+   libxt6
 
 # Install required R packages from CRAN
 RUN install2.r cutpointr \
@@ -23,11 +24,9 @@ RUN install2.r cutpointr \
 	survminer \
 	Hmisc
 
-# Install maftools from BioC
-RUN /usr/local/lib/R/site-library/littler/examples/installBioc.r maftools
-
 # Install R packages from GitHub
 RUN installGithub.r d3b-center/annoFuse \
-	jokergoo/ComplexHeatmap
+	jokergoo/ComplexHeatmap \ 
+	PoisonAlien/maftools
 
 ADD Dockerfile .

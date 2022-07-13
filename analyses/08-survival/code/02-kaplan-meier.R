@@ -11,9 +11,6 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 
 # Declare output directory
 output_dir <- file.path(root_dir, "analyses", "08-survival", "plots")
-if (!dir.exists(output_dir)) {
-  dir.create(output_dir, recursive = TRUE)
-}
 
 # Input directory
 input_dir <- file.path(root_dir, "analyses", "08-survival", "output")
