@@ -3,7 +3,7 @@ title: "TP53 HIST1H3B,H3F3A,HIST1H3C alterations in cohort"
 output: html_notebook
 
 params:
-  cohort_label_file:
+  histology_file:
     label: "Cohort specific annotation file"
     value: pbta-histologies.tsv
     input: file
@@ -29,34 +29,24 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 
 library(data.table)
 library(tidyverse)
-# install.packages("openxlsx", dependencies = TRUE)
-library("openxlsx")
+library(openxlsx)
 
-# soft linked to v17
 # histology
-cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file)) 
+histology <- read_tsv(file.path(root_dir,"data",params$histology_file)) 
 # cell-line composition 
 cell_line <- read_tsv("../input/cell-line-composition.tsv") %>% 
   dplyr::select(Kids_First_Biospecimen_ID ,cell_line_composition)
 
 # telomere ratio
-telomere_ratio <- read_tsv(file.path(root_dir,"data",params$telomere_ratio)) 
+telomere_ratio <- read_tsv(file.path(root_dir,
+                                     "analyses",
+                                     "01-alterations_ratio_check", 
+                                     "input", 
+                                     params$telomere_ratio)) 
 
 # DNA alterations
 merge_dna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_dna_alt)) %>%
   left_join(cell_line)
-
-# ccircle from Dr. Cole
-ccircle <- readWorkbook("~/Documents/Cole_HCC/telomere_maintenance/Copy of pHGG_CCA_061318.xlsx") %>%
-  dplyr::filter(!is.na(Research.ID)) %>%
-  dplyr::mutate(ID=paste0(gsub("[]]","",gsub("-TISS [[]","-T-",ID)),".WGS")) %>%
-  left_join(cohort_plot_labels,by= c("ID"="parent_aliquot_id"))
-
-# Terra from 
-terra_stranded <- read_tsv(file.path(root_dir,"data","TelomeraseScores_PTBAStranded_FPKM.txt"))
-terra_polya <- read_tsv(file.path(root_dir,"data","TelomeraseScores_PTBAPolya_FPKM.txt"))
-terra <- rbind(terra_polya,terra_stranded) %>%
-  left_join(cell_line, by = c("SampleID"="Kids_First_Biospecimen_ID"))
 
 # RNA alterations
 merged_rna_ATRX_DAXX_TERT <- read_tsv(file.path(params$merge_rna_alt))  %>%
@@ -127,13 +117,11 @@ all_alterations_ratio <- all_alterations %>%
                                 "Kids_First_Biospecimen_ID_DNA" = "Kids_First_Biospecimen_ID_tumor")) %>%
   dplyr::mutate(ratio = log2(ratio)) %>%
   dplyr::rename(telomere_ratio=ratio) %>%
-  left_join(terra,by = c("Kids_First_Biospecimen_ID_RNA" = "SampleID","cell_line_composition")) %>%
-  left_join(ccircle[,c("CCA.Dot.Blot","Kids_First_Biospecimen_ID")],by = c("Kids_First_Biospecimen_ID_DNA" = "Kids_First_Biospecimen_ID")) %>%
   # since there are NA in RNA Ids in some rows 
   # using only WGS DNA which is used in telomerehunter to match to histology
-  full_join(cohort_plot_labels[which(
-      cohort_plot_labels$experimental_strategy=="WGS" &
-        cohort_plot_labels$sample_type== "Tumor"),],
+  full_join(histology[which(
+      histology$experimental_strategy=="WGS" &
+        histology$sample_type== "Tumor"),],
             by=c("Kids_First_Biospecimen_ID_DNA"="Kids_First_Biospecimen_ID",
             "Kids_First_Participant_ID","sample_id")) 
 
@@ -143,41 +131,4 @@ all_alterations_ratio %>%
   write_tsv(file.path("../output/all_alterations_ATRX_DAXX_TERT.tsv"))
 
 
-```
-
-
-```{r}
-
-count_alt<-all_alterations_ratio %>% dplyr::group_by(defining_alt) %>% tally() %>% dplyr::mutate("count_alt"=paste0(defining_alt,"(",n,")"))
-
-all_alterations_ratio <- all_alterations_ratio %>% left_join(count_alt)  
-
-ggplot(all_alterations_ratio,aes(x=count_alt,y=telomere_ratio))+geom_boxplot()+geom_jitter(aes(color=broad_histology,alpha=0.001))+theme(axis.text.x = element_text(angle = 90))+ ggsave(filename = "../plots/all_alterations_ATRX_DAXX_TERT.png")
-```
-
-
-Comparing ATRX WT and mutation 
-```{r}
-plot_per_gene <- function(gene,all_alterations_ratio){
-  
-gene_alterations_ratio <- all_alterations_ratio %>%
-  dplyr::select(-count_alt,-n) %>%
-  dplyr::mutate(status =case_when(grepl(gene,defining_alt) ~ paste0(gene,"_mut"),
-                                       TRUE ~ paste0(gene,"_WT"))) 
-
-count_alt<- gene_alterations_ratio %>% dplyr::group_by(status) %>% tally() %>% dplyr::mutate("count_alt"=paste0(status,"(",n,")"))
-
-gene_alterations_ratio <- gene_alterations_ratio %>% left_join(count_alt,by="status")  
-
-ggplot(gene_alterations_ratio,aes(x=count_alt,y=telomere_ratio,color=broad_histology))+geom_boxplot()+theme(axis.text.x = element_text(angle = 90))
-}
-
-
-plot_per_gene("ATRX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX.png",width = 12,height = 8)
-
-plot_per_gene("DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_DAXX.png",width = 12, height = 8)
-
-plot_per_gene("TERT",all_alterations_ratio) + ggsave(filename =    "../plots/all_alterations_TERT.png",width = 12, height = 8)
-
-plot_per_gene("ATRX|DAXX",all_alterations_ratio) + ggsave(filename = "../plots/all_alterations_ATRX_or_DAXX.png",width = 12, height = 8)
 ```

@@ -51,7 +51,8 @@ summary(opt_cut)
 tiff(file.path(analysis_dir, "plots", "all-pbta-by-subgroup.tiff"), height = 1200, width = 1800, res = 300)
 plot_metric(opt_cut) +
   theme_Publication()
-invisible(dev.off())
+#invisible(dev.off())
+dev.off()
 ```
 #subset and plot - HGAT
 ```{r}

@@ -1,27 +1,24 @@
 ## Description
 
-In this analysis we find distribution of telmerehunter ratio with respect to ATRX alterations. 
+In this analysis we find distribution of TelmereHunter ratio with respect to ATRX alterations. 
 
- - CBTN SNV consensus SNV (2 out of 4 callers) alterations in ATRX|DAXX|TERT concensus snv method
+ - D3b SNV consensus SNV (2 out of 4 callers) alterations in ATRX|DAXX|TERT
  - CNV alterations in ATRX|DAXX|TERT from consensus CNV method were also identified. 
  - Calls from manta are also added in files but not used in `defining_alt` columns yet since manta is included in CNV consensus call mentioned above.
 
-TelomereHunter was run for telomre content in tumor and normal. We plot log2(ratio) in the plots for clear clarification.
-TelomeraseScores were derived from [here](https://github.com/AlexsLemonade/OpenPBTA-analysis/tree/master/analyses/telomerase-activity-prediction)
+TelomereHunter was run for telomre content in tumor and normal. We plot log2(ratio) in the plots for clarification.
 
 
-## Input OpenPBTA v17
- - data/pbta-merged-chop-method-consensus_somatic.maf.gz (CBTN)
- - data/consensus_seg_annotated_cn_autosomes.tsv.gz data/consensus_seg_annotated_cn_x_and_y.tsv.gz
- - data/pbta-sv-manta.tsv.gz
- - data/pbta-gene-expression-rsem-fpkm.polya.rds
- - data/pbta-gene-expression-rsem-fpkm.stranded.rds
- - data/pbta-fusion-arriba.tsv.gz
- - data/pbta-fusion-starfusion.tsv.gz
+## Input OpenPBTA v22, OpenPedCan v10
+- consensus_wgs_plus_cnvkit_wxs.tsv.gz (OpenPedCan)
+- pbta-fusion-putative-oncogenic.tsv (OpenPBTA)
+- pbta-gene-expression-rsem-fpkm-collapsed.polya.rds (OpenPBTA)
+- pbta-gene-expression-rsem-fpkm-collapsed.stranded.rds (OpenPBTA)
+- pbta-histologies.tsv (OpenPBTA)
+- pbta-sv-manta.tsv.gz (OpenPBTA)
+- snv-consensus-plus-hotspots.maf.tsv.gz (OpenPedCan)
 
-## Input telhunter and extend scores
- - TelomeraseScores_PTBAStranded_FPKM.txt
- - TelomeraseScores_PTBAPolya_FPKM.txt
+## Input telhunter scores
  - telomere_940_ratio.tsv
 
 ## Ouptut
@@ -75,9 +72,6 @@ Alterations in TERT
     TRUE ~ NA_character_
 
 ```
-
-
-04_score_per_alterations.Rmd : correlations within telomere ratio and extend scores as well as FPKM values
 
 
 

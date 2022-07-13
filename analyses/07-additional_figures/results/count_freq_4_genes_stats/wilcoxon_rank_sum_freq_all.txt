@@ -1,5 +1,5 @@
 
-	Pairwise comparisons using Wilcoxon signed rank test 
+	Pairwise comparisons using Wilcoxon signed rank exact test 
 
 data:  count_df_4_genes$freq and count_df_4_genes$`alt final` 
 

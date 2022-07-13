@@ -1,14 +1,5 @@
 # Package names
 cran_packages <- c("tidyverse","R.utils","rprojroot","devtools")
-
-# Install packages not yet installed
-installed_packages <- cran_packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)) {
-  install.packages(cran_packages[!installed_packages],repos = "http://cran.us.r-project.org")
-}
-
-devtools::install_github("jokergoo/ComplexHeatmap")
-
 # Packages loading
 invisible(lapply(c(cran_packages,"ComplexHeatmap"), library, character.only = TRUE))
 
@@ -18,6 +9,8 @@ data_dir <- file.path(root_dir, "data")
 analysis_dir <- file.path(root_dir, "analyses", "05-oncoplot")
 input_dir <- file.path(analysis_dir, "input")
 output_dir <- file.path(analysis_dir, "output")
+
+source(file.path(input_dir, "mutation-colors.R"))
 
 ##read in input
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
@@ -30,15 +23,9 @@ hgat <- read_tsv(file.path(root_dir,
   mutate(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
   filter(short_histology == "HGAT")
 
-#tmb <- read_tsv(file.path(data_dir,"pbta-snv-consensus-TMB_intarget.txt"))
-
-#hgat <- hgat %>%
-#  left_join(tmb,by=c("Tumor_Sample_Barcode"))
-
-
 # format for MAF
 
-###read in maf - we don't have VAF??
+###read in maf
 keep_cols <- c("Hugo_Symbol", 
                "Chromosome", 
                "Start_Position", 
@@ -55,8 +42,10 @@ consensus <- data.table::fread(file.path(data_dir, "snv-consensus-plus-hotspots.
   unique()
 
 
-##read in cnv copied over from OpenPedCan v9
+## read in cnv (OpenPedCan v10)
 cnv_df <- readr::read_tsv(file.path(data_dir, "consensus_wgs_plus_cnvkit_wxs.tsv.gz")) %>%
+  # filter for HGAT and gene of interest
+  filter(biospecimen_id %in% hgat$Tumor_Sample_Barcode) %>%
   mutate(Hugo_Symbol = gene_symbol,
          Tumor_Sample_Barcode = biospecimen_id,
          Variant_Classification = status) %>%
@@ -67,8 +56,6 @@ cnv_df <- readr::read_tsv(file.path(data_dir, "consensus_wgs_plus_cnvkit_wxs.tsv
                                                           TRUE ~ as.character(Variant_Classification))) %>%
   # only keep Del and Amp calls
   filter(Variant_Classification %in% c("Del", "Amp")) %>%
-  # filter for HGAT and gene of interest
-  filter(Tumor_Sample_Barcode %in% hgat$Tumor_Sample_Barcode) %>%
   distinct()
 
 cnv_df <- cnv_df %>%

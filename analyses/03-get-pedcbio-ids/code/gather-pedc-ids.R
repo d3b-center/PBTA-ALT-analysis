@@ -7,7 +7,8 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "03-get-pedcbio-ids")
 input_dir <- file.path(root_dir, "analyses", "02-add-histologies")
 output_dir <- file.path(analysis_dir, "output")
-
+data_dir <- file.path(root_dir, "data")
+  
 meta<- read_tsv(file.path(input_dir, 
                          "output",
                          "stundon_hgat_updated_hist_alt.tsv"))
@@ -16,10 +17,9 @@ meta %>%
   dplyr::group_by(phenotype, group) %>%
   dplyr::select(Kids_First_Biospecimen_ID_DNA)
 
-v21 <- read_tsv(file.path(input_dir, 
-                          "input-v21",
+hist <- read_tsv(file.path(data_dir,
                           "pbta-histologies.tsv"))
-rna <- v21 %>%
+rna <- hist %>%
   filter(experimental_strategy == "RNA-Seq") %>%
   pull(Kids_First_Biospecimen_ID)
 
