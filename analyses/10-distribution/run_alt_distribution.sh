@@ -4,4 +4,4 @@ set -e
 set -o pipefail
 
 # ALT distribution plots
-Rscript 01-alt-distribution.R
+Rscript code/01-alt-distribution.R

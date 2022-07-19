@@ -3,7 +3,6 @@ library(ggplot2)
 library(ggforce)
 library(forcats)
 
-source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
 # define directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "10-distribution")
@@ -12,6 +11,8 @@ output_dir <- file.path(analysis_dir, "output")
 palette_dir <- file.path(analysis_dir, "v22-input")
 data_dir <- file.path(root_dir, "data")
 
+# publication theme
+source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
 
 # telhunter results
 telhunt <- read_tsv(file.path(input_dir, "telomere_940_ratio.tsv")) %>%
