@@ -20,13 +20,15 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
    libxt6
 
 # Install required R packages from CRAN
-RUN install2.r cutpointr \
+RUN install2.r |
+	cutpointr \
 	ggforce \
 	openxlsx \
 	patchwork \
 	R.utils \
 	survminer \
-	Hmisc
+	Hmisc \
+	optparse
 
 # Install R packages from GitHub
 RUN installGithub.r d3b-center/annoFuse \
