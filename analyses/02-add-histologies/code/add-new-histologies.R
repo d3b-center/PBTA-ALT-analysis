@@ -23,7 +23,10 @@ nonhgat <- readxl::read_excel(file.path(analysis_dir,
   dplyr::rename(`alt final` = `FINAL ALT`)
 
 full_set <- hgat %>%
-  bind_rows(nonhgat)
+  bind_rows(nonhgat) %>%
+  mutate(`alt final` = case_when(`alt final` == "neg" ~ "NEG",
+                                 `alt final` == "pos" ~ "POS",
+                                 TRUE ~ as.character(`alt final`)))
 
 # read in alterations file
 alt <- read_tsv(file.path(root_dir, 
@@ -33,15 +36,15 @@ alt <- read_tsv(file.path(root_dir,
                           "PutativeDriver_ATRX_DAXX_TERT_DNA_alt.tsv"), guess_max = 10000)
 
 # remove columns from jenny's while which are going to be replaced by histologies file columns
-rm.cols <- intersect(names(jen), names(hist))
-jen.new <- jen[,!colnames(jen) %in% rm.cols]
+rm.cols <- intersect(names(full_set), names(hist))
+full_set_new <- full_set[,!colnames(full_set) %in% rm.cols]
 
 #grab only appropriate rows from hist based on DNA sample
 hist_subset <- hist %>%
   dplyr::filter(Kids_First_Biospecimen_ID %in% full_set$Kids_First_Biospecimen_ID_DNA) %>%
   dplyr::select(c(Kids_First_Participant_ID, Kids_First_Biospecimen_ID, sample_id, all_of(rm.cols)))
 
-jen_mer <- jen.new %>%
+jen_mer <- full_set_new %>%
   dplyr::rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_DNA) %>%
   dplyr::left_join(hist_subset, by = c("Kids_First_Biospecimen_ID")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Kids_First_Biospecimen_ID) %>%
