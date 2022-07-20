@@ -18,11 +18,11 @@ params:
     label: "MAF output file"
     value: output/snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv
     input: file
-  python_path:
-    label: "Python path"
+#  python_path:
+#    label: "Python path"
     #value: /usr/bin/python
-    value: /Users/harenzaj/miniconda3/bin/python
-    input: ""
+#    value: /Users/harenzaj/miniconda3/bin/python
+#    input: ""
 ---
 
 ```{r}
@@ -35,10 +35,11 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "09-lollipop")
 input_dir <- file.path(analysis_dir, "input")
 output_dir <- file.path(analysis_dir, "output")
+
 # oncokb binary
 readRenviron("~/.Renviron")
 oncokb_token <- Sys.getenv("oncokb_token")
-oncokb_tool <- "~/oncokb-annotator"
+#oncokb_tool <- "~/oncokb-annotator"
 maf_annotator <- file.path(oncokb_tool, "MafAnnotator.py")
 
 # define file
