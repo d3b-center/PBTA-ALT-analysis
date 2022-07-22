@@ -3,9 +3,9 @@ title: "TERT,ATRX,DAXX alterations in cohort"
 output: html_notebook
 
 params:
-  cohort_label_file:
+  histology_file:
     label: "Cohort specific annotation file"
-    value: histologies.tsv
+    value: pbta-histologies.tsv
     input: file
   telomere_ratio:
     label: "Telomere ratio file from merging control_summary.tsv and tumor_summary.tsv"
@@ -21,26 +21,25 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 library(data.table)
 library(tidyverse)
 
-# soft linked to OpenPedCan v10, subset to PBTA
-cohort_plot_labels <- read_tsv(file.path(root_dir,"data",params$cohort_label_file)) %>%
-  filter(cohort == "PBTA")
+# , subset to PBTA
+histology <- read_tsv(file.path(root_dir,"data", params$histology_file), guess_max = 3000)
 
 telomere_ratio <- read_tsv(file.path(root_dir,"analyses","01-alterations_ratio_check", "input",params$telomere_ratio))
 
 consensus_snv <- fread(file.path(root_dir,"data","snv-consensus-plus-hotspots.maf.tsv.gz"),
                        select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","HGVSp_Short")) %>%
-  filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID) %>%
+  filter(Tumor_Sample_Barcode %in% histology$Kids_First_Biospecimen_ID) %>%
   unique()
 
 consensus_cnv <- read_tsv(file.path(root_dir,
                                       "data",
                                       "consensus_wgs_plus_cnvkit_wxs.tsv.gz")) %>%
-  filter(biospecimen_id %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+  filter(biospecimen_id %in% histology$Kids_First_Biospecimen_ID)
 
 manta_sv <- read_tsv(file.path(root_dir,
                                       "data",
-                                      "sv-manta.tsv.gz")) %>%
-  filter(Kids.First.Biospecimen.ID.Tumor %in% cohort_plot_labels$Kids_First_Biospecimen_ID)
+                                      "pbta-sv-manta.tsv.gz")) %>%
+  filter(Kids.First.Biospecimen.ID.Tumor %in% histology$Kids_First_Biospecimen_ID)
 ```
 
 ```{r echo=FALSE,message=FALSE,warning=FALSE}
@@ -99,7 +98,7 @@ TERT_promoter_alt <- fread(file.path(
   "data",
   "snv-consensus-plus-hotspots.maf.tsv.gz"),
   select=c("IMPACT","Hugo_Symbol","Tumor_Sample_Barcode","Existing_variation","Consequence","Reference_Allele","Tumor_Seq_Allele2")) %>% 
-  filter(Tumor_Sample_Barcode %in% cohort_plot_labels$Kids_First_Biospecimen_ID) %>%
+  filter(Tumor_Sample_Barcode %in% histology$Kids_First_Biospecimen_ID) %>%
   unique() %>% 
   dplyr::filter(Consequence == "upstream_gene_variant", Hugo_Symbol=="TERT") 
 
@@ -135,7 +134,7 @@ merge_TERT <- merge_TERT %>% dplyr::select(-Hugo_Symbol)
 ```
 
 ```{r}
-final <- cohort_plot_labels %>%
+final <- histology %>%
   dplyr::filter(experimental_strategy %in% c("WGS"),
                 sample_type=="Tumor") %>%
   dplyr::select("Kids_First_Biospecimen_ID","Kids_First_Participant_ID","sample_id") %>%

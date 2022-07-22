@@ -11,6 +11,3 @@ Rscript code/02_get_alt_rnaseq.R
 
 # merge with telomere content ,ccircle and terra and plot
 Rscript -e "rmarkdown::render('code/03_merge_telomere_content.Rmd')"
-
-# plot scores
-Rscript -e "rmarkdown::render('code/04_score_per_alterations.Rmd')"

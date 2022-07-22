@@ -3,26 +3,28 @@ library(ggplot2)
 library(ggforce)
 library(forcats)
 
-source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
 # define directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "10-distribution")
 input_dir <- file.path(root_dir, "analyses", "01-alterations_ratio_check", "input")
 output_dir <- file.path(analysis_dir, "output")
-hist_dir <- file.path(analysis_dir, "v22-input")
+palette_dir <- file.path(analysis_dir, "v22-input")
+data_dir <- file.path(root_dir, "data")
 
+# publication theme
+source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
 
 # telhunter results
 telhunt <- read_tsv(file.path(input_dir, "telomere_940_ratio.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_tumor)
 
-palette <- read_tsv(file.path(hist_dir, "broad_histology_cancer_group_palette.tsv")) %>%
+palette <- read_tsv(file.path(palette_dir, "broad_histology_cancer_group_palette.tsv")) %>%
   select(broad_histology, cancer_group, cancer_group_display) %>%
   mutate(cancer_group_display = case_when(is.na(cancer_group_display) ~ "Benign Tumor", 
                                           TRUE ~ as.character(cancer_group_display)))
 
 # v22 OpenPBTA histologies
-v22 <- read_tsv(file.path(hist_dir, "pbta-histologies.tsv"), guess_max = 3000) %>%
+v22 <- read_tsv(file.path(data_dir, "pbta-histologies.tsv"), guess_max = 3000) %>%
   filter(sample_type == "Tumor") %>%
   mutate(sample_id = case_when(sample_id == "7316-3214-A07083" ~ "7316-3214",
                                sample_id == "7316-3214-A07082" ~ "7316-3214",

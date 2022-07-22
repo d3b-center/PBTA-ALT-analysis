@@ -50,7 +50,7 @@ gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
 gene_matrix <- gene_matrix[goi.list$genes,]
 
 
-tmb <- read_tsv(file.path(input_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
+tmb <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
   select(Kids_First_Biospecimen_ID_DNA, tmb)
 
