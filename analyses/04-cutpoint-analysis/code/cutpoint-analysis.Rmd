@@ -32,14 +32,32 @@ meta %>%
   group_by(group, alt_final) %>%
   tally()
 ```
+# Shuffle telhunter ratios and plot ROC
+```{r shuffle telhunter ratios, fig.height=4, fig.width=8}
+set.seed(2022)
+meta <- meta %>%
+  mutate(shuffled_telhunt = sample(telomere_ratio))
+
+opt_cut <- cutpointr(meta, shuffled_telhunt, alt_final,
+                method = maximize_metric, metric = sum_sens_spec, na.rm = T)
+
+# plot shuffle scores
+p1 <- plot_x(opt_cut, display_cutpoint = TRUE) + 
+   theme_Publication()
+p2 <- plot_roc(opt_cut) + 
+  theme_Publication()
+
+tiff(file.path(analysis_dir, "plots", "all_shuffled.tiff"), height = 1200, width = 2400, res = 300)
+p <- ggarrange(p1, p2, widths = c(1500, 900), height = c(1200, 600), align = "h",
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+p$`1`
+dev.off()
+
+```
 
 #run optimal cutpoint by group
 ```{r}
-#how many per group?
-meta %>%
-  group_by(group, alt_final) %>%
-  tally()
-
 opt_cut <- cutpointr(meta, telomere_ratio, alt_final, group, metric = sum_sens_spec, 
                      tol_metric = 0.05, break_ties = c, na.rm = T)
 summary(opt_cut)
