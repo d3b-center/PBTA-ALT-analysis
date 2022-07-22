@@ -1770,7 +1770,7 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjdXRwb2ludHIpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkoZ2dwdWJyKVxuXG4jIGRlZmluZSBkaXJlY3RvcmllcyBcbnJvb3RfZGlyIDwtIHJwcm9qcm9vdDo6ZmluZF9yb290KHJwcm9qcm9vdDo6aGFzX2RpcihcIi5naXRcIikpXG5hbmFseXNpc19kaXIgPC0gZmlsZS5wYXRoKHJvb3RfZGlyLCBcImFuYWx5c2VzXCIsIFwiMDQtY3V0cG9pbnQtYW5hbHlzaXNcIilcbmlucHV0X2RpciA8LSBmaWxlLnBhdGgocm9vdF9kaXIsIFwiYW5hbHlzZXNcIiwgXCIwMi1hZGQtaGlzdG9sb2dpZXNcIiwgXCJvdXRwdXRcIilcbm91dHB1dF9kaXIgPC0gZmlsZS5wYXRoKGFuYWx5c2lzX2RpciwgXCJvdXRwdXRcIilcblxuc291cmNlKGZpbGUucGF0aChhbmFseXNpc19kaXIsIFwiY29kZVwiLCBcInRoZW1lLlJcIikpXG4gICAgICAgXG4jcmVhZCBpbiBjb21iaW5lZCBmaWxlXG5tZXRhIDwtIHJlYWRfdHN2KGZpbGUucGF0aChpbnB1dF9kaXIsIFwic3R1bmRvbl9oZ2F0X3VwZGF0ZWRfaGlzdF9hbHQudHN2XCIpLFxuICAgICAgICAgZ3Vlc3NfbWF4ID0gMTAwMCkgJT4lXG4gIG11dGF0ZShhbHRfZmluYWwgPSB0b3VwcGVyKGBhbHQgZmluYWxgKSlcblxuI3N1YnNldCBmb3IgSEdHIGFuZCBub24tSEdHXG5oZ2F0IDwtIG1ldGEgJT4lXG4gIGZpbHRlcihncm91cCA9PSBcIkhHQVRcIilcbiBub25faGdhdCA8LSBtZXRhICU+JVxuICAgZmlsdGVyKGdyb3VwID09IFwibm9uLUhHQVRcIilcblxuI2hvdyBtYW55IHBlciBncm91cD9cbm1ldGEgJT4lXG4gIGdyb3VwX2J5KGdyb3VwLCBhbHRfZmluYWwpICU+JVxuICB0YWxseSgpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjdXRwb2ludHIpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkoZ2dwdWJyKVxuXG4jIGRlZmluZSBkaXJlY3RvcmllcyBcbnJvb3RfZGlyIDwtIHJwcm9qcm9vdDo6ZmluZF9yb290KHJwcm9qcm9vdDo6aGFzX2RpcihcIi5naXRcIikpXG5hbmFseXNpc19kaXIgPC0gZmlsZS5wYXRoKHJvb3RfZGlyLCBcImFuYWx5c2VzXCIsIFwiMDQtY3V0cG9pbnQtYW5hbHlzaXNcIilcbmlucHV0X2RpciA8LSBmaWxlLnBhdGgocm9vdF9kaXIsIFwiYW5hbHlzZXNcIiwgXCIwMi1hZGQtaGlzdG9sb2dpZXNcIiwgXCJvdXRwdXRcIilcbm91dHB1dF9kaXIgPC0gZmlsZS5wYXRoKGFuYWx5c2lzX2RpciwgXCJvdXRwdXRcIilcblxuc291cmNlKGZpbGUucGF0aChhbmFseXNpc19kaXIsIFwiY29kZVwiLCBcInRoZW1lLlJcIikpXG4gICAgICAgXG4jcmVhZCBpbiBjb21iaW5lZCBmaWxlXG5tZXRhIDwtIHJlYWRfdHN2KGZpbGUucGF0aChpbnB1dF9kaXIsIFwic3R1bmRvbl9oZ2F0X3VwZGF0ZWRfaGlzdF9hbHQudHN2XCIpLFxuICAgICAgICAgZ3Vlc3NfbWF4ID0gMTAwMCkgJT4lXG4gIG11dGF0ZShhbHRfZmluYWwgPSB0b3VwcGVyKGBhbHQgZmluYWxgKSlcbmBgYCJ9 -->
 <pre class="r"><code>library(cutpointr)
 library(tidyverse)
 library(ggpubr)
@@ -1786,9 +1786,19 @@ source(file.path(analysis_dir, &quot;code&quot;, &quot;theme.R&quot;))
 #read in combined file
 meta &lt;- read_tsv(file.path(input_dir, &quot;stundon_hgat_updated_hist_alt.tsv&quot;),
          guess_max = 1000) %&gt;%
-  mutate(alt_final = toupper(`alt final`))
-
-#subset for HGG and non-HGG
+  mutate(alt_final = toupper(`alt final`))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTmV3IG5hbWVzOlJvd3M6IDc5NyBDb2x1bW5zOiAxMTXilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFwiXFx0XCJcbmNociAoNTcpOiBLaWRzX0ZpcnN0X0Jpb3NwZWNpbWVuX0lEX0ROQSwgS2lkc19GaXJzdF9CaW9zcGVjaW1lbl9JRF9STkEsIEtpZHNfRmlyc3RfQmlvc3BlY2ltZW5fSURfbm9ybWFsLCBBVFJYIE11dGF0aW9uIGYuLi5cbmRibCAoNTIpOiBUSCBUL1RIIE4sIFVCVEYgQmluYXJ5LCBBVFJYIFJldmVyc2UgQmluYXJ5LCBBVFJYIElIQyBCaW5hcnksIEFUUlggQmluYXJ5LCBBVFJYIEJpbmFyeSAxMC4uLjIwLCBBVFJYIEJpbmFyeSAxMC4uLi5cbmxnbCAgKDYpOiBjZWxsX2xpbmVfY29tcG9zaXRpb24sIERBWFhfZnVzaW9uLCAuLi4zMywgTkYuLi4zOCwgQ0NBLkRvdC5CbG90LCBSTkFfbGlicmFyeVxu4oS5IFVzZSBgc3BlYygpYCB0byByZXRyaWV2ZSB0aGUgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbiBmb3IgdGhpcyBkYXRhLlxu4oS5IFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
+<pre><code>New names:Rows: 797 Columns: 115── Column specification ─────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: &quot;\t&quot;
+chr (57): Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, Kids_First_Biospecimen_ID_normal, ATRX Mutation f...
+dbl (52): TH T/TH N, UBTF Binary, ATRX Reverse Binary, ATRX IHC Binary, ATRX Binary, ATRX Binary 10...20, ATRX Binary 10....
+lgl  (6): cell_line_composition, DAXX_fusion, ...33, NF...38, CCA.Dot.Blot, RNA_library
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3N1YnNldCBmb3IgSEdHIGFuZCBub24tSEdHXG5oZ2F0IDwtIG1ldGEgJT4lXG4gIGZpbHRlcihncm91cCA9PSBcIkhHQVRcIilcbiBub25faGdhdCA8LSBtZXRhICU+JVxuICAgZmlsdGVyKGdyb3VwID09IFwibm9uLUhHQVRcIilcblxuI2hvdyBtYW55IHBlciBncm91cD9cbm1ldGEgJT4lXG4gIGdyb3VwX2J5KGdyb3VwLCBhbHRfZmluYWwpICU+JVxuICB0YWxseSgpXG5gYGAifQ== -->
+<pre class="r"><code>#subset for HGG and non-HGG
 hgat &lt;- meta %&gt;%
   filter(group == &quot;HGAT&quot;)
  non_hgat &lt;- meta %&gt;%
@@ -1799,6 +1809,13 @@ meta %&gt;%
   group_by(group, alt_final) %&gt;%
   tally()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImdyb3VwZWRfZGYiLCJ0YmxfZGYiLCJ0YmwiLCJkYXRhLmZyYW1lIl0sIm5yb3ciOjQsIm5jb2wiOjMsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNCDDlyAzIl0sIkdyb3VwcyI6WyJncm91cCBbMl0iXX19LCJyZGYiOiJVa1JZTXdwWUNnQUFBQU1BQkFJQkFBTUZBQUFBQUFWVlZFWXRPQUFBQkFJQUFBQUJBQVFBQ1FBQUFBRjRBQUFERXdBQUFBTUFBQUFRQUFBQUJBQUVBQWtBQUFBRVNFZEJWQUFFQUFrQUFBQUVTRWRCVkFBRUFBa0FBQUFJYm05dUxVaEhRVlFBQkFBSkFBQUFDRzV2YmkxSVIwRlVBQUFBRUFBQUFBUUFCQUFKQUFBQUEwNUZSd0FFQUFrQUFBQURVRTlUQUFRQUNRQUFBQU5PUlVjQUJBQUpBQUFBQTFCUFV3QUFBQTBBQUFBRUFBQUFOUUFBQUNBQUFBS0JBQUFBUndBQUJBSUFBQUFCQUFRQUNRQUFBQVZqYkdGemN3QUFBQkFBQUFBQkFBUUFDUUFBQUFwa1lYUmhMbVp5WVcxbEFBQUVBZ0FBQUFFQUJBQUpBQUFBQ1hKdmR5NXVZVzFsY3dBQUFBMEFBQUFDZ0FBQUFQLy8vL3dBQUFRQ0FBQUFBUUFFQUFrQUFBQUZibUZ0WlhNQUFBQVFBQUFBQXdBRUFBa0FBQUFGWjNKdmRYQUFCQUFKQUFBQUNXRnNkRjltYVc1aGJBQUVBQWtBQUFBQmJnQUFBUDRBQUFRQ0FBQUFBUUFFQUFrQUFBQUhiM0IwYVc5dWN3QUFBaE1BQUFBRkFBQUFFQUFBQUFFQUJBQUpBQUFBQVhJQUFBQVFBQUFBQVFBRUFBa0FBQUFQZFc1dVlXMWxaQzFqYUhWdWF5MHhBQUFBQ2dBQUFBRUFBQUFBQUFBQURRQUFBQUVBQUFBRUFBQUFEUUFBQUFFQUFBQURBQUFFQWdBQUJQOEFBQUFRQUFBQUJRQUVBQWtBQUFBR1pXNW5hVzVsQUFRQUNRQUFBQVZzWVdKbGJBQUVBQWtBQUFBT2NtOTNibUZ0WlhNdWNISnBiblFBQkFBSkFBQUFDbkp2ZDNNdWRHOTBZV3dBQkFBSkFBQUFDbU52YkhNdWRHOTBZV3dBQUFEK0FBQUEvZz09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["group"],"name":[1],"type":["chr"],"align":["left"]},{"label":["alt_final"],"name":[2],"type":["chr"],"align":["left"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"HGAT","2":"NEG","3":"53"},{"1":"HGAT","2":"POS","3":"32"},{"1":"non-HGAT","2":"NEG","3":"641"},{"1":"non-HGAT","2":"POS","3":"71"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="shuffle-telhunter-ratios-and-plot-roc" class="section level1">
@@ -1845,11 +1862,119 @@ dev.off()</code></pre>
 <p>#run optimal cutpoint by group</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub3B0X2N1dCA8LSBjdXRwb2ludHIobWV0YSwgdGVsb21lcmVfcmF0aW8sIGFsdF9maW5hbCwgZ3JvdXAsIG1ldHJpYyA9IHN1bV9zZW5zX3NwZWMsIFxuICAgICAgICAgICAgICAgICAgICAgdG9sX21ldHJpYyA9IDAuMDUsIGJyZWFrX3RpZXMgPSBjLCBuYS5ybSA9IFQpXG5zdW1tYXJ5KG9wdF9jdXQpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub3B0X2N1dCA8LSBjdXRwb2ludHIobWV0YSwgdGVsb21lcmVfcmF0aW8sIGFsdF9maW5hbCwgZ3JvdXAsIG1ldHJpYyA9IHN1bV9zZW5zX3NwZWMsIFxuICAgICAgICAgICAgICAgICAgICAgdG9sX21ldHJpYyA9IDAuMDUsIGJyZWFrX3RpZXMgPSBjLCBuYS5ybSA9IFQpXG5gYGAifQ== -->
 <pre class="r"><code>opt_cut &lt;- cutpointr(meta, telomere_ratio, alt_final, group, metric = sum_sens_spec, 
-                     tol_metric = 0.05, break_ties = c, na.rm = T)
-summary(opt_cut)</code></pre>
+                     tol_metric = 0.05, break_ties = c, na.rm = T)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGlzIFBPU1xuQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGhhcyBoaWdoZXIgeCB2YWx1ZXNcbk11bHRpcGxlIG9wdGltYWwgY3V0cG9pbnRzIGZvdW5kLCBhcHBseWluZyBicmVha190aWVzLlxuTXVsdGlwbGUgb3B0aW1hbCBjdXRwb2ludHMgZm91bmQsIGFwcGx5aW5nIGJyZWFrX3RpZXMuXG4ifQ== -->
+<pre><code>Assuming the positive class is POS
+Assuming the positive class has higher x values
+Multiple optimal cutpoints found, applying break_ties.
+Multiple optimal cutpoints found, applying break_ties.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShvcHRfY3V0KVxuYGBgIn0= -->
+<pre class="r"><code>summary(opt_cut)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTWV0aG9kOiBtYXhpbWl6ZV9tZXRyaWMgXG5QcmVkaWN0b3I6IHRlbG9tZXJlX3JhdGlvIFxuT3V0Y29tZTogYWx0X2ZpbmFsIFxuRGlyZWN0aW9uOiA+PSBcblN1Ymdyb3Vwczogbm9uLUhHQVQsIEhHQVQgXG5cblN1Ymdyb3VwOiBub24tSEdBVCBcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIFxuICAgQVVDICAgbiBuX3BvcyBuX25lZ1xuIDAuNjYzIDcxMiAgICA3MSAgIDY0MVxuXG4gb3B0aW1hbF9jdXRwb2ludCBzdW1fc2Vuc19zcGVjICAgIGFjYyBzZW5zaXRpdml0eSBzcGVjaWZpY2l0eSB0cCBmbiAgZnAgIHRuXG4gICAgICAgICAgIDEuMDE2NyAgICAgICAgMS4zMDg5IDAuNzcyNSAgICAgIDAuNTA3MCAgICAgIDAuODAxOSAzNiAzNSAxMjcgNTE0XG4gICAgICAgICAgIDEuMDA3MiAgICAgICAgMS4zMDc0IDAuNzcxMSAgICAgIDAuNTA3MCAgICAgIDAuODAwMyAzNiAzNSAxMjggNTEzXG4gICAgICAgICAgIDEuMDAxNSAgICAgICAgMS4zMTgzIDAuNzY5NyAgICAgIDAuNTIxMSAgICAgIDAuNzk3MiAzNyAzNCAxMzAgNTExXG4gICAgICAgICAgIDAuOTk5NCAgICAgICAgMS4zMTY4IDAuNzY4MyAgICAgIDAuNTIxMSAgICAgIDAuNzk1NiAzNyAzNCAxMzEgNTEwXG4gICAgICAgICAgIDAuOTk5MyAgICAgICAgMS4zMzA4IDAuNzY5NyAgICAgIDAuNTM1MiAgICAgIDAuNzk1NiAzOCAzMyAxMzEgNTEwXG4gICAgICAgICAgIDAuOTk5MiAgICAgICAgMS4zMjkzIDAuNzY4MyAgICAgIDAuNTM1MiAgICAgIDAuNzk0MSAzOCAzMyAxMzIgNTA5XG4gICAgICAgICAgIDAuOTk3OSAgICAgICAgMS4zMjc3IDAuNzY2OSAgICAgIDAuNTM1MiAgICAgIDAuNzkyNSAzOCAzMyAxMzMgNTA4XG4gICAgICAgICAgIDAuOTk3NyAgICAgICAgMS4zNDE4IDAuNzY4MyAgICAgIDAuNTQ5MyAgICAgIDAuNzkyNSAzOSAzMiAxMzMgNTA4XG4gICAgICAgICAgIDAuOTk2MyAgICAgICAgMS4zNTU5IDAuNzY5NyAgICAgIDAuNTYzNCAgICAgIDAuNzkyNSA0MCAzMSAxMzMgNTA4XG4gICAgICAgICAgIDAuOTkzOCAgICAgICAgMS4zNTQzIDAuNzY4MyAgICAgIDAuNTYzNCAgICAgIDAuNzkxMCA0MCAzMSAxMzQgNTA3XG4gICAgICAgICAgIDAuOTkzMyAgICAgICAgMS4zNTI4IDAuNzY2OSAgICAgIDAuNTYzNCAgICAgIDAuNzg5NCA0MCAzMSAxMzUgNTA2XG4gICAgICAgICAgIDAuOTkyNCAgICAgICAgMS4zNTEyIDAuNzY1NCAgICAgIDAuNTYzNCAgICAgIDAuNzg3OCA0MCAzMSAxMzYgNTA1XG4gICAgICAgICAgIDAuOTkxOSAgICAgICAgMS4zNDk3IDAuNzY0MCAgICAgIDAuNTYzNCAgICAgIDAuNzg2MyA0MCAzMSAxMzcgNTA0XG4gICAgICAgICAgIDAuOTkxMiAgICAgICAgMS4zNDgxIDAuNzYyNiAgICAgIDAuNTYzNCAgICAgIDAuNzg0NyA0MCAzMSAxMzggNTAzXG4gICAgICAgICAgIDAuOTg4MCAgICAgICAgMS4zNDY1IDAuNzYxMiAgICAgIDAuNTYzNCAgICAgIDAuNzgzMiA0MCAzMSAxMzkgNTAyXG4gICAgICAgICAgIDAuOTg2NCAgICAgICAgMS4zNDUwIDAuNzU5OCAgICAgIDAuNTYzNCAgICAgIDAuNzgxNiA0MCAzMSAxNDAgNTAxXG4gICAgICAgICAgIDAuOTgxOSAgICAgICAgMS4zNDM0IDAuNzU4NCAgICAgIDAuNTYzNCAgICAgIDAuNzgwMCA0MCAzMSAxNDEgNTAwXG4gICAgICAgICAgIDAuOTc3MCAgICAgICAgMS4zNDE5IDAuNzU3MCAgICAgIDAuNTYzNCAgICAgIDAuNzc4NSA0MCAzMSAxNDIgNDk5XG4gICAgICAgICAgIDAuOTc1NSAgICAgICAgMS4zNDAzIDAuNzU1NiAgICAgIDAuNTYzNCAgICAgIDAuNzc2OSA0MCAzMSAxNDMgNDk4XG4gICAgICAgICAgIDAuOTczNCAgICAgICAgMS4zMzg3IDAuNzU0MiAgICAgIDAuNTYzNCAgICAgIDAuNzc1NCA0MCAzMSAxNDQgNDk3XG4gICAgICAgICAgIDAuOTczMCAgICAgICAgMS4zMzcyIDAuNzUyOCAgICAgIDAuNTYzNCAgICAgIDAuNzczOCA0MCAzMSAxNDUgNDk2XG4gICAgICAgICAgIDAuOTcxMSAgICAgICAgMS4zNTEzIDAuNzU0MiAgICAgIDAuNTc3NSAgICAgIDAuNzczOCA0MSAzMCAxNDUgNDk2XG4gICAgICAgICAgIDAuOTcwMyAgICAgICAgMS4zNDk3IDAuNzUyOCAgICAgIDAuNTc3NSAgICAgIDAuNzcyMiA0MSAzMCAxNDYgNDk1XG4gICAgICAgICAgIDAuOTY3OSAgICAgICAgMS4zNDgxIDAuNzUxNCAgICAgIDAuNTc3NSAgICAgIDAuNzcwNyA0MSAzMCAxNDcgNDk0XG4gICAgICAgICAgIDAuOTY3MSAgICAgICAgMS4zNDY2IDAuNzUwMCAgICAgIDAuNTc3NSAgICAgIDAuNzY5MSA0MSAzMCAxNDggNDkzXG4gICAgICAgICAgIDAuOTYzNiAgICAgICAgMS4zNDUwIDAuNzQ4NiAgICAgIDAuNTc3NSAgICAgIDAuNzY3NiA0MSAzMCAxNDkgNDkyXG4gICAgICAgICAgIDAuOTYyMiAgICAgICAgMS4zNDM1IDAuNzQ3MiAgICAgIDAuNTc3NSAgICAgIDAuNzY2MCA0MSAzMCAxNTAgNDkxXG4gICAgICAgICAgIDAuOTYwMCAgICAgICAgMS4zNDE5IDAuNzQ1OCAgICAgIDAuNTc3NSAgICAgIDAuNzY0NCA0MSAzMCAxNTEgNDkwXG4gICAgICAgICAgIDAuOTU5NCAgICAgICAgMS4zNDAzIDAuNzQ0NCAgICAgIDAuNTc3NSAgICAgIDAuNzYyOSA0MSAzMCAxNTIgNDg5XG4gICAgICAgICAgIDAuOTU4MCAgICAgICAgMS4zMzg4IDAuNzQzMCAgICAgIDAuNTc3NSAgICAgIDAuNzYxMyA0MSAzMCAxNTMgNDg4XG4gICAgICAgICAgIDAuOTU3MSAgICAgICAgMS4zMzcyIDAuNzQxNiAgICAgIDAuNTc3NSAgICAgIDAuNzU5OCA0MSAzMCAxNTQgNDg3XG4gICAgICAgICAgIDAuOTU1NiAgICAgICAgMS4zMzU3IDAuNzQwMiAgICAgIDAuNTc3NSAgICAgIDAuNzU4MiA0MSAzMCAxNTUgNDg2XG4gICAgICAgICAgIDAuOTU1MyAgICAgICAgMS4zMzQxIDAuNzM4OCAgICAgIDAuNTc3NSAgICAgIDAuNzU2NiA0MSAzMCAxNTYgNDg1XG4gICAgICAgICAgIDAuOTU1MyAgICAgICAgMS4zMzI1IDAuNzM3NCAgICAgIDAuNTc3NSAgICAgIDAuNzU1MSA0MSAzMCAxNTcgNDg0XG4gICAgICAgICAgIDAuOTUwNyAgICAgICAgMS4zMzEwIDAuNzM2MCAgICAgIDAuNTc3NSAgICAgIDAuNzUzNSA0MSAzMCAxNTggNDgzXG4gICAgICAgICAgIDAuOTQ5OCAgICAgICAgMS4zMjk0IDAuNzM0NiAgICAgIDAuNTc3NSAgICAgIDAuNzUyMCA0MSAzMCAxNTkgNDgyXG4gICAgICAgICAgIDAuOTQ4MCAgICAgICAgMS4zMjc5IDAuNzMzMSAgICAgIDAuNTc3NSAgICAgIDAuNzUwNCA0MSAzMCAxNjAgNDgxXG4gICAgICAgICAgIDAuOTQ3MiAgICAgICAgMS4zMjYzIDAuNzMxNyAgICAgIDAuNTc3NSAgICAgIDAuNzQ4OCA0MSAzMCAxNjEgNDgwXG4gICAgICAgICAgIDAuOTQ2OSAgICAgICAgMS4zMjQ3IDAuNzMwMyAgICAgIDAuNTc3NSAgICAgIDAuNzQ3MyA0MSAzMCAxNjIgNDc5XG4gICAgICAgICAgIDAuOTQ2MSAgICAgICAgMS4zMjMyIDAuNzI4OSAgICAgIDAuNTc3NSAgICAgIDAuNzQ1NyA0MSAzMCAxNjMgNDc4XG4gICAgICAgICAgIDAuOTQxOCAgICAgICAgMS4zMjE2IDAuNzI3NSAgICAgIDAuNTc3NSAgICAgIDAuNzQ0MSA0MSAzMCAxNjQgNDc3XG4gICAgICAgICAgIDAuOTM5NyAgICAgICAgMS4zMzU3IDAuNzI4OSAgICAgIDAuNTkxNSAgICAgIDAuNzQ0MSA0MiAyOSAxNjQgNDc3XG4gICAgICAgICAgIDAuOTM4NyAgICAgICAgMS4zMzQxIDAuNzI3NSAgICAgIDAuNTkxNSAgICAgIDAuNzQyNiA0MiAyOSAxNjUgNDc2XG4gICAgICAgICAgIDAuOTM4MiAgICAgICAgMS4zMzI2IDAuNzI2MSAgICAgIDAuNTkxNSAgICAgIDAuNzQxMCA0MiAyOSAxNjYgNDc1XG4gICAgICAgICAgIDAuOTM2MiAgICAgICAgMS4zMzEwIDAuNzI0NyAgICAgIDAuNTkxNSAgICAgIDAuNzM5NSA0MiAyOSAxNjcgNDc0XG4gICAgICAgICAgIDAuOTM0MSAgICAgICAgMS4zMjk1IDAuNzIzMyAgICAgIDAuNTkxNSAgICAgIDAuNzM3OSA0MiAyOSAxNjggNDczXG4gICAgICAgICAgIDAuOTMzMCAgICAgICAgMS4zMjc5IDAuNzIxOSAgICAgIDAuNTkxNSAgICAgIDAuNzM2MyA0MiAyOSAxNjkgNDcyXG4gICAgICAgICAgIDAuOTMxMCAgICAgICAgMS4zMjYzIDAuNzIwNSAgICAgIDAuNTkxNSAgICAgIDAuNzM0OCA0MiAyOSAxNzAgNDcxXG4gICAgICAgICAgIDAuOTIzNiAgICAgICAgMS4zMjQ4IDAuNzE5MSAgICAgIDAuNTkxNSAgICAgIDAuNzMzMiA0MiAyOSAxNzEgNDcwXG4gICAgICAgICAgIDAuOTIyMCAgICAgICAgMS4zMjMyIDAuNzE3NyAgICAgIDAuNTkxNSAgICAgIDAuNzMxNyA0MiAyOSAxNzIgNDY5XG4gICAgICAgICAgIDAuOTIxMyAgICAgICAgMS4zMjE3IDAuNzE2MyAgICAgIDAuNTkxNSAgICAgIDAuNzMwMSA0MiAyOSAxNzMgNDY4XG4gICAgICAgICAgIDAuOTE5NCAgICAgICAgMS4zMjAxIDAuNzE0OSAgICAgIDAuNTkxNSAgICAgIDAuNzI4NSA0MiAyOSAxNzQgNDY3XG4gICAgICAgICAgIDAuOTE3MiAgICAgICAgMS4zMTg1IDAuNzEzNSAgICAgIDAuNTkxNSAgICAgIDAuNzI3MCA0MiAyOSAxNzUgNDY2XG4gICAgICAgICAgIDAuOTE2NCAgICAgICAgMS4zMTcwIDAuNzEyMSAgICAgIDAuNTkxNSAgICAgIDAuNzI1NCA0MiAyOSAxNzYgNDY1XG4gICAgICAgICAgIDAuOTE0NiAgICAgICAgMS4zMTU0IDAuNzEwNyAgICAgIDAuNTkxNSAgICAgIDAuNzIzOSA0MiAyOSAxNzcgNDY0XG4gICAgICAgICAgIDAuOTExNiAgICAgICAgMS4zMTM5IDAuNzA5MyAgICAgIDAuNTkxNSAgICAgIDAuNzIyMyA0MiAyOSAxNzggNDYzXG4gICAgICAgICAgIDAuOTA2OSAgICAgICAgMS4zMTIzIDAuNzA3OSAgICAgIDAuNTkxNSAgICAgIDAuNzIwNyA0MiAyOSAxNzkgNDYyXG4gICAgICAgICAgIDAuOTA2NSAgICAgICAgMS4zMTA3IDAuNzA2NSAgICAgIDAuNTkxNSAgICAgIDAuNzE5MiA0MiAyOSAxODAgNDYxXG4gICAgICAgICAgIDAuOTA0NyAgICAgICAgMS4zMDkyIDAuNzA1MSAgICAgIDAuNTkxNSAgICAgIDAuNzE3NiA0MiAyOSAxODEgNDYwXG4gICAgICAgICAgIDAuOTA0NCAgICAgICAgMS4zMDc2IDAuNzAzNyAgICAgIDAuNTkxNSAgICAgIDAuNzE2MSA0MiAyOSAxODIgNDU5XG4gICAgICAgICAgIDAuOTAzMiAgICAgICAgMS4zMDYxIDAuNzAyMiAgICAgIDAuNTkxNSAgICAgIDAuNzE0NSA0MiAyOSAxODMgNDU4XG5cblByZWRpY3RvciBzdW1tYXJ5OiBcbiAgICBEYXRhICAgICAgTWluLiAgICAgICAgNSUgICAxc3QgUXUuICAgIE1lZGlhbiAgICAgIE1lYW4gICAzcmQgUXUuICAgICAgOTUlICAgICBNYXguICAgICAgICBTRCBOQXNcbiBPdmVyYWxsIDAuMTc3NjQyOCAwLjM5MTc0MTIgMC41NjMyMjMyIDAuNzM4MzE5MyAwLjg0NTQ4MTEgMC45ODg3ODQ3IDEuNTc4ODM3IDYuNzczMjgyIDAuNTExOTk5NiAgIDBcbiAgICAgTkVHIDAuMjI3NTQwMSAwLjM5MDExMTMgMC41NTgyODc5IDAuNzE4MDYwOCAwLjc5NTk5MzYgMC45NDcyMDUwIDEuNDUyNDUzIDMuMTkxNzg1IDAuMzQ4MDk2NiAgIDBcbiAgICAgUE9TIDAuMTc3NjQyOCAwLjQxOTgyNDkgMC42MzE2MzUxIDEuMDE2NzQ2NiAxLjI5MjI2MjggMS4zNzIyMzg5IDMuOTAyNzAxIDYuNzczMjgyIDEuMTUzMjA3MiAgIDBcblxuU3ViZ3JvdXA6IEhHQVQgXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSBcbiAgICBBVUMgIG4gbl9wb3Mgbl9uZWdcbiAwLjk0NTIgODUgICAgMzIgICAgNTNcblxuIG9wdGltYWxfY3V0cG9pbnQgc3VtX3NlbnNfc3BlYyAgICBhY2Mgc2Vuc2l0aXZpdHkgc3BlY2lmaWNpdHkgdHAgZm4gZnAgdG5cbiAgICAgICAgICAgMS4yODIxICAgICAgICAxLjc4NzEgMC45MDU5ICAgICAgMC44NDM4ICAgICAgMC45NDM0IDI3ICA1ICAzIDUwXG4gICAgICAgICAgIDEuMDc3MyAgICAgICAgMS43OTMwIDAuODk0MSAgICAgIDAuOTA2MiAgICAgIDAuODg2OCAyOSAgMyAgNiA0N1xuICAgICAgICAgICAxLjA2NzkgICAgICAgIDEuODI0MyAwLjkwNTkgICAgICAwLjkzNzUgICAgICAwLjg4NjggMzAgIDIgIDYgNDdcbiAgICAgICAgICAgMS4wMjU1ICAgICAgICAxLjgwNTQgMC44OTQxICAgICAgMC45Mzc1ICAgICAgMC44Njc5IDMwICAyICA3IDQ2XG4gICAgICAgICAgIDAuOTg4OSAgICAgICAgMS43ODY2IDAuODgyNCAgICAgIDAuOTM3NSAgICAgIDAuODQ5MSAzMCAgMiAgOCA0NVxuICAgICAgICAgICAwLjkzNTQgICAgICAgIDEuNzgwMSAwLjg3MDYgICAgICAwLjk2ODggICAgICAwLjgxMTMgMzEgIDEgMTAgNDNcblxuUHJlZGljdG9yIHN1bW1hcnk6IFxuICAgIERhdGEgICAgICBNaW4uICAgICAgICA1JSAgIDFzdCBRdS4gICAgTWVkaWFuICAgICAgTWVhbiAgIDNyZCBRdS4gICAgICA5NSUgICAgICBNYXguICAgICAgICBTRCBOQXNcbiBPdmVyYWxsIDAuMzMwMDk4MCAwLjQwNzgyNDcgMC42NjUxNTgzIDAuOTE0MTcxOSAxLjQzNTcyNTMgMS40OTQzODk1IDMuNzk4NTcyIDEwLjg0NDYxMCAxLjU5NTE2MTggICAwXG4gICAgIE5FRyAwLjMzMDA5ODAgMC4zODk1Nzc1IDAuNTcxNTE1MCAwLjcyOTUyNTUgMC43NzE4OTcyIDAuOTA1OTI5OCAxLjMxNjY2NyAgMi4xMjc4NTQgMC4zMjQwNDM3ICAgMFxuICAgICBQT1MgMC42MDMxMDUxIDEuMDA4MzE0MSAxLjMzMTUxNDkgMS43NjQ5MDM5IDIuNTM1MTkwNSAyLjg0NTE3ODQgNi42NDI2NzUgMTAuODQ0NjEwIDIuMTcxOTg3OSAgIDBcbiJ9 -->
+<pre><code>Method: maximize_metric 
+Predictor: telomere_ratio 
+Outcome: alt_final 
+Direction: &gt;= 
+Subgroups: non-HGAT, HGAT 
+
+Subgroup: non-HGAT 
+----------------------------------------------------------------------------------------------------------------------------- 
+   AUC   n n_pos n_neg
+ 0.663 712    71   641
+
+ optimal_cutpoint sum_sens_spec    acc sensitivity specificity tp fn  fp  tn
+           1.0167        1.3089 0.7725      0.5070      0.8019 36 35 127 514
+           1.0072        1.3074 0.7711      0.5070      0.8003 36 35 128 513
+           1.0015        1.3183 0.7697      0.5211      0.7972 37 34 130 511
+           0.9994        1.3168 0.7683      0.5211      0.7956 37 34 131 510
+           0.9993        1.3308 0.7697      0.5352      0.7956 38 33 131 510
+           0.9992        1.3293 0.7683      0.5352      0.7941 38 33 132 509
+           0.9979        1.3277 0.7669      0.5352      0.7925 38 33 133 508
+           0.9977        1.3418 0.7683      0.5493      0.7925 39 32 133 508
+           0.9963        1.3559 0.7697      0.5634      0.7925 40 31 133 508
+           0.9938        1.3543 0.7683      0.5634      0.7910 40 31 134 507
+           0.9933        1.3528 0.7669      0.5634      0.7894 40 31 135 506
+           0.9924        1.3512 0.7654      0.5634      0.7878 40 31 136 505
+           0.9919        1.3497 0.7640      0.5634      0.7863 40 31 137 504
+           0.9912        1.3481 0.7626      0.5634      0.7847 40 31 138 503
+           0.9880        1.3465 0.7612      0.5634      0.7832 40 31 139 502
+           0.9864        1.3450 0.7598      0.5634      0.7816 40 31 140 501
+           0.9819        1.3434 0.7584      0.5634      0.7800 40 31 141 500
+           0.9770        1.3419 0.7570      0.5634      0.7785 40 31 142 499
+           0.9755        1.3403 0.7556      0.5634      0.7769 40 31 143 498
+           0.9734        1.3387 0.7542      0.5634      0.7754 40 31 144 497
+           0.9730        1.3372 0.7528      0.5634      0.7738 40 31 145 496
+           0.9711        1.3513 0.7542      0.5775      0.7738 41 30 145 496
+           0.9703        1.3497 0.7528      0.5775      0.7722 41 30 146 495
+           0.9679        1.3481 0.7514      0.5775      0.7707 41 30 147 494
+           0.9671        1.3466 0.7500      0.5775      0.7691 41 30 148 493
+           0.9636        1.3450 0.7486      0.5775      0.7676 41 30 149 492
+           0.9622        1.3435 0.7472      0.5775      0.7660 41 30 150 491
+           0.9600        1.3419 0.7458      0.5775      0.7644 41 30 151 490
+           0.9594        1.3403 0.7444      0.5775      0.7629 41 30 152 489
+           0.9580        1.3388 0.7430      0.5775      0.7613 41 30 153 488
+           0.9571        1.3372 0.7416      0.5775      0.7598 41 30 154 487
+           0.9556        1.3357 0.7402      0.5775      0.7582 41 30 155 486
+           0.9553        1.3341 0.7388      0.5775      0.7566 41 30 156 485
+           0.9553        1.3325 0.7374      0.5775      0.7551 41 30 157 484
+           0.9507        1.3310 0.7360      0.5775      0.7535 41 30 158 483
+           0.9498        1.3294 0.7346      0.5775      0.7520 41 30 159 482
+           0.9480        1.3279 0.7331      0.5775      0.7504 41 30 160 481
+           0.9472        1.3263 0.7317      0.5775      0.7488 41 30 161 480
+           0.9469        1.3247 0.7303      0.5775      0.7473 41 30 162 479
+           0.9461        1.3232 0.7289      0.5775      0.7457 41 30 163 478
+           0.9418        1.3216 0.7275      0.5775      0.7441 41 30 164 477
+           0.9397        1.3357 0.7289      0.5915      0.7441 42 29 164 477
+           0.9387        1.3341 0.7275      0.5915      0.7426 42 29 165 476
+           0.9382        1.3326 0.7261      0.5915      0.7410 42 29 166 475
+           0.9362        1.3310 0.7247      0.5915      0.7395 42 29 167 474
+           0.9341        1.3295 0.7233      0.5915      0.7379 42 29 168 473
+           0.9330        1.3279 0.7219      0.5915      0.7363 42 29 169 472
+           0.9310        1.3263 0.7205      0.5915      0.7348 42 29 170 471
+           0.9236        1.3248 0.7191      0.5915      0.7332 42 29 171 470
+           0.9220        1.3232 0.7177      0.5915      0.7317 42 29 172 469
+           0.9213        1.3217 0.7163      0.5915      0.7301 42 29 173 468
+           0.9194        1.3201 0.7149      0.5915      0.7285 42 29 174 467
+           0.9172        1.3185 0.7135      0.5915      0.7270 42 29 175 466
+           0.9164        1.3170 0.7121      0.5915      0.7254 42 29 176 465
+           0.9146        1.3154 0.7107      0.5915      0.7239 42 29 177 464
+           0.9116        1.3139 0.7093      0.5915      0.7223 42 29 178 463
+           0.9069        1.3123 0.7079      0.5915      0.7207 42 29 179 462
+           0.9065        1.3107 0.7065      0.5915      0.7192 42 29 180 461
+           0.9047        1.3092 0.7051      0.5915      0.7176 42 29 181 460
+           0.9044        1.3076 0.7037      0.5915      0.7161 42 29 182 459
+           0.9032        1.3061 0.7022      0.5915      0.7145 42 29 183 458
+
+Predictor summary: 
+    Data      Min.        5%   1st Qu.    Median      Mean   3rd Qu.      95%     Max.        SD NAs
+ Overall 0.1776428 0.3917412 0.5632232 0.7383193 0.8454811 0.9887847 1.578837 6.773282 0.5119996   0
+     NEG 0.2275401 0.3901113 0.5582879 0.7180608 0.7959936 0.9472050 1.452453 3.191785 0.3480966   0
+     POS 0.1776428 0.4198249 0.6316351 1.0167466 1.2922628 1.3722389 3.902701 6.773282 1.1532072   0
+
+Subgroup: HGAT 
+----------------------------------------------------------------------------------------------------------------------------- 
+    AUC  n n_pos n_neg
+ 0.9452 85    32    53
+
+ optimal_cutpoint sum_sens_spec    acc sensitivity specificity tp fn fp tn
+           1.2821        1.7871 0.9059      0.8438      0.9434 27  5  3 50
+           1.0773        1.7930 0.8941      0.9062      0.8868 29  3  6 47
+           1.0679        1.8243 0.9059      0.9375      0.8868 30  2  6 47
+           1.0255        1.8054 0.8941      0.9375      0.8679 30  2  7 46
+           0.9889        1.7866 0.8824      0.9375      0.8491 30  2  8 45
+           0.9354        1.7801 0.8706      0.9688      0.8113 31  1 10 43
+
+Predictor summary: 
+    Data      Min.        5%   1st Qu.    Median      Mean   3rd Qu.      95%      Max.        SD NAs
+ Overall 0.3300980 0.4078247 0.6651583 0.9141719 1.4357253 1.4943895 3.798572 10.844610 1.5951618   0
+     NEG 0.3300980 0.3895775 0.5715150 0.7295255 0.7718972 0.9059298 1.316667  2.127854 0.3240437   0
+     POS 0.6031051 1.0083141 1.3315149 1.7649039 2.5351905 2.8451784 6.642675 10.844610 2.1719879   0</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#plot by group</p>
@@ -1863,6 +1988,10 @@ plot_metric(opt_cut) +
 #invisible(dev.off())
 dev.off()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibnVsbCBkZXZpY2UgXG4gICAgICAgICAgMSBcbiJ9 -->
+<pre><code>null device 
+          1 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#subset and plot - HGAT</p>
@@ -1875,6 +2004,13 @@ dev.off()</code></pre>
   unnest(cols = c(optimal_cutpoint, sum_sens_spec)) %&gt;%
   arrange(-sum_sens_spec)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Miwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDIiXX19LCJyZGYiOiJVa1JZTXdwWUNnQUFBQU1BQkFJQkFBTUZBQUFBQUFWVlZFWXRPQUFBQkFJQUFBQUJBQVFBQ1FBQUFBRjRBQUFERXdBQUFBSUFBQUFPQUFBQUJqL3hGa203RG1zbVAvQm9aZUV6clVRLzhUekd1ZkpFd0QvMGcyUXBhMTIwUCsra3RENU9pWncvN2U4WUF0WmlNQUFBQUE0QUFBQUdQLzB3VFVoejdLNC8vT01FMUljK3l6LzhzRTFJYyt5dVAveVlKcVE1OWxjLy9KVzhZSnFRNkQvOGV5dDR3VFVpQUFBRUFnQUFBQUVBQkFBSkFBQUFCVzVoYldWekFBQUFFQUFBQUFJQUJBQUpBQUFBRUc5d2RHbHRZV3hmWTNWMGNHOXBiblFBQkFBSkFBQUFEWE4xYlY5elpXNXpYM053WldNQUFBUUNBQUFBQVFBRUFBa0FBQUFKY205M0xtNWhiV1Z6QUFBQURRQUFBQUtBQUFBQS8vLy8rZ0FBQkFJQUFBQUJBQVFBQ1FBQUFBVmpiR0Z6Y3dBQUFCQUFBQUFCQUFRQUNRQUFBQXBrWVhSaExtWnlZVzFsQUFBQS9nQUFCQUlBQUFBQkFBUUFDUUFBQUFkdmNIUnBiMjV6QUFBQ0V3QUFBQVVBQUFBUUFBQUFBUUFFQUFrQUFBQUJjZ0FBQUJBQUFBQUJBQVFBQ1FBQUFBOTFibTVoYldWa0xXTm9kVzVyTFRRQUFBQUtBQUFBQVFBQUFBQUFBQUFOQUFBQUFRQUFBQVlBQUFBTkFBQUFBUUFBQUFJQUFBUUNBQUFDL3dBQUFCQUFBQUFGQUFRQUNRQUFBQVpsYm1kcGJtVUFCQUFKQUFBQUJXeGhZbVZzQUFRQUNRQUFBQTV5YjNkdVlXMWxjeTV3Y21sdWRBQUVBQWtBQUFBS2NtOTNjeTUwYjNSaGJBQUVBQWtBQUFBS1kyOXNjeTUwYjNSaGJBQUFBUDRBQUFEKyJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["optimal_cutpoint"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["sum_sens_spec"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1.0679414","2":"1.824292"},{"1":"1.0254878","2":"1.805425"},{"1":"1.0773380","2":"1.793042"},{"1":"1.2820779","2":"1.787146"},{"1":"0.9888555","2":"1.786557"},{"1":"0.9354363","2":"1.780071"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#subset and plot - non-HGAT</p>
@@ -1887,16 +2023,47 @@ dev.off()</code></pre>
   unnest(cols = c(optimal_cutpoint, sum_sens_spec)) %&gt;%
   arrange(-sum_sens_spec)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NjEsIm5jb2wiOjIsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNjEgw5cgMiJdfX0sInJkZiI6IlVrUllNd3BZQ2dBQUFBTUFCQUlCQUFNRkFBQUFBQVZWVkVZdE9BQUFCQUlBQUFBQkFBUUFDUUFBQUFGNEFBQURFd0FBQUFJQUFBQU9BQUFBUFQvdjRjb1RyTmJsUCsvTTFia3NWYjAvNzhrVXp3cXY1ei92RXl4M21VZDNQKy9CVzZiRy8wMC83dzBXUXB3ajlEL3Z2VTF1SHNrVVArNzQ5VDhkZ08wLzc3ZnVPY0V1Y1QvdThpNnp1RnNaUCsrZGhhbzQ1Q2cvN3RXSjg1dHE1VC92a01qaEQ0Q2RQKzdLcytadktady83MndYNW1mM1hEL3V1QlNKem1FT1ArOURkUHBUMGQwLzcrMlFrSWhCL0QvdXMyQkNUekVpUCs4M01uSzVQdWcvN3FmTHZyY2ZBei92SmNhaGxWM1ZQKzZnVFVVcThpWS83eUp5QllYTVJEL3VFZ0JWR3dMY1ArNlQvZU51RFlvLzdnb285OCtQU1QvdWthc0pGNFFxUCs0R0cwR3NJaTAvN3BGckJSQk1aai90OWNBTUcxcXRQKzVzRnE0bzFpZy83L3FKQ25zVzJqL3Q0OFpsSkFoOVArNWxEbzZCY2ljLzcvbk9YSnNNTEQvdDJyMXFTWHZSUCs1Vi91KzlCd2MvNys4RlBsUjNOVC90eXJaWm9hK3RQKzVQZ05ybVJicy83WTR4OW0yMzdqL3VUVGg0LzFqSVArMkF4b3hMc1hBLzdrWWZyT3c4UUQvdGV6NEZpdHFNUCs0amRPcW94NGcvN1d3VkNaUEw5VC90V1dMWTV1TEZQL0FHT1RZbm4vay83VkxwOWJJbUdEL3YrM2huY2szRFArMUVhbmhQeGRjLzdTd2RRaEhhK1QvdEJaTmVQdjF0UCswQnRXV0JROG8vN1BNZVdibkMrVC93UkpnS0xtSFZQK3p3OFV5TUVpZy84QjFtWTl2MGJqL3M1MmFzVEdSN0FBQUFEZ0FBQUQwLzliRzd5b1J5VXovMXExZnlkSGkyUC9XazlCcGtmeG8vOVo2K1Z0YkdOei8xbnBCQ1ZJVitQL1dZV243R3pKby85WmdzYWtTTDRqLzFrZmFtdHRMK1AvV1J5Skkwa2tZLzlZdVN6cWJaWWovMWkyUzZKSmlxUC9XRkx2YVczOFkvOVlVQTRoU2ZEai8xZnNzZWh1WXFQL1YrblFvRXBYSS85WGhuUm5ic2pqLzFlRGt4OUt2V1AvVjRDeDF5YXgwLzlYSURibWJ5OGovMWNkVlo1TEk1UC9Wcm41WlcrVlkvOVd0eGdkUzRuVC8xWlR1K1J2KzZQL1ZsRGFuRXZ3RS85VjhGK3JsRzFqLzFYdGZtTndZZVAvVllvaUtwVFRvLzlWaDBEaWNNZ1QvMVVqNUttVk9lUC9WU0VEWVhFdVUvOVV2YWNvbGFBai8xUzZ4ZUJ4bEpQL1ZMSWlDQVZ4NC85VVYybW5sZ1pqLzFSVWlGOXgrc1AvVkV2a2h3WFlJLzlUOFN3bWxteVQvMVB1U3Q1eVlRUC9VK1duQmdZK1kvOVRpdTZsbHRMVC8xT0lEVjF5eDBQL1V5U3hKSmM1RS85VEljL2NjeTJELzFLK2M2T1huMFAvVXJ1U1czT1R3LzlTV0RZaW1BV0QvMUpWVk5weitnUC9VZkg0b1pocncvOVJpN3NnbU5JRC8xRjlWTGZrbUVQL1VTVjluNWs0US85UkZ4YzI1UDZELzFDL1FCNlpub1AvVUZrQ25ab0V3LzlQOHNVY21tc0QvMCtNaDV1YTBVUC9UeVpLR3BzM2cvOVBGUUpwd3ZJei8wN0FESm1ibmJQL1RxN0U2TU5ZYy85T1djOFluQVB3QUFCQUlBQUFBQkFBUUFDUUFBQUFWdVlXMWxjd0FBQUJBQUFBQUNBQVFBQ1FBQUFCQnZjSFJwYldGc1gyTjFkSEJ2YVc1MEFBUUFDUUFBQUExemRXMWZjMlZ1YzE5emNHVmpBQUFFQWdBQUFBRUFCQUFKQUFBQUNYSnZkeTV1WVcxbGN3QUFBQTBBQUFBQ2dBQUFBUC8vLzhNQUFBUUNBQUFBQVFBRUFBa0FBQUFGWTJ4aGMzTUFBQUFRQUFBQUFRQUVBQWtBQUFBS1pHRjBZUzVtY21GdFpRQUFBUDRBQUFRQ0FBQUFBUUFFQUFrQUFBQUhiM0IwYVc5dWN3QUFBaE1BQUFBRkFBQUFFQUFBQUFFQUJBQUpBQUFBQVhJQUFBQVFBQUFBQVFBRUFBa0FBQUFQZFc1dVlXMWxaQzFqYUhWdWF5MDFBQUFBQ2dBQUFBRUFBQUFBQUFBQURRQUFBQUVBQUFBOUFBQUFEUUFBQUFFQUFBQUNBQUFFQWdBQUF2OEFBQUFRQUFBQUJRQUVBQWtBQUFBR1pXNW5hVzVsQUFRQUNRQUFBQVZzWVdKbGJBQUVBQWtBQUFBT2NtOTNibUZ0WlhNdWNISnBiblFBQkFBSkFBQUFDbkp2ZDNNdWRHOTBZV3dBQkFBSkFBQUFDbU52YkhNdWRHOTBZV3dBQUFEK0FBQUEvZz09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["optimal_cutpoint"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["sum_sens_spec"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.9963122","2":"1.355892"},{"1":"0.9937543","2":"1.354332"},{"1":"0.9932961","2":"1.352772"},{"1":"0.9710905","2":"1.351256"},{"1":"0.9923533","2":"1.351212"},{"1":"0.9703475","2":"1.349696"},{"1":"0.9918582","2":"1.349652"},{"1":"0.9678904","2":"1.348136"},{"1":"0.9912025","2":"1.348092"},{"1":"0.9670633","2":"1.346576"},{"1":"0.9879788","2":"1.346532"},{"1":"0.9635668","2":"1.345015"},{"1":"0.9864239","2":"1.344972"},{"1":"0.9622440","2":"1.343455"},{"1":"0.9819450","2":"1.343411"},{"1":"0.9599707","2":"1.341895"},{"1":"0.9769845","2":"1.341851"},{"1":"0.9977496","2":"1.341807"},{"1":"0.9593965","2":"1.340335"},{"1":"0.9754879","2":"1.340291"},{"1":"0.9579829","2":"1.338775"},{"1":"0.9733613","2":"1.338731"},{"1":"0.9570681","2":"1.337215"},{"1":"0.9729548","2":"1.337171"},{"1":"0.9396974","2":"1.335699"},{"1":"0.9555654","2":"1.335655"},{"1":"0.9387402","2":"1.334139"},{"1":"0.9552818","2":"1.334095"},{"1":"0.9382454","2":"1.332579"},{"1":"0.9552512","2":"1.332535"},{"1":"0.9362488","2":"1.331019"},{"1":"0.9506944","2":"1.330975"},{"1":"0.9993329","2":"1.330843"},{"1":"0.9340546","2":"1.329459"},{"1":"0.9498360","2":"1.329415"},{"1":"0.9992439","2":"1.329283"},{"1":"0.9329516","2":"1.327899"},{"1":"0.9479975","2":"1.327855"},{"1":"0.9979273","2":"1.327723"},{"1":"0.9309952","2":"1.326339"},{"1":"0.9472050","2":"1.326295"},{"1":"0.9236078","2":"1.324779"},{"1":"0.9469263","2":"1.324735"},{"1":"0.9219697","2":"1.323219"},{"1":"0.9460600","2":"1.323175"},{"1":"0.9212942","2":"1.321659"},{"1":"0.9418282","2":"1.321615"},{"1":"0.9194436","2":"1.320098"},{"1":"0.9171614","2":"1.318538"},{"1":"1.0015194","2":"1.318319"},{"1":"0.9163713","2":"1.316978"},{"1":"0.9994471","2":"1.316759"},{"1":"0.9146016","2":"1.315418"},{"1":"0.9116350","2":"1.313858"},{"1":"0.9069306","2":"1.312298"},{"1":"0.9064586","2":"1.310738"},{"1":"0.9046776","2":"1.309178"},{"1":"1.0167466","2":"1.308914"},{"1":"0.9044119","2":"1.307618"},{"1":"1.0071777","2":"1.307354"},{"1":"0.9032472","2":"1.306058"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[61]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#all samples together - cutpoint</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3AgPC0gY3V0cG9pbnRyKG1ldGEsIHRlbG9tZXJlX3JhdGlvLCBhbHRfZmluYWwsIFxuICAgICAgICAgICAgICAgIG1ldGhvZCA9IG1heGltaXplX21ldHJpYywgbWV0cmljID0gc3VtX3NlbnNfc3BlYywgbmEucm0gPSBUKVxuc3VtbWFyeShjcClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3AgPC0gY3V0cG9pbnRyKG1ldGEsIHRlbG9tZXJlX3JhdGlvLCBhbHRfZmluYWwsIFxuICAgICAgICAgICAgICAgIG1ldGhvZCA9IG1heGltaXplX21ldHJpYywgbWV0cmljID0gc3VtX3NlbnNfc3BlYywgbmEucm0gPSBUKVxuYGBgIn0= -->
 <pre class="r"><code>cp &lt;- cutpointr(meta, telomere_ratio, alt_final, 
-                method = maximize_metric, metric = sum_sens_spec, na.rm = T)
-summary(cp)</code></pre>
+                method = maximize_metric, metric = sum_sens_spec, na.rm = T)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGlzIFBPU1xuQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGhhcyBoaWdoZXIgeCB2YWx1ZXNcbiJ9 -->
+<pre><code>Assuming the positive class is POS
+Assuming the positive class has higher x values</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShjcClcbmBgYCJ9 -->
+<pre class="r"><code>summary(cp)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTWV0aG9kOiBtYXhpbWl6ZV9tZXRyaWMgXG5QcmVkaWN0b3I6IHRlbG9tZXJlX3JhdGlvIFxuT3V0Y29tZTogYWx0X2ZpbmFsIFxuRGlyZWN0aW9uOiA+PSBcblxuICAgIEFVQyAgIG4gbl9wb3Mgbl9uZWdcbiAwLjc0ODcgNzk3ICAgMTAzICAgNjk0XG5cbiBvcHRpbWFsX2N1dHBvaW50IHN1bV9zZW5zX3NwZWMgICAgYWNjIHNlbnNpdGl2aXR5IHNwZWNpZmljaXR5IHRwIGZuICBmcCAgdG5cbiAgICAgICAgICAgMC45OTYzICAgICAgICAxLjQ3NzkgMC43ODI5ICAgICAgMC42Nzk2ICAgICAgMC43OTgzIDcwIDMzIDE0MCA1NTRcblxuUHJlZGljdG9yIHN1bW1hcnk6IFxuICAgIERhdGEgICAgICBNaW4uICAgICAgICA1JSAgIDFzdCBRdS4gICAgTWVkaWFuICAgICAgTWVhbiAgIDNyZCBRdS4gICAgICA5NSUgICAgICBNYXguICAgICAgICBTRCBOQXNcbiBPdmVyYWxsIDAuMTc3NjQyOCAwLjM5MjU2NzIgMC41NjkwMDQxIDAuNzU3ODc5MyAwLjkwODQzMDYgMS4wMTY3NDY2IDEuNzM1ODY1IDEwLjg0NDYxMCAwLjczMjA1NTMgICAwXG4gICAgIE5FRyAwLjIyNzU0MDEgMC4zOTAwMzI5IDAuNTYxOTU4OCAwLjcxOTM3NDUgMC43OTQxNTM0IDAuOTQxMDU2MiAxLjQ1NTcyMSAgMy4xOTE3ODUgMC4zNDYxNTY1ICAgMFxuICAgICBQT1MgMC4xNzc2NDI4IDAuNDczNzM1MyAwLjc5ODA3MjUgMS4xMzAwNzAwIDEuNjc4NDE1MSAxLjc2NDkwMzkgNC40MDkzMjYgMTAuODQ0NjEwIDEuNjM3MjI4MyAgIDBcbiJ9 -->
+<pre><code>Method: maximize_metric 
+Predictor: telomere_ratio 
+Outcome: alt_final 
+Direction: &gt;= 
+
+    AUC   n n_pos n_neg
+ 0.7487 797   103   694
+
+ optimal_cutpoint sum_sens_spec    acc sensitivity specificity tp fn  fp  tn
+           0.9963        1.4779 0.7829      0.6796      0.7983 70 33 140 554
+
+Predictor summary: 
+    Data      Min.        5%   1st Qu.    Median      Mean   3rd Qu.      95%      Max.        SD NAs
+ Overall 0.1776428 0.3925672 0.5690041 0.7578793 0.9084306 1.0167466 1.735865 10.844610 0.7320553   0
+     NEG 0.2275401 0.3900329 0.5619588 0.7193745 0.7941534 0.9410562 1.455721  3.191785 0.3461565   0
+     POS 0.1776428 0.4737353 0.7980725 1.1300700 1.6784151 1.7649039 4.409326 10.844610 1.6372283   0</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1904,7 +2071,7 @@ summary(cp)</code></pre>
 <h1>all samples together - plot</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucDEgPC0gcGxvdF94KGNwLCBkaXNwbGF5X2N1dHBvaW50ID0gVFJVRSkgKyBcbiAgIHRoZW1lX1B1YmxpY2F0aW9uKClcbnAyIDwtIHBsb3Rfcm9jKGNwKSArIFxuICB0aGVtZV9QdWJsaWNhdGlvbigpXG50aWZmKGZpbGUucGF0aChhbmFseXNpc19kaXIsIFwicGxvdHNcIiwgXCJhbGwtcGJ0YS50aWZmXCIpLCBoZWlnaHQgPSAxMjAwLCB3aWR0aCA9IDI0MDAsIHJlcyA9IDMwMClcbnAgPC0gZ2dhcnJhbmdlKHAxLCBwMiwgd2lkdGhzID0gYygxNTAwLCA5MDApLCBoZWlnaHQgPSBjKDEyMDAsIDYwMCksIGFsaWduID0gXCJoXCIsXG4gICAgICAgICAgbGFiZWxzID0gYyhcIkFcIiwgXCJCXCIpLFxuICAgICAgICAgIG5jb2wgPSAyLCBucm93ID0gMSlcbnAkYDFgXG5kZXYub2ZmKClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucDEgPC0gcGxvdF94KGNwLCBkaXNwbGF5X2N1dHBvaW50ID0gVFJVRSkgKyBcbiAgIHRoZW1lX1B1YmxpY2F0aW9uKClcbnAyIDwtIHBsb3Rfcm9jKGNwKSArIFxuICB0aGVtZV9QdWJsaWNhdGlvbigpXG50aWZmKGZpbGUucGF0aChhbmFseXNpc19kaXIsIFwicGxvdHNcIiwgXCJhbGwtcGJ0YS50aWZmXCIpLCBoZWlnaHQgPSAxMjAwLCB3aWR0aCA9IDI0MDAsIHJlcyA9IDMwMClcbnAgPC0gZ2dhcnJhbmdlKHAxLCBwMiwgd2lkdGhzID0gYygxNTAwLCA5MDApLCBoZWlnaHQgPSBjKDEyMDAsIDYwMCksIGFsaWduID0gXCJoXCIsXG4gICAgICAgICAgbGFiZWxzID0gYyhcIkFcIiwgXCJCXCIpLFxuICAgICAgICAgIG5jb2wgPSAyLCBucm93ID0gMSlcbmBgYCJ9 -->
 <pre class="r"><code>p1 &lt;- plot_x(cp, display_cutpoint = TRUE) + 
    theme_Publication()
 p2 &lt;- plot_roc(cp) + 
@@ -1912,26 +2079,59 @@ p2 &lt;- plot_roc(cp) +
 tiff(file.path(analysis_dir, &quot;plots&quot;, &quot;all-pbta.tiff&quot;), height = 1200, width = 2400, res = 300)
 p &lt;- ggarrange(p1, p2, widths = c(1500, 900), height = c(1200, 600), align = &quot;h&quot;,
           labels = c(&quot;A&quot;, &quot;B&quot;),
-          ncol = 2, nrow = 1)
-p$`1`
+          ncol = 2, nrow = 1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogR3JhcGhzIGNhbm5vdCBiZSBob3Jpem9udGFsbHkgYWxpZ25lZCB1bmxlc3MgdGhlIGF4aXMgcGFyYW1ldGVyIGlzIHNldC4gUGxhY2luZyBncmFwaHMgdW5hbGlnbmVkLldhcm5pbmc6IENhbm5vdCBjb252ZXJ0IG9iamVjdCBvZiBjbGFzcyBudW1lcmljIGludG8gYSBncm9iLlxuIn0= -->
+<pre><code>Warning: Graphs cannot be horizontally aligned unless the axis parameter is set. Placing graphs unaligned.Warning: Cannot convert object of class numeric into a grob.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucCRgMWBcbmRldi5vZmYoKVxuYGBgIn0= -->
+<pre class="r"><code>p$`1`
 dev.off()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibnVsbCBkZXZpY2UgXG4gICAgICAgICAgMSBcbiJ9 -->
+<pre><code>null device 
+          1 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#hgat alone - cutpoint</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3AgPC0gY3V0cG9pbnRyKGhnYXQsIHRlbG9tZXJlX3JhdGlvLCBhbHRfZmluYWwsXG4gICAgICAgICAgICAgICAgbWV0aG9kID0gbWF4aW1pemVfbWV0cmljLCBtZXRyaWMgPSBzdW1fc2Vuc19zcGVjLCBuYS5ybSA9IFQpXG5zdW1tYXJ5KGNwKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3AgPC0gY3V0cG9pbnRyKGhnYXQsIHRlbG9tZXJlX3JhdGlvLCBhbHRfZmluYWwsXG4gICAgICAgICAgICAgICAgbWV0aG9kID0gbWF4aW1pemVfbWV0cmljLCBtZXRyaWMgPSBzdW1fc2Vuc19zcGVjLCBuYS5ybSA9IFQpXG5gYGAifQ== -->
 <pre class="r"><code>cp &lt;- cutpointr(hgat, telomere_ratio, alt_final,
-                method = maximize_metric, metric = sum_sens_spec, na.rm = T)
-summary(cp)</code></pre>
+                method = maximize_metric, metric = sum_sens_spec, na.rm = T)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGlzIFBPU1xuQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGhhcyBoaWdoZXIgeCB2YWx1ZXNcbiJ9 -->
+<pre><code>Assuming the positive class is POS
+Assuming the positive class has higher x values</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShjcClcbmBgYCJ9 -->
+<pre class="r"><code>summary(cp)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTWV0aG9kOiBtYXhpbWl6ZV9tZXRyaWMgXG5QcmVkaWN0b3I6IHRlbG9tZXJlX3JhdGlvIFxuT3V0Y29tZTogYWx0X2ZpbmFsIFxuRGlyZWN0aW9uOiA+PSBcblxuICAgIEFVQyAgbiBuX3BvcyBuX25lZ1xuIDAuOTQ1MiA4NSAgICAzMiAgICA1M1xuXG4gb3B0aW1hbF9jdXRwb2ludCBzdW1fc2Vuc19zcGVjICAgIGFjYyBzZW5zaXRpdml0eSBzcGVjaWZpY2l0eSB0cCBmbiBmcCB0blxuICAgICAgICAgICAxLjA2NzkgICAgICAgIDEuODI0MyAwLjkwNTkgICAgICAwLjkzNzUgICAgICAwLjg4NjggMzAgIDIgIDYgNDdcblxuUHJlZGljdG9yIHN1bW1hcnk6IFxuICAgIERhdGEgICAgICBNaW4uICAgICAgICA1JSAgIDFzdCBRdS4gICAgTWVkaWFuICAgICAgTWVhbiAgIDNyZCBRdS4gICAgICA5NSUgICAgICBNYXguICAgICAgICBTRCBOQXNcbiBPdmVyYWxsIDAuMzMwMDk4MCAwLjQwNzgyNDcgMC42NjUxNTgzIDAuOTE0MTcxOSAxLjQzNTcyNTMgMS40OTQzODk1IDMuNzk4NTcyIDEwLjg0NDYxMCAxLjU5NTE2MTggICAwXG4gICAgIE5FRyAwLjMzMDA5ODAgMC4zODk1Nzc1IDAuNTcxNTE1MCAwLjcyOTUyNTUgMC43NzE4OTcyIDAuOTA1OTI5OCAxLjMxNjY2NyAgMi4xMjc4NTQgMC4zMjQwNDM3ICAgMFxuICAgICBQT1MgMC42MDMxMDUxIDEuMDA4MzE0MSAxLjMzMTUxNDkgMS43NjQ5MDM5IDIuNTM1MTkwNSAyLjg0NTE3ODQgNi42NDI2NzUgMTAuODQ0NjEwIDIuMTcxOTg3OSAgIDBcbiJ9 -->
+<pre><code>Method: maximize_metric 
+Predictor: telomere_ratio 
+Outcome: alt_final 
+Direction: &gt;= 
+
+    AUC  n n_pos n_neg
+ 0.9452 85    32    53
+
+ optimal_cutpoint sum_sens_spec    acc sensitivity specificity tp fn fp tn
+           1.0679        1.8243 0.9059      0.9375      0.8868 30  2  6 47
+
+Predictor summary: 
+    Data      Min.        5%   1st Qu.    Median      Mean   3rd Qu.      95%      Max.        SD NAs
+ Overall 0.3300980 0.4078247 0.6651583 0.9141719 1.4357253 1.4943895 3.798572 10.844610 1.5951618   0
+     NEG 0.3300980 0.3895775 0.5715150 0.7295255 0.7718972 0.9059298 1.316667  2.127854 0.3240437   0
+     POS 0.6031051 1.0083141 1.3315149 1.7649039 2.5351905 2.8451784 6.642675 10.844610 2.1719879   0</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#hgat alone - plot</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGlmZihmaWxlLnBhdGgoYW5hbHlzaXNfZGlyLCBcInBsb3RzXCIsIFwiaGdhdC50aWZmXCIpLCBoZWlnaHQgPSAxMjAwLCB3aWR0aCA9IDI0MDAsIHJlcyA9IDMwMClcblxucDFfMiA8LSBwbG90X3goY3AsIGRpc3BsYXlfY3V0cG9pbnQgPSBUUlVFKSArIFxuICAgdGhlbWVfUHVibGljYXRpb24oKVxucDMgPC0gcGxvdF9yb2MoY3ApICsgXG50aGVtZV9QdWJsaWNhdGlvbigpXG5cbnAgPC0gZ2dhcnJhbmdlKHAxXzIsIHAzLCB3aWR0aHMgPSBjKDE1MDAsIDkwMCksIGhlaWdodCA9IGMoMTIwMCwgNjAwKSxcbiAgICAgICAgICBsYWJlbHMgPSBjKFwiQVwiLCBcIkJcIiksXG4gICAgICAgICAgbmNvbCA9IDIsIG5yb3cgPSAxKVxucCRgMWBcbmludmlzaWJsZShkZXYub2ZmKCkpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGlmZihmaWxlLnBhdGgoYW5hbHlzaXNfZGlyLCBcInBsb3RzXCIsIFwiaGdhdC50aWZmXCIpLCBoZWlnaHQgPSAxMjAwLCB3aWR0aCA9IDI0MDAsIHJlcyA9IDMwMClcblxucDFfMiA8LSBwbG90X3goY3AsIGRpc3BsYXlfY3V0cG9pbnQgPSBUUlVFKSArIFxuICAgdGhlbWVfUHVibGljYXRpb24oKVxucDMgPC0gcGxvdF9yb2MoY3ApICsgXG50aGVtZV9QdWJsaWNhdGlvbigpXG5cbnAgPC0gZ2dhcnJhbmdlKHAxXzIsIHAzLCB3aWR0aHMgPSBjKDE1MDAsIDkwMCksIGhlaWdodCA9IGMoMTIwMCwgNjAwKSxcbiAgICAgICAgICBsYWJlbHMgPSBjKFwiQVwiLCBcIkJcIiksXG4gICAgICAgICAgbmNvbCA9IDIsIG5yb3cgPSAxKVxuYGBgIn0= -->
 <pre class="r"><code>tiff(file.path(analysis_dir, &quot;plots&quot;, &quot;hgat.tiff&quot;), height = 1200, width = 2400, res = 300)
 
 p1_2 &lt;- plot_x(cp, display_cutpoint = TRUE) + 
@@ -1941,8 +2141,13 @@ theme_Publication()
 
 p &lt;- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
           labels = c(&quot;A&quot;, &quot;B&quot;),
-          ncol = 2, nrow = 1)
-p$`1`
+          ncol = 2, nrow = 1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogQ2Fubm90IGNvbnZlcnQgb2JqZWN0IG9mIGNsYXNzIG51bWVyaWMgaW50byBhIGdyb2IuXG4ifQ== -->
+<pre><code>Warning: Cannot convert object of class numeric into a grob.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucCRgMWBcbmludmlzaWJsZShkZXYub2ZmKCkpXG5gYGAifQ== -->
+<pre class="r"><code>p$`1`
 invisible(dev.off())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -1950,17 +2155,41 @@ invisible(dev.off())</code></pre>
 <p>#non-hgat alone cutpoint</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIGNwIDwtIGN1dHBvaW50cihub25faGdhdCwgdGVsb21lcmVfcmF0aW8sIGFsdF9maW5hbCwgXG4gICAgICAgICAgICAgICAgIG1ldGhvZCA9IG1heGltaXplX21ldHJpYywgbWV0cmljID0gc3VtX3NlbnNfc3BlYywgbmEucm0gPSBUKVxuIHN1bW1hcnkoY3ApXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIGNwIDwtIGN1dHBvaW50cihub25faGdhdCwgdGVsb21lcmVfcmF0aW8sIGFsdF9maW5hbCwgXG4gICAgICAgICAgICAgICAgIG1ldGhvZCA9IG1heGltaXplX21ldHJpYywgbWV0cmljID0gc3VtX3NlbnNfc3BlYywgbmEucm0gPSBUKVxuYGBgIn0= -->
 <pre class="r"><code> cp &lt;- cutpointr(non_hgat, telomere_ratio, alt_final, 
-                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
- summary(cp)</code></pre>
+                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGlzIFBPU1xuQXNzdW1pbmcgdGhlIHBvc2l0aXZlIGNsYXNzIGhhcyBoaWdoZXIgeCB2YWx1ZXNcbiJ9 -->
+<pre><code>Assuming the positive class is POS
+Assuming the positive class has higher x values</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIHN1bW1hcnkoY3ApXG5gYGAifQ== -->
+<pre class="r"><code> summary(cp)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTWV0aG9kOiBtYXhpbWl6ZV9tZXRyaWMgXG5QcmVkaWN0b3I6IHRlbG9tZXJlX3JhdGlvIFxuT3V0Y29tZTogYWx0X2ZpbmFsIFxuRGlyZWN0aW9uOiA+PSBcblxuICAgQVVDICAgbiBuX3BvcyBuX25lZ1xuIDAuNjYzIDcxMiAgICA3MSAgIDY0MVxuXG4gb3B0aW1hbF9jdXRwb2ludCBzdW1fc2Vuc19zcGVjICAgIGFjYyBzZW5zaXRpdml0eSBzcGVjaWZpY2l0eSB0cCBmbiAgZnAgIHRuXG4gICAgICAgICAgIDAuOTk2MyAgICAgICAgMS4zNTU5IDAuNzY5NyAgICAgIDAuNTYzNCAgICAgIDAuNzkyNSA0MCAzMSAxMzMgNTA4XG5cblByZWRpY3RvciBzdW1tYXJ5OiBcbiAgICBEYXRhICAgICAgTWluLiAgICAgICAgNSUgICAxc3QgUXUuICAgIE1lZGlhbiAgICAgIE1lYW4gICAzcmQgUXUuICAgICAgOTUlICAgICBNYXguICAgICAgICBTRCBOQXNcbiBPdmVyYWxsIDAuMTc3NjQyOCAwLjM5MTc0MTIgMC41NjMyMjMyIDAuNzM4MzE5MyAwLjg0NTQ4MTEgMC45ODg3ODQ3IDEuNTc4ODM3IDYuNzczMjgyIDAuNTExOTk5NiAgIDBcbiAgICAgTkVHIDAuMjI3NTQwMSAwLjM5MDExMTMgMC41NTgyODc5IDAuNzE4MDYwOCAwLjc5NTk5MzYgMC45NDcyMDUwIDEuNDUyNDUzIDMuMTkxNzg1IDAuMzQ4MDk2NiAgIDBcbiAgICAgUE9TIDAuMTc3NjQyOCAwLjQxOTgyNDkgMC42MzE2MzUxIDEuMDE2NzQ2NiAxLjI5MjI2MjggMS4zNzIyMzg5IDMuOTAyNzAxIDYuNzczMjgyIDEuMTUzMjA3MiAgIDBcbiJ9 -->
+<pre><code>Method: maximize_metric 
+Predictor: telomere_ratio 
+Outcome: alt_final 
+Direction: &gt;= 
+
+   AUC   n n_pos n_neg
+ 0.663 712    71   641
+
+ optimal_cutpoint sum_sens_spec    acc sensitivity specificity tp fn  fp  tn
+           0.9963        1.3559 0.7697      0.5634      0.7925 40 31 133 508
+
+Predictor summary: 
+    Data      Min.        5%   1st Qu.    Median      Mean   3rd Qu.      95%     Max.        SD NAs
+ Overall 0.1776428 0.3917412 0.5632232 0.7383193 0.8454811 0.9887847 1.578837 6.773282 0.5119996   0
+     NEG 0.2275401 0.3901113 0.5582879 0.7180608 0.7959936 0.9472050 1.452453 3.191785 0.3480966   0
+     POS 0.1776428 0.4198249 0.6316351 1.0167466 1.2922628 1.3722389 3.902701 6.773282 1.1532072   0</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>#non-hgat alone plot</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGlmZihmaWxlLnBhdGgoYW5hbHlzaXNfZGlyLCBcInBsb3RzXCIsIFwibm9uLWhnYXQudGlmZlwiKSwgaGVpZ2h0ID0gMTIwMCwgd2lkdGggPSAyNDAwLCByZXMgPSAzMDApXG5cbnAxXzIgPC0gcGxvdF94KGNwLCBkaXNwbGF5X2N1dHBvaW50ID0gVFJVRSkgKyBcbiAgIHRoZW1lX1B1YmxpY2F0aW9uKClcbnAzIDwtIHBsb3Rfcm9jKGNwKSArIFxudGhlbWVfUHVibGljYXRpb24oKVxuXG5wIDwtIGdnYXJyYW5nZShwMV8yLCBwMywgd2lkdGhzID0gYygxNTAwLCA5MDApLCBoZWlnaHQgPSBjKDEyMDAsIDYwMCksXG4gICAgICAgICAgbGFiZWxzID0gYyhcIkNcIiwgXCJEXCIpLFxuICAgICAgICAgIG5jb2wgPSAyLCBucm93ID0gMSlcbnAkYDFgXG5pbnZpc2libGUoZGV2Lm9mZigpKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGlmZihmaWxlLnBhdGgoYW5hbHlzaXNfZGlyLCBcInBsb3RzXCIsIFwibm9uLWhnYXQudGlmZlwiKSwgaGVpZ2h0ID0gMTIwMCwgd2lkdGggPSAyNDAwLCByZXMgPSAzMDApXG5cbnAxXzIgPC0gcGxvdF94KGNwLCBkaXNwbGF5X2N1dHBvaW50ID0gVFJVRSkgKyBcbiAgIHRoZW1lX1B1YmxpY2F0aW9uKClcbnAzIDwtIHBsb3Rfcm9jKGNwKSArIFxudGhlbWVfUHVibGljYXRpb24oKVxuXG5wIDwtIGdnYXJyYW5nZShwMV8yLCBwMywgd2lkdGhzID0gYygxNTAwLCA5MDApLCBoZWlnaHQgPSBjKDEyMDAsIDYwMCksXG4gICAgICAgICAgbGFiZWxzID0gYyhcIkNcIiwgXCJEXCIpLFxuICAgICAgICAgIG5jb2wgPSAyLCBucm93ID0gMSlcbmBgYCJ9 -->
 <pre class="r"><code>tiff(file.path(analysis_dir, &quot;plots&quot;, &quot;non-hgat.tiff&quot;), height = 1200, width = 2400, res = 300)
 
 p1_2 &lt;- plot_x(cp, display_cutpoint = TRUE) + 
@@ -1970,8 +2199,13 @@ theme_Publication()
 
 p &lt;- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
           labels = c(&quot;C&quot;, &quot;D&quot;),
-          ncol = 2, nrow = 1)
-p$`1`
+          ncol = 2, nrow = 1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogQ2Fubm90IGNvbnZlcnQgb2JqZWN0IG9mIGNsYXNzIG51bWVyaWMgaW50byBhIGdyb2IuXG4ifQ== -->
+<pre><code>Warning: Cannot convert object of class numeric into a grob.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucCRgMWBcbmludmlzaWJsZShkZXYub2ZmKCkpXG5gYGAifQ== -->
+<pre class="r"><code>p$`1`
 invisible(dev.off())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
