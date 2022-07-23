@@ -140,8 +140,11 @@ count_df <- merged_dat %>%
 
 count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG")) 
 
+# add mutational sigs
+count_df_sigs <- count_df %>%
+  left_join(sigs)
 
-write.xlsx(count_df, 
+write.xlsx(count_df_sigs, 
            file.path(output_dir, "hgat_tmb_mut_counts_sigs_tel_df.xlsx"), 
              overwrite=TRUE, 
              keepNA=TRUE)
