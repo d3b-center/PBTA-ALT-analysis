@@ -32,14 +32,32 @@ meta %>%
   group_by(group, alt_final) %>%
   tally()
 ```
+# Shuffle telhunter ratios and plot ROC
+```{r shuffle telhunter ratios, fig.height=4, fig.width=8}
+set.seed(2022)
+meta <- meta %>%
+  mutate(shuffled_telhunt = sample(telomere_ratio))
+
+opt_cut <- cutpointr(meta, shuffled_telhunt, alt_final,
+                method = maximize_metric, metric = sum_sens_spec, na.rm = T)
+
+# plot shuffle scores
+p1 <- plot_x(opt_cut, display_cutpoint = TRUE) + 
+   theme_Publication()
+roc_shuffled <- plot_roc(opt_cut) + 
+  theme_Publication()
+
+tiff(file.path(analysis_dir, "plots", "all_shuffled.tiff"), height = 1200, width = 2400, res = 300)
+p <- ggarrange(p1, roc_shuffled, widths = c(1500, 900), height = c(1200, 600), align = "h",
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+p$`1`
+dev.off()
+
+```
 
 #run optimal cutpoint by group
 ```{r}
-#how many per group?
-meta %>%
-  group_by(group, alt_final) %>%
-  tally()
-
 opt_cut <- cutpointr(meta, telomere_ratio, alt_final, group, metric = sum_sens_spec, 
                      tol_metric = 0.05, break_ties = c, na.rm = T)
 summary(opt_cut)
@@ -124,16 +142,16 @@ invisible(dev.off())
 
 #non-hgat alone plot
 ```{r roc non-hgat, fig.height=4, fig.width=8}
-tiff(file.path(analysis_dir, "plots", "non-hgat.tiff"), height = 1200, width = 2400, res = 300)
+tiff(file.path(analysis_dir, "plots", "non-hgat-plus-shuffled.tiff"), height = 1200, width = 3200, res = 300)
 
 p1_2 <- plot_x(cp, display_cutpoint = TRUE) + 
    theme_Publication()
 p3 <- plot_roc(cp) + 
 theme_Publication()
 
-p <- ggarrange(p1_2, p3, widths = c(1500, 900), height = c(1200, 600),
-          labels = c("C", "D"),
-          ncol = 2, nrow = 1)
+p <- ggarrange(p1_2, p3, roc_shuffled, widths = c(1000, 500, 500), height = c(1200, 600, 600),
+          labels = c("A", "B", "C"),
+          ncol = 3, nrow = 1)
 p$`1`
 invisible(dev.off())
 ```

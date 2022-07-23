@@ -13,7 +13,8 @@ output_dir <- file.path(analysis_dir, "output")
 source(file.path(input_dir, "mutation-colors.R"))
 
 ##read in input
-goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
+goi_list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
+kegg_list <- read_tsv(file.path(input_dir, "KEGG_MISMATCH_REPAIR.txt"), col_names = "genes")
 
 hgat <- read_tsv(file.path(root_dir,
                            "analyses",
@@ -42,7 +43,14 @@ consensus <- data.table::fread(file.path(data_dir, "snv-consensus-plus-hotspots.
   unique()
 
 
-## read in cnv (OpenPedCan v10)
+# are there somatic MMR alterations?
+consensus_mmr <- consensus %>%
+  filter(Variant_Classification %in% names(colors),
+         Hugo_Symbol %in% kegg_list$genes) %>%
+  left_join(hgat[,c("Tumor_Sample_Barcode", "sample_id")])
+
+
+## read in cnv (OpenPedCan v11)
 cnv_df <- readr::read_tsv(file.path(data_dir, "consensus_wgs_plus_cnvkit_wxs.tsv.gz")) %>%
   # filter for HGAT and gene of interest
   filter(biospecimen_id %in% hgat$Tumor_Sample_Barcode) %>%

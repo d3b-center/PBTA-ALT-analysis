@@ -20,8 +20,8 @@ params:
     input: file
   python_path:
     label: "Python path"
-    value: /usr/bin/python
-    #value: /Users/harenzaj/miniconda3/bin/python
+    #value: /usr/bin/python
+    value: /Users/harenzaj/miniconda3/bin/python
     input: ""
 ---
 
@@ -47,6 +47,7 @@ metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", 
 
 # goi file
 goi_file <- file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations")
+kegg_file <- file.path(root_dir, "analyses", "05-oncoplot", "input", "KEGG_MISMATCH_REPAIR.txt")
 
 # mutation colors
 source(file.path(root_dir, "analyses", "05-oncoplot", "input", "mutation-colors.R"))
@@ -71,7 +72,9 @@ keep_cols <- c("Tumor_Sample_Barcode",
                "Tumor_Seq_Allele2", 
                "Variant_Classification", 
                "Variant_Type")
-goi <- read_tsv(goi_file, col_names = "genes")
+kegg <- read_tsv(kegg_file, col_names = "genes")
+goi <- read_tsv(goi_file, col_names = "genes") %>%
+  bind_rows(kegg)
 
 maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
   filter(Tumor_Sample_Barcode %in% hist$Kids_First_Biospecimen_ID_DNA,
@@ -95,8 +98,14 @@ Note: All VUS are missense mutations and no missense mutations are likely oncoge
 oncokb_maf <- read_tsv(file.path(analysis_dir, params$maf_out))
 unique(oncokb_maf$Transcript_ID) #ENST00000373344 is 2,492 residues
 
+metadata_cols <- hist %>%
+  dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
+  select(Tumor_Sample_Barcode, sample_id)
+
 oncokb_maf_oncogenic <-  oncokb_maf %>%
-  filter(ONCOGENIC == "Likely Oncogenic")
+  filter(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic")) %>%
+  left_join(metadata_cols) %>%
+  select(Tumor_Sample_Barcode, sample_id, Hugo_Symbol, ONCOGENIC, everything(oncokb_maf_oncogenic))
 
 oncokb_maf_onco_obj <- maftools::read.maf(oncokb_maf_oncogenic)
 pdf(file = file.path(output_dir, "atrx-lollipop-oncogenic.pdf"), width = 16, height = 6)
