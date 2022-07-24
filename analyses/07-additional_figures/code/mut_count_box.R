@@ -168,7 +168,7 @@ write.xlsx(count_df_sigs,
              keepNA=TRUE)
 
 # Remove hypermutant for plots
-count_df_for_plots <- count_df %>%
+count_df_for_plots <- count_df_sigs %>%
   filter(`TMB Coding` < 10)
 # output plots for all mutation coutns
 pdf(file.path(plots_dir, "mut_count_alt_all_genes.pdf"))
@@ -205,22 +205,22 @@ dev.off()
 
 
 pdf(file.path(plots_dir, "atrx_alt_stacked_by_oncogenicity.pdf"))
-p <- ggplot(table_df_atrx, aes(x = ALT, y = Count, fill = `Mutation Type`)) +
+p <- ggplot(table_df_atrx, aes(x = ALT, y = Frequency, fill = `Mutation Type`)) +
   geom_bar(stat = "identity") + 
   scale_fill_brewer(palette="Paired") +
   theme_bw() +
-  ylab("Number of tumors") +
+  ylab("Proportion of tumors") +
   xlab("ALT status")
 print(p)
 dev.off()
 
 pdf(file.path(plots_dir, "atrx_alt_faceted_by_oncogenicity.pdf"))
-p <- ggplot(table_df_atrx, aes(x = ALT, y = Count, fill = `Mutation Type`)) +
+p <- ggplot(table_df_atrx, aes(x = ALT, y = Frequency, fill = `Mutation Type`)) +
   geom_bar(stat = "identity") +
   facet_wrap(~`Mutation Type`)+
   scale_fill_brewer(palette="Paired")+
   theme_bw() +
-  ylab("Number of tumors") +
+  ylab("Proportion of tumors") +
   xlab("ALT status")
 print(p)
 dev.off()
@@ -239,43 +239,7 @@ print(p)
 dev.off()
 
 
-################# Generate figures mutation counts faceted by type
-# generate count dataframe
-count_df_facet <- merged_dat %>%
-  filter(`TMB Coding` < 10) %>%
-  dplyr::group_by(Tumor_Sample_Barcode,
-                  Variant_Classification) %>%
-  dplyr::mutate(mut_count = sum(count)) %>%
-  dplyr::select(Tumor_Sample_Barcode, mut_count, Variant_Classification, `TMB Coding`) %>%
-  distinct() %>%
-  dplyr::left_join(metadata) %>%
-  dplyr::mutate(log2_mut_count = log2(mut_count))
-count_df_facet$`alt final` <- factor(count_df_facet$`alt final`, levels = c("POS", "NEG"))
-
-# output plots
-pdf(file.path(plots_dir, "mut_count_alt_all_genes_faceted.pdf"))
-p <- ggplot(count_df_facet, aes(x =`alt final`, y = log2_mut_count)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test', label.y = 7) + 
-  facet_wrap( ~ Variant_Classification) +
-  theme_bw() + 
-  ylab("Log2 Mutation Count")
-
-print(p)
-dev.off()
-
-pdf(file.path(plots_dir, "tmb_alt_all_genes_faceted.pdf"))
-p <- ggplot(count_df_facet, aes(x =`alt final`, y = `TMB Coding`)) +
-  geom_boxplot() + 
-  geom_jitter() + 
-  stat_compare_means(method='t.test', label.y = 7) + 
-  facet_wrap( ~ Variant_Classification) +
-  theme_bw()
-
-print(p)
-dev.off()
-
+# Do telhunt scores inversely correlate with telomerase scores? No
 cor.test(count_df$telomere_ratio, count_df$telomerase_score)
 
 pdf(file.path(plots_dir, "alt_tel_cor.pdf"))
