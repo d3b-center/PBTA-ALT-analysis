@@ -16,7 +16,7 @@ maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 
 # source mutations used for oncoprint
 source(file.path(input_dir, "mutation-colors.R"))
-mut_of_interest <- c(names(colors), "3'UTR", "5'UTR")
+mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
 
 # metadata read in
 goi <- read_table(file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations"), col_names = F)
