@@ -158,9 +158,10 @@ count_df$`alt final` <- factor(count_df$`alt final`, levels = c("POS", "NEG"))
 # add mutational sigs
 count_df_sigs <- count_df %>%
   left_join(sigs) %>%
-  rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
+  rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode)
+count_df_sigs <- count_df_sigs %>%
   select(Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, sample_id, telomere_ratio, `alt final`,
-         atrx_mut, ONCOGENIC, `TMB Coding`, log2_mut_count, everything(sigs))
+         atrx_mut, ONCOGENIC, `TMB Coding`, log2_mut_count, everything(count_df_sigs), -mut_count)
 
 write.xlsx(count_df_sigs, 
            file.path(output_dir, "hgat_tmb_mut_counts_sigs_tel_df.xlsx"), 
