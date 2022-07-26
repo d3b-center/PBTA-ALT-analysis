@@ -28,6 +28,7 @@ Read in set up script.
 library(survival)
 library(ggpubr)
 library(tidyverse)
+library(openxlsx)
 
 # Set directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
@@ -73,6 +74,7 @@ Declare output file paths for HGG/DMG all subtypes.
 ```{r Set output file paths}
 kap_meier_plot_file <- file.path(plots_dir, "KM_hgg_alt_subtypes.pdf")
 kap_meier_model_file <- file.path(results_dir, "logrank_hgg_alt_subtypes.RDS")
+table_s4_file <- file.path(results_dir, "Table-S4.xlsx")
 ```
 
 ## Import the metadata
@@ -149,14 +151,19 @@ kap_fit <- survival_analysis(
   metadata_sample_col = "Kids_First_Biospecimen_ID_DNA"
   )
 # median and 0.95CI survival days
-kap_fit$original_data %>%
-  write_tsv(file.path(results_dir, "kap_fit_hgg_alt.tsv"))
-```
-Note that upper 95% bounds (0.95UCL) which are denoted "NA" are the consequence of underlying skew in the data. The upper confidence limit is therefore not defined (or may be interpreted as infinity).
+kap_fit_data <- kap_fit$original_data %>%
+  mutate(OS_months = OS_days/30.417,
+         OS_status = ifelse(OS_status == 0, "LIVING", "DECEASED")) %>%
+  select(-OS_days)
 
-`survminer` package comes with a convenient plotting function which uses `ggplot2`
-arguments. 
-It requires the original Kaplain-Meier `survfit` object, so we will extract that with `$model`.
+kap_fit_data_summary <- kap_fit_data %>%
+  group_by(alt_subtype) %>%
+  summarise_each(funs(median(., na.rm = T), sd(., na.rm = T)), OS_months)
+
+
+```
+
+# Make K-M plot 
 
 ```{r Make survival plot}
 surv_plot <- survminer::ggsurvplot(fit = kap_fit$model,
@@ -192,6 +199,16 @@ cowplot::save_plot(filename = kap_meier_plot_file, plot = surv_plot_all_subtype,
 readr::write_rds(kap_fit, kap_meier_model_file)
 ```
 
+## Analysis: cox regression based on ALT status
+```{r ALT status}
+
+# Run model
+fit_save_model(meta_updated, 
+               "ALT_status",
+               file.path(results_dir, "cox_hgg_alt_status.RDS"))
+
+```
+
 
 ## Analysis: cox regression for HGG ALT subtypes
 
@@ -216,7 +233,7 @@ int_model <- fit_save_model(meta_updated,
 int_model
 ```
 
-### Additive model: `mol_sub_group*ALT_status` 
+### Additive model: `mol_sub_group+ALT_status` 
 Also not significant
 
 ```{r additive alt molsub}
@@ -237,6 +254,20 @@ metadata_recode <- meta_updated %>%
       mutate(OS_status = ifelse(OS_status == "LIVING", 0, 1))
 pairwise_survdiff(formula = Surv(OS_years, OS_status) ~ alt_subtype, 
                   data = metadata_recode)
+```
+
+## Export table for manuscript
+```{r table_s4}
+# Combine and output
+list_s4_table <- list(kaplan_meier_fit = as.data.frame(kap_fit_data),
+                      kaplan_meier_summary = as.data.frame(kap_fit_data_summary),
+                      cox_additive_model = as.data.frame(add_model)
+                      )
+
+openxlsx::write.xlsx(list_s4_table,
+                     table_s4_file, 
+                     overwrite = T, 
+                     keepNA=TRUE)
 ```
 
 
