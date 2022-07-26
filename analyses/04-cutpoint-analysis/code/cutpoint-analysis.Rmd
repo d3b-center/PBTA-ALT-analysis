@@ -40,6 +40,7 @@ meta <- meta %>%
 
 opt_cut <- cutpointr(meta, shuffled_telhunt, alt_final,
                 method = maximize_metric, metric = sum_sens_spec, na.rm = T)
+summary(opt_cut)
 
 # plot shuffle scores
 p1 <- plot_x(opt_cut, display_cutpoint = TRUE) + 
