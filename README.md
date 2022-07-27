@@ -1,7 +1,9 @@
 # ALT in Pediatric Brain Tumors Can Occur without ATRX Mutation and is Enriched in Patients with Pathogenic Germline MMR Variants
-Stundon, et. al. 2022
+Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole
+\*Corresponding author
 
-## This repository contains a docker image and code used to conduct somatic analyses for the manuscript noted above.
+
+This repository contains a docker image and code used to conduct somatic analyses for the manuscript noted above.
 
 ### To reproduce the code in this repository:
 
@@ -11,16 +13,25 @@ git clone https://github.com/d3b-center/PBTA-ALT-analysis.git
 ```
 
 2. Pull the docker container:
-
 ```
 docker pull jrokita1/pbta-alt:version1.0
 ```
 
 3. Start the docker container, from the `PBTA-ALT-analysis` folder, run:
+```
+docker run --name container_name -d -e PASSWORD=ANYTHING -p 8787:8787 -v $PWD:/home/rstudio/PBTA-ALT-analysis pbta-alt:latest
+```
 
+4. To execute shell within the docker image, from the `PBTA-ALT-analysis` folder, run:
 ```
-docker run --name test -d -e PASSWORD=ANYTHING -p 8787:8787 -v $PWD:/home/rstudio/PBTA-ALT-analysis pbta-alt:latest
+docker exec -ti container_name bash
 ```
+
+5. Navigate to an analysis module and run the shell script:
+```
+cd /home/rstudio/PBTA-ALT-analysis/analyses/module_of_interest
+```
+
 
 ### Below is the main directory structure listing the analyses and data files used in this repository
 
