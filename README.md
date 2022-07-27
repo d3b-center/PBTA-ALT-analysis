@@ -1,5 +1,5 @@
 # ALT in Pediatric Brain Tumors Can Occur without ATRX Mutation and is Enriched in Patients with Pathogenic Germline MMR Variants
-Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole
+Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole <br>
 \*Corresponding author
 
 
