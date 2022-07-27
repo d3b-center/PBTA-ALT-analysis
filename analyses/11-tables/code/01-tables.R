@@ -14,10 +14,16 @@ if (!dir.exists(output_dir)) {
   dir.create(output_dir)
 }
 
-##read in input
+# read in input
+# histologies files
+v11 <- read_tsv(file.path(data_dir, "histologies.tsv"), guess_max = 100000)
+v22 <- read_tsv(file.path(data_dir, "pbta-histologies.tsv"), guess_max = 3000)
+
+# 85 hgat used in primary analysis
 hgat_subset_ids <- read_tsv(file.path(onco_dir,"hgat_subset.tsv")) %>% 
   pull(sample_id)
 
+# IHC (TMA) results
 ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
   rename(sample_id = ID,
          `ATRX IHC` = `ATRX IHC (Pathology)`,
@@ -33,8 +39,7 @@ ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_k
                                       TRUE ~ "Not done")) %>%
   select(sample_id, `C-Circle Assay`, UBTF, `ATRX IHC`, `Research Subject ID`)
 
-v22 <- read_tsv(file.path(data_dir, "pbta-histologies.tsv"), guess_max = 3000)
-
+# telhunt results
 telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Kids_First_Biospecimen_ID_tumor,
          `T/N TelHunt ratio` = ratio) %>%
@@ -46,9 +51,7 @@ telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
   select(sample_id, `T/N TelHunt ratio`) %>%
   unique()
 
-dups <- telhunt[duplicated(telhunt$sample_id),]
-
-
+# join everything together
 all_pbta_ihc <- v11 %>% 
   filter(!is.na(pathology_diagnosis)) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor) %>%
