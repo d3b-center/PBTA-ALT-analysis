@@ -3,9 +3,8 @@ Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin,
 \*Corresponding author
 
 
+## To reproduce the code in this repository:
 This repository contains a docker image and code used to conduct somatic analyses for the manuscript noted above.
-
-### To reproduce the code in this repository:
 
 1. Clone the repository
 ```
