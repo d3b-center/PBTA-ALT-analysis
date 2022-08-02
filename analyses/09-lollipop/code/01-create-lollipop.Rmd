@@ -25,7 +25,7 @@ params:
     input: ""
 ---
 
-```{r}
+```{r load libraries}
 # load libraries
 library(tidyverse)
 library(maftools)
@@ -81,13 +81,25 @@ maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols,
          Hugo_Symbol %in% goi$genes) %>%
   unique() %>%
   write_tsv(file.path(analysis_dir, params$maf_goi))
+
+dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
+  filter(Hugo_Symbol %in% goi$genes) %>%
+  write_tsv(file.path(analysis_dir,"output", "snv-dgd-goi.maf.tsv"))
 ```
 
 ```{r annotate maf}
+# pbta maf
 command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_goi), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
 command
 
 system(command)
+
+# dgd maf
+anno_dgd <- paste(params$python_path, maf_annotator, '-i', dgd_maf, '-o', file.path(analysis_dir, "dgd_maf-goi-oncokb.tsv"), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
+anno_dgd
+
+system(anno_dgd)
+
 ```
 
 ## [ENST00000373344](https://useast.ensembl.org/Homo_sapiens/Transcript/Summary?g=ENSG00000085224;r=X:77504880-77786216;t=ENST00000373344) is 2,492 residues, so same as the longer transcript chosen here by default
