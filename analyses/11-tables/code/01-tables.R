@@ -67,6 +67,7 @@ all_pbta_ihc <- v11 %>%
          )  %>%
   select(-`Research Subject ID`) %>%
   arrange(cohort_participant_id, Cohort) %>%
+  filter(!is.na(cohort_participant_id)) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor) %>%
