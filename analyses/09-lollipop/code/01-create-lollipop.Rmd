@@ -35,6 +35,7 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "09-lollipop")
 input_dir <- file.path(analysis_dir, "input")
 output_dir <- file.path(analysis_dir, "output")
+data_dir <- file.path(root_dir, "data")
 
 # oncokb binary
 readRenviron("~/.Renviron")
@@ -72,8 +73,8 @@ keep_cols <- c("Tumor_Sample_Barcode",
                "Tumor_Seq_Allele2", 
                "Variant_Classification", 
                "Variant_Type")
-kegg <- read_tsv(kegg_file, col_names = "genes")
-goi <- read_tsv(goi_file, col_names = "genes") %>%
+kegg <- read_table(kegg_file, col_names = "genes")
+goi <- read_table(goi_file, col_names = "genes") %>%
   bind_rows(kegg)
 
 maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
@@ -84,18 +85,20 @@ maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols,
 
 dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
   filter(Hugo_Symbol %in% goi$genes) %>%
-  write_tsv(file.path(analysis_dir,"output", "snv-dgd-goi.maf.tsv"))
+  write_tsv(file.path(output_dir, "snv-dgd-goi.maf.tsv"))
 ```
 
-```{r annotate maf}
+```{r annotate pbta maf}
 # pbta maf
 command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_goi), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
 command
 
 system(command)
+```
 
+```{r annotate dgd maf}
 # dgd maf
-anno_dgd <- paste(params$python_path, maf_annotator, '-i', dgd_maf, '-o', file.path(analysis_dir, "dgd_maf-goi-oncokb.tsv"), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
+anno_dgd <- paste(params$python_path, maf_annotator, '-i', file.path(output_dir, "snv-dgd-goi.maf.tsv"), '-o', file.path(output_dir, "dgd_maf-goi-oncokb.tsv"), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
 anno_dgd
 
 system(anno_dgd)
@@ -117,7 +120,7 @@ metadata_cols <- hist %>%
 oncokb_maf_oncogenic <-  oncokb_maf %>%
   filter(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic")) %>%
   left_join(metadata_cols) %>%
-  select(Tumor_Sample_Barcode, sample_id, Hugo_Symbol, ONCOGENIC, everything(oncokb_maf_oncogenic))
+  select(Tumor_Sample_Barcode, sample_id, Hugo_Symbol, ONCOGENIC, everything(oncokb_maf))
 
 oncokb_maf_onco_obj <- maftools::read.maf(oncokb_maf_oncogenic)
 pdf(file = file.path(output_dir, "atrx-lollipop-oncogenic.pdf"), width = 16, height = 6)

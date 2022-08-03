@@ -42,21 +42,29 @@ pbta_maf <- read_tsv(file.path(anno_maf_dir, "snv-consensus-plus-hotspots-hgat-o
   mutate(ATRXm = case_when(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic") ~ 
                            paste0(HGVSp_Short),
                            ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)")))
+
 pbta_atrx <- pbta_maf %>%
   select(Kids_First_Biospecimen_ID, ATRXm) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
   select(sample_id, ATRXm) 
 
 #DGD MAF
-dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
+dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
   filter(Hugo_Symbol == "ATRX",
-         Variant_Classification %in% mut_of_interest)
+         Variant_Classification %in% mut_of_interest) %>%
+  mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~
+                                   "splice",
+                                 HGVSp_Short = is.na(HGVSp_Short) & Variant_Classification == "3'UTR" ~
+                                   "3'UTR",
+                                 TRUE ~ as.character(HGVSp_Short))) %>%
+  mutate(ATRXm = case_when(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic") ~ 
+                             paste0(HGVSp_Short),
+                           ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)")))
 
 dgd_atrx <- dgd_maf %>%
-  select(Kids_First_Biospecimen_ID, HGVSp_Short) %>%
+  select(Kids_First_Biospecimen_ID, HGVSp_Short, ATRXm) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
-  rename(ATRXm = HGVSp_Short) %>%
   select(sample_id, ATRXm) 
 
 # remove samples duplicated in DGD
@@ -103,7 +111,7 @@ telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
   unique()
 
 # join everything together
-all_pbta_ihc <- v11 %>% 
+all_pbta_dgd_ihc <- v11 %>% 
   filter(!is.na(pathology_diagnosis)) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor) %>%
   unique() %>%
@@ -117,23 +125,30 @@ all_pbta_ihc <- v11 %>%
          tumor_descriptor = case_when(is.na(tumor_descriptor) ~ "Not Reported",
                                       TRUE ~ as.character(tumor_descriptor)),
          ATRXm = case_when(is.na(ATRXm) & sample_id %in% samples_mut_profiled ~ "Not mutated",
-                           is.na(ATRXm) & !sample_id %in% samples_mut_profiled ~ "Not profiled",
+                         #  is.na(ATRXm) & !sample_id %in% samples_mut_profiled ~ "Not profiled",
                            TRUE ~ as.character(ATRXm)),
          # filter duplicate rows if VUS + oncogenic
          remove = case_when(sample_id == "7316-2189" & grepl("VUS", ATRXm) ~ "remove",
                             sample_id == "7316-2756" & grepl("VUS", ATRXm) ~ "remove",
+                            sample_id == "7316-4723" & grepl("VUS", ATRXm) ~ "remove",
+                            sample_id == "7316-5159" & grepl("VUS", ATRXm) ~ "remove",
                             TRUE ~ "keep")
          )  %>%
   filter(remove == "keep") %>%
   select(-c(`Research Subject ID`, remove)) %>%
   arrange(cohort_participant_id, Cohort) %>%
   filter(!is.na(cohort_participant_id)) %>%
+  group_by(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
+           UBTF, `ATRX IHC`, `T/N TelHunt ratio`, Cohort) %>%
+  summarise(ATRXm = str_c(unique(ATRXm), collapse = ", ")) %>%
+  select(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
+           UBTF, `ATRX IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor) 
 
   # which samples are duplicated - choose oncogenic mutation only?
-all_pbta_ihc[duplicated(all_pbta_ihc$`Tumor ID`)|duplicated(all_pbta_ihc$`Tumor ID`, fromLast=TRUE),]
+all_pbta_dgd_ihc[duplicated(all_pbta_dgd_ihc$`Tumor ID`)|duplicated(all_pbta_dgd_ihc$`Tumor ID`, fromLast=TRUE),]
 
-all_pbta_ihc %>%
+all_pbta_dgd_ihc %>%
   openxlsx::write.xlsx(file.path(output_dir, "Table-S1.xlsx"), overwrite = T, keepNA=TRUE)

@@ -1,6 +1,6 @@
 FROM rocker/tidyverse:4.2
 
-LABEL maintainer="Daniel Miller (millerd15@chop.edu)"
+LABEL maintainer="Jo Lynne Rokita (rokita@chop.edu)"
 
 ### Install apt-getable packages to start
 #########################################
