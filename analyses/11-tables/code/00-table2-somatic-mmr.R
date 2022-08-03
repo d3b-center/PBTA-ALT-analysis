@@ -50,7 +50,7 @@ pbta_mut <- pbta_maf %>%
   select(sample_id, MMR) 
 
 #DGD MAF
-dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) #%>%
+dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
   filter(Hugo_Symbol %in% goi$genes,
          Variant_Classification %in% mut_of_interest,
@@ -60,13 +60,16 @@ dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) #%>%
          MMR = paste(Hugo_Symbol, HGVSp_Short, sep = " ")) %>%
   select(Kids_First_Biospecimen_ID, Hugo_Symbol, HGVSp_Short, MMR, 
          Variant_Classification, GENE_IN_ONCOKB, VARIANT_IN_ONCOKB,
-         ONCOGENIC, MUTATION_EFFECT) %>%
+         ONCOGENIC, MUTATION_EFFECT, everything(dgd_maf)) %>%
   unique()
 
 
 dgd_mut <- dgd_maf %>%
   select(Kids_First_Biospecimen_ID, MMR) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
+  #filter out known germline variants
+  filter(!(sample_id == "7316-4215" & MMR == "MSH6 p.K1288_F1289ins*"),
+         !(sample_id == "7316-4917" & MMR == "MSH6 p.R497*")) %>%
   select(sample_id, MMR) %>%
   unique()
 
