@@ -136,7 +136,6 @@ all_pbta_dgd_ihc <- v11 %>%
          )  %>%
   filter(remove == "keep") %>%
   select(-c(`Research Subject ID`, remove)) %>%
-  arrange(cohort_participant_id, Cohort) %>%
   filter(!is.na(cohort_participant_id)) %>%
   group_by(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
            UBTF, `ATRX IHC`, `T/N TelHunt ratio`, Cohort) %>%
@@ -145,7 +144,9 @@ all_pbta_dgd_ihc <- v11 %>%
            UBTF, `ATRX IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
-         `Phase of Therapy` = tumor_descriptor) 
+         `Phase of Therapy` = tumor_descriptor) %>%
+  arrange(`Patient ID`, Cohort)
+
 
   # which samples are duplicated - choose oncogenic mutation only?
 all_pbta_dgd_ihc[duplicated(all_pbta_dgd_ihc$`Tumor ID`)|duplicated(all_pbta_dgd_ihc$`Tumor ID`, fromLast=TRUE),]
