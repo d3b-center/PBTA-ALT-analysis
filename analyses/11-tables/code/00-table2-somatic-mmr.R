@@ -50,7 +50,7 @@ pbta_mut <- pbta_maf %>%
   select(sample_id, MMR) 
 
 #DGD MAF
-dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
+dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) #%>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
   filter(Hugo_Symbol %in% goi$genes,
          Variant_Classification %in% mut_of_interest,
@@ -77,7 +77,8 @@ all_mut <- pbta_mut %>%
          sample_id %in% table2_ids) %>%
   unique() %>%
   group_by(sample_id) %>%
-  summarise(MMR = str_c(unique(MMR), collapse = ", "))
+  summarise(`Somatic MMR` = str_c(unique(MMR), collapse = ", "))
 
-xlsx::write.xlsx(all_mut, file.path(output_dir, "Table2-somatic-MMR-oncogenic-mutations.xlsx"))
+all_mut %>%
+  write_tsv(file.path(output_dir, "Table2-somatic-MMR-oncogenic-mutations.tsv"))
   
