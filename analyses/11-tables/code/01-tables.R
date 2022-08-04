@@ -69,7 +69,9 @@ dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
 dgd_atrx <- dgd_maf %>%
   select(Kids_First_Biospecimen_ID, HGVSp_Short, ATRXm) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
-  select(sample_id, ATRXm) 
+  select(sample_id, ATRXm) %>%
+  # add DGD samples which we do not have MAFs for in release, but for which KAC had clinical results
+  add_row(sample_id = "7316-4678", ATRXm = "p.S1153*")
 
 # remove samples duplicated in DGD
 remove_atrx <- intersect(dgd_atrx$sample_id, pbta_atrx$sample_id)
@@ -86,6 +88,7 @@ samples_mut_profiled <- v11 %>%
   pull(sample_id) %>%
   unique()
 
+samples_mut_profiled <- c(samples_mut_profiled, "7316-4740", "7316-958", "7316-4678")
 # IHC (TMA) results
 ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
   rename(sample_id = ID,
@@ -158,3 +161,4 @@ all_pbta_dgd_ihc[duplicated(all_pbta_dgd_ihc$`Tumor ID`)|duplicated(all_pbta_dgd
 
 all_pbta_dgd_ihc %>%
   openxlsx::write.xlsx(file.path(output_dir, "Table-S1.xlsx"), overwrite = T, keepNA=TRUE)
+
