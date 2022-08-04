@@ -45,6 +45,10 @@ pbta_maf <- read_tsv(file.path(anno_maf_dir, "snv-consensus-plus-hotspots-hgat-o
 
 pbta_atrx <- pbta_maf %>%
   select(Kids_First_Biospecimen_ID, ATRXm) %>%
+  # add SVs/CNVs
+  add_row(Kids_First_Biospecimen_ID = "BS_STNH7YSX", ATRXm = "exon 1 DEL (promoter)") %>%
+  add_row(Kids_First_Biospecimen_ID = "BS_JB3J82ZK", ATRXm = "deep DEL (truncation)") %>%
+  add_row(Kids_First_Biospecimen_ID = "BS_KHSYAB3J", ATRXm = "deep DEL (truncation)") %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
   select(sample_id, ATRXm) 
 
@@ -144,7 +148,8 @@ all_pbta_dgd_ihc <- v11 %>%
            UBTF, `ATRX IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
-         `Phase of Therapy` = tumor_descriptor) %>%
+         `Phase of Therapy` = tumor_descriptor,
+         `Somatic ATRX` = ATRXm) %>%
   arrange(`Patient ID`, Cohort)
 
 
