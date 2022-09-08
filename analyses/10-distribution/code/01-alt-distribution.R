@@ -48,7 +48,8 @@ tel_df <- tel_df %>%
   dplyr::inner_join(tel_df) %>%
   unique() %>%
   # reverse order levels to alphabetize when flipping coordinates
-  mutate(cancer_group_display_n = fct_rev(cancer_group_display_n))
+  mutate(cancer_group_display_n = fct_rev(cancer_group_display_n)) %>%
+  write_tsv(file.path(output_dir, "distribution_table.tsv"))
 
 # plot
 tiff(file.path(output_dir, "telhunt-distributions.tiff"), height = 1800, width = 4200, res = 300)
