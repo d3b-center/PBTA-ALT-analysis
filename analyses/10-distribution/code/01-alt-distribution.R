@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggforce)
 library(forcats)
+library(openxlsx)
 
 # define directories
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
@@ -10,6 +11,7 @@ input_dir <- file.path(root_dir, "analyses", "01-alterations_ratio_check", "inpu
 output_dir <- file.path(analysis_dir, "output")
 palette_dir <- file.path(analysis_dir, "v22-input")
 data_dir <- file.path(root_dir, "data")
+excel_input_dir <- file.path(analysis_dir, "input")
 
 # publication theme
 source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
@@ -67,3 +69,10 @@ scale_linetype_manual(name = "ALT+ cutpoint", values = c(2, 2),
 
 p
 dev.off()
+
+# merge tel_df cancer_group info with Fig 1 info for same labeling
+fig1_df <- readxl::read_excel(file.path(excel_input_dir, "CCA List for FIgure 1A.xlsx")) %>%
+  left_join(tel_df[,c("cancer_group_display", "sample_id")]) %>%
+  openxlsx::write.xlsx(file.path(output_dir, "CCA_Figure1A.xlsx"), overwrite = T, keepNA=TRUE)
+
+  
