@@ -73,6 +73,6 @@ dev.off()
 # merge tel_df cancer_group info with Fig 1 info for same labeling
 fig1_df <- readxl::read_excel(file.path(excel_input_dir, "CCA List for FIgure 1A.xlsx")) %>%
   left_join(tel_df[,c("cancer_group_display", "sample_id")]) %>%
-  openxlsx::write.xlsx(file.path(output_dir, "Table-S1.xlsx"), overwrite = T, keepNA=TRUE)
+  openxlsx::write.xlsx(file.path(output_dir, "CCA_Figure1A.xlsx"), overwrite = T, keepNA=TRUE)
 
   
