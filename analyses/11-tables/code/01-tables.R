@@ -89,7 +89,14 @@ samples_mut_profiled <- v11 %>%
   unique()
 
 samples_mut_profiled <- c(samples_mut_profiled, "7316-4740", "7316-958", "7316-4678")
+
 # IHC (TMA) results
+
+# h3k27me3 ihc
+me3 <- read_tsv(file.path(onco_dir, "h3k27me3_tma.tsv")) %>%
+  dplyr::rename(`H3K27me3 IHC` = H3K27me3)
+
+# atrx, UBTF, CCA
 ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
   rename(sample_id = ID,
          `ATRX IHC` = `ATRX IHC (Pathology)`,
@@ -103,7 +110,12 @@ ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_k
          UBTF = case_when(UBTF == 1 ~ "POS",
                           UBTF == 0 ~ "NEG",
                                       TRUE ~ "Not done")) %>%
-  select(sample_id, `C-Circle Assay`, UBTF, `ATRX IHC`, `Research Subject ID`)
+  select(sample_id, `C-Circle Assay`, UBTF, `ATRX IHC`, `Research Subject ID`) %>%
+  full_join(me3) %>%
+  mutate(`H3K27me3 IHC` = case_when(is.na(`H3K27me3 IHC`) ~ "Not done",
+                                    TRUE ~ `H3K27me3 IHC`)) %>%
+  # remove those without research ID
+  filter(!is.na(`Research Subject ID`))
 
 # telhunt results
 telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
@@ -145,10 +157,10 @@ all_pbta_dgd_ihc <- v11 %>%
   select(-c(`Research Subject ID`, remove)) %>%
   filter(!is.na(cohort_participant_id)) %>%
   group_by(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
-           UBTF, `ATRX IHC`, `T/N TelHunt ratio`, Cohort) %>%
+           UBTF, `ATRX IHC`, `H3K27me3 IHC`, `T/N TelHunt ratio`, Cohort) %>%
   summarise(ATRXm = str_c(unique(ATRXm), collapse = ", ")) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
-           UBTF, `ATRX IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
+           UBTF, `ATRX IHC`, `H3K27me3 IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor,
