@@ -15,6 +15,8 @@ data_dir <- file.path(root_dir, "data")
 source(file.path(input_dir, "mutation-colors.R"))
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 germline <- read_tsv(file.path(input_dir, "germline_variants_meta_format.tsv"))
+me3 <- read_tsv(file.path(input_dir, "h3k27me3_tma.tsv")) %>%
+  dplyr::rename(`H3K27me3 IHC` = H3K27me3)
 ihc <- readxl::read_excel(file.path(input_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
   rename(sample_id = ID,
          `ATRX IHC` = `ATRX IHC (Pathology)`,
@@ -24,7 +26,14 @@ ihc <- readxl::read_excel(file.path(input_dir, "TMA table for HGAT paper_052722_
                                 TRUE ~ "Not done"),
          `Telomeric foci` = case_when(`Telomeric foci` == 1 ~ "POS",
                                         `Telomeric foci` == 0 ~ "NEG",
-                                TRUE ~ "Not done"))
+                                TRUE ~ "Not done")) %>%
+  full_join(me3) %>%
+  mutate(`H3K27me3 IHC` = case_when(is.na(`H3K27me3 IHC`) ~ "Not done",
+                                    TRUE ~ `H3K27me3 IHC`)) %>%
+  # remove those without research ID
+  filter(!is.na(`Research Subject ID`))
+
+
 # read in telomerase scores
 tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"), sheet = 2) %>%
   rename(`Telomerase score` = NormEXTENDScores_fpkm) %>%
@@ -79,7 +88,7 @@ hgat$TMB <- factor(hgat$TMB, levels = c("Ultra-hypermutant", "Hypermutant", "Nor
 
 ## color for barplot
 col = colors
-df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio", "C-circle", "ATRX IHC", "Telomeric foci", "TMB", "Germline MMR", "Somatic MMR")]
+df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio", "C-circle", "ATRX IHC", "H3K27me3 IHC", "Telomeric foci", "TMB", "Germline MMR", "Somatic MMR")]
 
 colorder <- df$Kids_First_Biospecimen_ID_DNA
 
@@ -97,7 +106,7 @@ palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D
 
 
 # match annotations and gene matrix by bs_id with 
-ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "Telomeric foci", "ATRX IHC", "TMB", "Germline MMR", "Somatic MMR")],
+ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "Telomeric foci", "ATRX IHC", "H3K27me3 IHC", "TMB", "Germline MMR", "Somatic MMR")],
                        # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
                           "Sex" = c("Male" = "#56B4E9",
@@ -120,6 +129,9 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                           "ATRX IHC" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
+                         "H3K27me3 IHC" = c("POS"="#0072B2",
+                                           "NEG"="lightsteelblue1",
+                                           "Not done" = "whitesmoke"),
                           "Telomeric foci" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),

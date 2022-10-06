@@ -32,8 +32,7 @@ mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
 
 pbta_maf <- read_tsv(file.path(anno_maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
-  filter(Hugo_Symbol == "ATRX",
-         Variant_Classification %in% mut_of_interest) %>%
+  filter(Hugo_Symbol == "ATRX" & Variant_Classification %in% mut_of_interest) %>%
   mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~
            "splice",
            HGVSp_Short = is.na(HGVSp_Short) & Variant_Classification == "3'UTR" ~
@@ -52,10 +51,15 @@ pbta_atrx <- pbta_maf %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
   select(sample_id, ATRXm) 
 
-#DGD MAF
-dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
+#DGD MAF - add ATRX and histone mutations
+#dgd_histone_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
+#  rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
+#  filter(Hugo_Symbol %in% c("H3-3A", "HIST1H3B","HIST1H3C", "HIST2H3C"),
+#             HGVSp_Short %in% c("p.K28M", "p.G35R", "p.G35V"))
+
+dgd_onco_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
-  filter(Hugo_Symbol == "ATRX",
+  filter(Hugo_Symbol %in% "ATRX",
          Variant_Classification %in% mut_of_interest) %>%
   mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~
                                    "splice",
@@ -93,8 +97,10 @@ samples_mut_profiled <- c(samples_mut_profiled, "7316-4740", "7316-958", "7316-4
 # IHC (TMA) results
 
 # h3k27me3 ihc
-me3 <- read_tsv(file.path(onco_dir, "h3k27me3_tma.tsv")) %>%
-  dplyr::rename(`H3K27me3 IHC` = H3K27me3)
+#me3 <- read_tsv(file.path(onco_dir, "h3k27me3_tma.tsv"))
+h3 <- tma_mut %>%
+  select(-UID)
+
 
 # atrx, UBTF, CCA
 ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
@@ -111,9 +117,7 @@ ihc <- readxl::read_excel(file.path(onco_dir, "TMA table for HGAT paper_052722_k
                           UBTF == 0 ~ "NEG",
                                       TRUE ~ "Not done")) %>%
   select(sample_id, `C-Circle Assay`, UBTF, `ATRX IHC`, `Research Subject ID`) %>%
-  full_join(me3) %>%
-  mutate(`H3K27me3 IHC` = case_when(is.na(`H3K27me3 IHC`) ~ "Not done",
-                                    TRUE ~ `H3K27me3 IHC`)) %>%
+  full_join(tma_mut) %>%
   # remove those without research ID
   filter(!is.na(`Research Subject ID`))
 
@@ -146,6 +150,8 @@ all_pbta_dgd_ihc <- v11 %>%
          ATRXm = case_when(is.na(ATRXm) & sample_id %in% samples_mut_profiled ~ "Not mutated",
                          #  is.na(ATRXm) & !sample_id %in% samples_mut_profiled ~ "Not profiled",
                            TRUE ~ as.character(ATRXm)),
+         `Somatic H3` = case_when(is.na(`Somatic H3`) & sample_id %in% samples_mut_profiled ~ "H3-wildtype",
+                                  TRUE ~ as.character(`Somatic H3`)),
          # filter duplicate rows if VUS + oncogenic
          remove = case_when(sample_id == "7316-2189" & grepl("VUS", ATRXm) ~ "remove",
                             sample_id == "7316-2756" & grepl("VUS", ATRXm) ~ "remove",
@@ -157,10 +163,10 @@ all_pbta_dgd_ihc <- v11 %>%
   select(-c(`Research Subject ID`, remove)) %>%
   filter(!is.na(cohort_participant_id)) %>%
   group_by(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
-           UBTF, `ATRX IHC`, `H3K27me3 IHC`, `T/N TelHunt ratio`, Cohort) %>%
+           UBTF, `ATRX IHC`,`H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`,  `T/N TelHunt ratio`, Cohort) %>%
   summarise(ATRXm = str_c(unique(ATRXm), collapse = ", ")) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
-           UBTF, `ATRX IHC`, `H3K27me3 IHC`, ATRXm, `T/N TelHunt ratio`, Cohort) %>%
+           UBTF, `ATRX IHC`, ATRXm, `H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor,
@@ -173,4 +179,19 @@ all_pbta_dgd_ihc[duplicated(all_pbta_dgd_ihc$`Tumor ID`)|duplicated(all_pbta_dgd
 
 all_pbta_dgd_ihc %>%
   openxlsx::write.xlsx(file.path(output_dir, "Table-S1.xlsx"), overwrite = T, keepNA=TRUE)
+
+
+# which H3 mutant/WT do not match IHC
+non_matches <- all_pbta_dgd_ihc %>%
+  mutate(match = case_when(`H3K28M IHC` == `Somatic H3` ~ "true",
+                           `H3K28M IHC` == "H3-wildtype" & grepl("H", `Somatic H3`) ~ "false",
+                           `H3K28me3 IHC` == "LOST" & `H3K28M IHC` == "K28-altered" & `Somatic H3` != "H3-wildtype" ~ "true",
+                           `H3K28M IHC` == "K28-altered" & `Somatic H3` == "H3-wildtype" ~ "false",
+                           `H3K28me3 IHC` == "RETAINED" & `Somatic H3` == "H3-wildtype" ~ "true",
+                           `H3K28me3 IHC` == "LOST" & `Somatic H3` != "H3-wildtype" ~ "false",
+                           TRUE ~ "Unknown")
+         )
+         
+
+
 
