@@ -179,7 +179,8 @@ all_pbta_dgd_ihc <- v11 %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor,
-         `Somatic ATRX` = ATRXm) %>%
+         `Somatic ATRX` = ATRXm,
+         `CNS region` = CNS_region) %>%
   arrange(`Patient ID`, Cohort)
 
 
