@@ -70,7 +70,7 @@ dgd_onco_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
                              paste0(HGVSp_Short),
                            ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)")))
 
-dgd_atrx <- dgd_maf %>%
+dgd_atrx <- dgd_onco_maf %>%
   select(Kids_First_Biospecimen_ID, HGVSp_Short, ATRXm) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
   select(sample_id, ATRXm) %>%
@@ -133,12 +133,21 @@ telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
   select(sample_id, `T/N TelHunt ratio`) %>%
   unique()
 
+# CNS region map - DGD does not have this, so need to remove first
+cns_regions <- v11 %>%
+  filter(!is.na(pathology_diagnosis),
+         cohort %in% c("PBTA", "DGD")) %>%
+  select(sample_id, CNS_region) %>%
+  filter(!is.na(CNS_region)) %>%
+  unique()
+
 # join everything together
 all_pbta_dgd_ihc <- v11 %>% 
   filter(!is.na(pathology_diagnosis)) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor) %>%
   unique() %>%
   right_join(ihc) %>%
+  left_join(cns_regions) %>%
   left_join(atrx_mut) %>%
   left_join(telhunt) %>%
   mutate(Cohort = case_when(sample_id %in% hgat_subset_ids ~ "Primary Analysis",
@@ -162,10 +171,10 @@ all_pbta_dgd_ihc <- v11 %>%
   filter(remove == "keep") %>%
   select(-c(`Research Subject ID`, remove)) %>%
   filter(!is.na(cohort_participant_id)) %>%
-  group_by(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
+  group_by(cohort_participant_id, sample_id, tumor_descriptor, CNS_region, `C-Circle Assay`,
            UBTF, `ATRX IHC`,`H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`,  `T/N TelHunt ratio`, Cohort) %>%
   summarise(ATRXm = str_c(unique(ATRXm), collapse = ", ")) %>%
-  select(cohort_participant_id, sample_id, tumor_descriptor, `C-Circle Assay`,
+  select(cohort_participant_id, sample_id, tumor_descriptor, CNS_region, `C-Circle Assay`,
            UBTF, `ATRX IHC`, ATRXm, `H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
@@ -180,7 +189,6 @@ all_pbta_dgd_ihc[duplicated(all_pbta_dgd_ihc$`Tumor ID`)|duplicated(all_pbta_dgd
 all_pbta_dgd_ihc %>%
   openxlsx::write.xlsx(file.path(output_dir, "Table-S1.xlsx"), overwrite = T, keepNA=TRUE)
 
-
 # which H3 mutant/WT do not match IHC
 non_matches <- all_pbta_dgd_ihc %>%
   mutate(match = case_when(`H3K28M IHC` == `Somatic H3` ~ "true",
@@ -192,6 +200,6 @@ non_matches <- all_pbta_dgd_ihc %>%
                            TRUE ~ "Unknown")
          )
          
-
+non_matches
 
 
