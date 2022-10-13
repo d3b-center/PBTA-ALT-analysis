@@ -7,6 +7,7 @@ root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 onco_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 anno_maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 tel_dir <- file.path(root_dir, "analyses", "01-alterations_ratio_check", "input")
+analysis_dir <- file.path(root_dir, "analyses", "11-tables")
 output_dir <- file.path(root_dir, "analyses", "11-tables", "output")
 data_dir <- file.path(root_dir, "data")
 
@@ -21,8 +22,7 @@ v11 <- read_tsv(file.path(data_dir, "histologies.tsv"), guess_max = 100000)
 v22 <- read_tsv(file.path(data_dir, "pbta-histologies.tsv"), guess_max = 3000)
 
 # 85 hgat used in primary analysis
-hgat_subset_ids <- read_tsv(file.path(onco_dir,"hgat_subset.tsv")) %>% 
-  pull(sample_id)
+hgat_subset <- read_tsv(file.path(onco_dir,"hgat_subset.tsv"))
 
 # MAFs for PBTA + DGD
 # pbta MAF - read in only oncogenic/likely oncogenic variants for ATRX
@@ -31,6 +31,7 @@ source(file.path(onco_dir, "mutation-colors.R"))
 mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
 
 pbta_maf <- read_tsv(file.path(anno_maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
+  filter(Tumor_Sample_Barcode %in% hgat_subset$Kids_First_Biospecimen_ID_DNA) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
   filter(Hugo_Symbol == "ATRX" & Variant_Classification %in% mut_of_interest) %>%
   mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~
@@ -50,12 +51,6 @@ pbta_atrx <- pbta_maf %>%
   add_row(Kids_First_Biospecimen_ID = "BS_KHSYAB3J", ATRXm = "deep DEL (truncation)") %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
   select(sample_id, ATRXm) 
-
-#DGD MAF - add ATRX and histone mutations
-#dgd_histone_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
-#  rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
-#  filter(Hugo_Symbol %in% c("H3-3A", "HIST1H3B","HIST1H3C", "HIST2H3C"),
-#             HGVSp_Short %in% c("p.K28M", "p.G35R", "p.G35V"))
 
 dgd_onco_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
@@ -95,11 +90,7 @@ samples_mut_profiled <- v11 %>%
 samples_mut_profiled <- c(samples_mut_profiled, "7316-4740", "7316-958", "7316-4678")
 
 # IHC (TMA) results
-
-# h3k27me3 ihc
-#me3 <- read_tsv(file.path(onco_dir, "h3k27me3_tma.tsv"))
-h3 <- tma_mut %>%
-  select(-UID)
+tma_mut <- read_tsv(file.path(onco_dir, "h3k28me3_tma.tsv"))
 
 
 # atrx, UBTF, CCA
@@ -133,13 +124,20 @@ telhunt <- read_tsv(file.path(tel_dir, "telomere_940_ratio.tsv")) %>%
   select(sample_id, `T/N TelHunt ratio`) %>%
   unique()
 
-# CNS region map - DGD does not have this, so need to remove first
+# CNS region map - add manually curated CNS regions from DGD
+dgd_cns_regions <- read_tsv(file.path(analysis_dir, "input", "dgd-cns-regions.tsv"))
+
 cns_regions <- v11 %>%
   filter(!is.na(pathology_diagnosis),
          cohort %in% c("PBTA", "DGD")) %>%
   select(sample_id, CNS_region) %>%
-  filter(!is.na(CNS_region)) %>%
+  filter(!is.na(CNS_region),
+         sample_id != "7316-3230") %>%
+  bind_rows(dgd_cns_regions) %>%
   unique()
+
+cns_regions[duplicated(cns_regions$sample_id)|duplicated(cns_regions$sample_id, fromLast=TRUE),]
+
 
 # join everything together
 all_pbta_dgd_ihc <- v11 %>% 
@@ -150,7 +148,7 @@ all_pbta_dgd_ihc <- v11 %>%
   left_join(cns_regions) %>%
   left_join(atrx_mut) %>%
   left_join(telhunt) %>%
-  mutate(Cohort = case_when(sample_id %in% hgat_subset_ids ~ "Primary Analysis",
+  mutate(Cohort = case_when(sample_id %in% hgat_subset$sample_id ~ "Primary Analysis",
                             TRUE ~ "Validation"),
          cohort_participant_id = case_when(is.na(cohort_participant_id) ~ `Research Subject ID`,
                                            TRUE ~ as.character(cohort_participant_id)),
