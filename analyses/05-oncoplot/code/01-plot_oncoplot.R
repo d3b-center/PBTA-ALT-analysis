@@ -165,7 +165,7 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
 
 
 #pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 3, width = 15, onefile = FALSE)
-tiff(file.path(output_dir, "oncoprint_hgat.tiff"), height = 1000, width = 4500, units = "px", res = 300)
+tiff(file.path(output_dir, "oncoprint_hgat.tiff"), height = 1100, width = 4500, units = "px", res = 300)
 # global option to increase space between heatmap and annotations
 ht_opt$ROW_ANNO_PADDING = unit(1, "cm")
 oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
