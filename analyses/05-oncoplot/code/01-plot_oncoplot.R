@@ -4,6 +4,9 @@ library(ComplexHeatmap)
 library(circlize)
 library(openxlsx)
 
+#7316-3027
+#7316-3030
+
 # define directories 
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "05-oncoplot")
@@ -15,16 +18,19 @@ data_dir <- file.path(root_dir, "data")
 source(file.path(input_dir, "mutation-colors.R"))
 goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 germline <- read_tsv(file.path(input_dir, "germline_variants_meta_format.tsv"))
-ihc <- readxl::read_excel(file.path(input_dir, "TMA table for HGAT paper_052722_kac.xlsx")) %>%
-  rename(sample_id = ID,
-         `ATRX IHC` = `ATRX IHC (Pathology)`,
-         `Telomeric foci` = `Presence of UBTF`) %>%
-  mutate(`ATRX IHC` = case_when(`ATRX IHC` == 0 ~ "POS",
-                                `ATRX IHC` == 1 ~ "NEG",
-                                TRUE ~ "Not done"),
-         `Telomeric foci` = case_when(`Telomeric foci` == 1 ~ "POS",
-                                        `Telomeric foci` == 0 ~ "NEG",
-                                TRUE ~ "Not done"))
+ihc <- readxl::read_excel(file.path(root_dir, "analyses", "11-tables", "output",
+                                    "Table-S1.xlsx")) %>%
+  dplyr::rename(sample_id = `Tumor ID`) %>%
+  mutate(`ATRX IHC` = case_when(`ATRX IHC` == "LOST" ~ "Lost",
+                                `ATRX IHC` == "RETAINED" ~ "Retained",
+                                TRUE ~ as.character(`ATRX IHC`)),
+         `H3K28me3 IHC` = case_when(is.na(`H3K28me3 IHC`) ~ "Not done",
+                                    `H3K28me3 IHC` == "LOST" ~ "Lost",
+                                    `H3K28me3 IHC` == "RETAINED" ~ "Retained"),
+         `H3K28M IHC` = case_when(is.na(`H3K28M IHC`) ~ "Not done",
+                                    TRUE ~ as.character(`H3K28M IHC`))
+         )
+
 # read in telomerase scores
 tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"), sheet = 2) %>%
   rename(`Telomerase score` = NormEXTENDScores_fpkm) %>%
@@ -48,7 +54,7 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
 
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
 gene_matrix <- gene_matrix[goi.list$genes,]
-
+gene_matrix[,"BS_8FSJDG2T"]
 
 tmb <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
@@ -80,7 +86,7 @@ hgat$TMB <- factor(hgat$TMB, levels = c("Ultra-hypermutant", "Hypermutant", "Nor
 
 ## color for barplot
 col = colors
-df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio", "C-circle", "ATRX IHC", "Telomeric foci", "TMB", "Germline MMR", "Somatic MMR")]
+df = hgat[,c("Kids_First_Biospecimen_ID_DNA", "Sex","Phase of therapy", "Telomere ratio", "C-circle", "UBTF", "ATRX IHC", "H3K28me3 IHC", "H3K28M IHC", "TMB", "Germline MMR", "Somatic MMR")]
 
 colorder <- df$Kids_First_Biospecimen_ID_DNA
 
@@ -98,7 +104,7 @@ palette_OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D
 
 
 # match annotations and gene matrix by bs_id with 
-ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "Telomeric foci", "ATRX IHC", "TMB", "Germline MMR", "Somatic MMR")],
+ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy", "Telomere ratio", "C-circle", "UBTF", "ATRX IHC", "H3K28me3 IHC", "H3K28M IHC", "TMB", "Germline MMR", "Somatic MMR")],
                        # "TMB"=anno_barplot(hgat$TMB, ylim = c(0,6), gp = gpar(fill = "#CCCCCC80")),
                         col=list(
                           "Sex" = c("Male" = "#56B4E9",
@@ -118,11 +124,17 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                           "C-circle" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
-                          "ATRX IHC" = c("POS"="#0072B2",
-                                         "NEG"="lightsteelblue1",
+                          "ATRX IHC" = c("Retained"="#0072B2",
+                                         "Lost"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
-                          "Telomeric foci" = c("POS"="#0072B2",
-                                         "NEG"="lightsteelblue1",
+                         "H3K28me3 IHC" = c("Lost" = "#0072B2",
+                                           "Retained" = "lightsteelblue1",
+                                           "Not done" = "whitesmoke"),
+                         "H3K28M IHC" = c("K28-altered" = "#0072B2",
+                                          "K28-wildtype" = "lightsteelblue1",
+                                          "Not done" = "whitesmoke"),
+                          "UBTF" = c("POS" = "#0072B2",
+                                         "NEG" = "lightsteelblue1",
                                          "Not done" = "whitesmoke"),
                           "Germline MMR" = c("yes" = "#56B4E9",
                                              "no" = "whitesmoke"),
@@ -153,7 +165,7 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
 
 
 #pdf(file.path(output_dir, "oncoprint_hgat.pdf"), height = 3, width = 15, onefile = FALSE)
-tiff(file.path(output_dir, "oncoprint_hgat.tiff"), height = 900, width = 4500, units = "px", res = 300)
+tiff(file.path(output_dir, "oncoprint_hgat.tiff"), height = 1100, width = 4500, units = "px", res = 300)
 # global option to increase space between heatmap and annotations
 ht_opt$ROW_ANNO_PADDING = unit(1, "cm")
 oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
