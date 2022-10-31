@@ -47,6 +47,7 @@ Set up output directories.
 
 ```{r Set up directories}
 input_dir <- file.path(root_dir, "analyses", "02-add-histologies", "output")
+tma_dir <- file.path(root_dir, "analyses", "05-oncoplot", "input")
 results_dir <- file.path(analysis_dir, "output")
 plots_dir <- file.path(analysis_dir, "plots")
 ```
@@ -66,7 +67,7 @@ Declare input file paths and useful variables
 
 ```{r Set input file paths}
 metadata_file <- file.path(input_dir, "stundon_hgat_updated_hist_alt.tsv")
-
+tma_file <- file.path(tma_dir, "h3k28me3_tma.tsv")
 ```
 
 Declare output file paths for HGG/DMG all subtypes. 
@@ -80,6 +81,9 @@ table_s4_file <- file.path(results_dir, "Table-S4.xlsx")
 ## Import the metadata
 
 ```{r Read in metadata}
+# read in TMA data to get additional samples which are K28-altered, but not mutated
+tma <- read_tsv(tma_file)
+
 # choose HGG samples
 # remove cell-lines from this analysis as well
 metadata <- readr::read_tsv(
@@ -95,8 +99,10 @@ metadata <- readr::read_tsv(
                            `alt final` == "POS"~ "ALT +",
                            `alt final` == "NEG"~ "ALT -")
   ) %>%
+  left_join(tma) %>%
   # keep only relevant columns
-  select(Kids_First_Participant_ID, Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, tumor_descriptor, ALT_status, molecular_subtype, OS_days, OS_years, OS_status)
+  select(Kids_First_Participant_ID, Kids_First_Biospecimen_ID_DNA, Kids_First_Biospecimen_ID_RNA, tumor_descriptor, ALT_status, molecular_subtype, OS_days, OS_years, OS_status, `H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`)
+
 ```
 
 ## Create new variable
@@ -115,7 +121,12 @@ meta_updated <- metadata %>%
     molecular_subtype %in% c("HGG, IDH, TP53 loss",
                              "HGG, IDH, TP53 activated") ~ "IDH",
     TRUE ~ NA_character_
-  ))
+  )) %>%
+  
+  # add logic for non-mutant H3 which are K28-altered
+  dplyr::mutate(mol_sub_group = case_when(    
+    `H3K28me3 IHC` == "LOST" & `Somatic H3` == "H3-wildtype" ~ "H3 K28",
+    TRUE ~ as.character(mol_sub_group)))
 
 as.data.frame(table(meta_updated$mol_sub_group))
 
