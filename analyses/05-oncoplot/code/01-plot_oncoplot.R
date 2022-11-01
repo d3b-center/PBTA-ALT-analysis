@@ -4,9 +4,6 @@ library(ComplexHeatmap)
 library(circlize)
 library(openxlsx)
 
-#7316-3027
-#7316-3030
-
 # define directories 
 root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
 analysis_dir <- file.path(root_dir, "analyses", "05-oncoplot")
@@ -16,7 +13,7 @@ data_dir <- file.path(root_dir, "data")
 
 ##read in input
 source(file.path(input_dir, "mutation-colors.R"))
-goi.list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
+goi_list <- read_tsv(file.path(input_dir, "goi-mutations"), col_names = "genes")
 germline <- read_tsv(file.path(input_dir, "germline_variants_meta_format.tsv"))
 ihc <- readxl::read_excel(file.path(root_dir, "analyses", "11-tables", "output",
                                     "Table-S1.xlsx")) %>%
@@ -53,8 +50,7 @@ hgat <- read_tsv(file.path(input_dir,"hgat_subset.tsv")) %>%
   arrange(telomere_ratio)
 
 gene_matrix<- readRDS(file.path(input_dir,"hgat_snv_cnv_alt_matrix.RDS"))
-gene_matrix <- gene_matrix[goi.list$genes,]
-gene_matrix[,"BS_8FSJDG2T"]
+gene_matrix <- gene_matrix[goi_list$genes,]
 
 tmb <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
   dplyr::rename(Kids_First_Biospecimen_ID_DNA = Tumor_Sample_Barcode) %>%
@@ -114,13 +110,7 @@ ha = HeatmapAnnotation(name = "annotation", df = hgat[,c("Sex","Phase of therapy
                                                  "Progressive Disease Post-Mortem" = "#009E73",
                                                  "Recurrence" = "#E69F00",
                                                  "Second Malignancy" = "#0072B2"),
-                          #"Phase of therapy" = c("Initial CNS Tumor" = "#7FFFD4",
-                          #                       "Progressive" = "#FFFFB5",
-                          #                       "Progressive Disease Post-Mortem" = "#EEAEEE",
-                          #                       "Recurrence" = "#ABDEE6",
-                          #                       "Second Malignancy" = "#CBAACB"),
                           "Telomere ratio" = colorRamp2(c(0, 1.05, 1.06), c("whitesmoke", "#CAE1FF","#0072B2")),
-                         # "Telomerase score" = colorRamp2(c(0, 0.5, 1.0), c("whitesmoke", "#E69F00", "#0072B2")),
                           "C-circle" = c("POS"="#0072B2",
                                          "NEG"="lightsteelblue1",
                                          "Not done" = "whitesmoke"),
@@ -187,11 +177,12 @@ oncoPrint(gene_matrix_ordered, get_type = function(x) strsplit(x, ",")[[1]],
             Multi_Hit_Fusion  = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Multi_Hit_Fusion"]),col = NA)),
             Multi_Hit = function(x, y, w, h) grid.rect(x, y, w*0.75, h*0.85, gp = gpar(fill = unname(col["Multi_Hit"]), col = NA)),
             Del = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Del"]), col = NA)),
-            Amp = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Amp"]), col = NA))),
+            Amp = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["Amp"]), col = NA)),
+            `5'Flank` = function(x, y, w, h) grid.rect(x, y, w*0.85, h*0.85, gp = gpar(fill = unname(col["5'Flank"]), col = NA))),
           col = col,
           top_annotation = ha,
           #bottom_annotation = ha1,
           column_order =  colnames(gene_matrix_ordered)
           )
-dev.off()
+  dev.off()
 
