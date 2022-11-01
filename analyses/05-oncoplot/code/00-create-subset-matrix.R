@@ -84,6 +84,10 @@ collapse_cnv_dat <- cnv_df %>%
   summarise(count = as.double(length(Variant_Classification[!is.na(Variant_Classification)])),
             Variant_Classification=paste(Variant_Classification,collapse = ",")) 
 
+# No fusion calls to add for this cohort
+fusion_df <- read_tsv(file.path(data_dir, "pbta-fusion-putative-oncogenic.tsv")) %>%
+  filter(Sample %in% hgat$Tumor_Sample_Barcode)
+
 
 merged_dat <- collapse_snv_dat %>%
   full_join(collapse_cnv_dat, by=c("Hugo_Symbol","Tumor_Sample_Barcode"),suffix=c("_SNV","_CNV")) %>%
