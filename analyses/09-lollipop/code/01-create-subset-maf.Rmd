@@ -73,20 +73,3 @@ dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
   filter(Hugo_Symbol %in% goi$genes) %>%
   write_tsv(file.path(output_dir, "snv-dgd-goi.maf.tsv"))
 ```
-
-```{r annotate pbta maf}
-# pbta maf
-command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_goi), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
-command
-
-system(command)
-```
-
-```{r annotate dgd maf}
-# dgd maf
-anno_dgd <- paste(params$python_path, maf_annotator, '-i', file.path(output_dir, "snv-dgd-goi.maf.tsv"), '-o', file.path(output_dir, "dgd_maf-goi-oncokb.tsv"), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
-anno_dgd
-
-system(anno_dgd)
-
-```
