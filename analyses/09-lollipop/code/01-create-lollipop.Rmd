@@ -72,14 +72,17 @@ keep_cols <- c("Tumor_Sample_Barcode",
                "Tumor_Seq_Allele1",
                "Tumor_Seq_Allele2", 
                "Variant_Classification", 
-               "Variant_Type")
+               "Variant_Type",
+               "VAF")
 kegg <- read_table(kegg_file, col_names = "genes")
 goi <- read_table(goi_file, col_names = "genes") %>%
   bind_rows(kegg)
 
-maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
+maf <- data.table::fread(file.path(root_dir, params$maf_in), data.table = F) %>% 
   filter(Tumor_Sample_Barcode %in% hist$Kids_First_Biospecimen_ID_DNA,
          Hugo_Symbol %in% goi$genes) %>%
+  mutate(VAF = t_alt_count/(t_ref_count+t_alt_count)) %>%
+  select(all_of(keep_cols)) %>%
   unique() %>%
   write_tsv(file.path(analysis_dir, params$maf_goi))
 
@@ -91,7 +94,6 @@ dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
 ```{r annotate pbta maf}
 # pbta maf
 command <- paste(params$python_path, maf_annotator, '-i', file.path(analysis_dir, params$maf_goi), '-o', file.path(analysis_dir, params$maf_out), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
-command
 
 system(command)
 ```
@@ -99,7 +101,6 @@ system(command)
 ```{r annotate dgd maf}
 # dgd maf
 anno_dgd <- paste(params$python_path, maf_annotator, '-i', file.path(output_dir, "snv-dgd-goi.maf.tsv"), '-o', file.path(output_dir, "dgd_maf-goi-oncokb.tsv"), '-b', oncokb_token, '-q hgvsp_short', '-r GRCh38')
-anno_dgd
 
 system(anno_dgd)
 
