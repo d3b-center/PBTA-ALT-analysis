@@ -13,7 +13,7 @@ git clone https://github.com/d3b-center/PBTA-ALT-analysis.git
 
 2. Pull the docker container:
 ```
-docker pull jrokita1/pbta-alt:version1.0
+docker pull jrokita1/pbta-alt:latest
 ```
 
 3. Start the docker container, from the `PBTA-ALT-analysis` folder, run:
