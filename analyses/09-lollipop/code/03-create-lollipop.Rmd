@@ -1,0 +1,154 @@
+---
+title: "ATRX lollipop plots"
+output: 
+  html_notebook:
+  toc: TRUE
+toc_float: TRUE
+author: Jo Lynne Rokita, Ryan Corbett
+params:
+  #   maf_in:
+  #   label: "MAF input file"
+  # value: data/snv-consensus-plus-hotspots.maf.tsv.gz
+  # input: file
+  # maf_goi:
+  #   label: "HGAT goi MAF file"
+  # value: output/hgat-goi.maf.tsv
+  #input: file
+  maf_out:
+    label: "MAF output file"
+    value: output/snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv
+    input: file
+# python_path:
+#   label: "Python path"
+# #value: /usr/bin/python
+# value: /Users/harenzaj/miniconda3/bin/python
+#input: ""
+---
+  
+  
+```{r load libraries}
+# load libraries
+library(tidyverse)
+library(maftools)
+
+# define directories 
+root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
+analysis_dir <- file.path(root_dir, "analyses", "09-lollipop")
+input_dir <- file.path(analysis_dir, "input")
+output_dir <- file.path(analysis_dir, "output")
+data_dir <- file.path(root_dir, "data")
+
+# define file
+metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", "stundon_hgat_updated_hist_alt.tsv")
+
+# mutation colors
+source(file.path(root_dir, "analyses", "05-oncoplot", "input", "mutation-colors.R"))
+```
+
+## [ENST00000373344](https://useast.ensembl.org/Homo_sapiens/Transcript/Summary?g=ENSG00000085224;r=X:77504880-77786216;t=ENST00000373344) is 2,492 residues, so same as the longer transcript chosen here by default
+
+Note: All VUS are missense mutations and no missense mutations are likely oncogenic
+
+```{r lollipop by oncogenic status}
+oncokb_maf <- read_tsv(file.path(analysis_dir, params$maf_out))
+unique(oncokb_maf$Transcript_ID) #ENST00000373344 is 2,492 residues
+
+# metadata_cols <- hist %>%
+#   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
+#   select(Tumor_Sample_Barcode, sample_id)
+
+hist <- read_tsv(file.path(metadata_file), guess_max = 1000) %>%
+  filter(short_histology == "HGAT")
+
+metadata_cols <- hist %>%
+  dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
+  select(Tumor_Sample_Barcode, sample_id)
+
+oncokb_maf_oncogenic <-  oncokb_maf %>%
+  filter(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic")) %>%
+  left_join(metadata_cols) %>%
+  select(Tumor_Sample_Barcode, sample_id, Hugo_Symbol, ONCOGENIC, everything(oncokb_maf))
+
+oncokb_maf_onco_obj <- maftools::read.maf(oncokb_maf_oncogenic)
+pdf(file = file.path(output_dir, "atrx-lollipop-oncogenic.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_onco_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+oncokb_maf_vus <-  oncokb_maf %>%
+  filter(ONCOGENIC == "Unknown")
+
+oncokb_maf_vus_obj <- maftools::read.maf(oncokb_maf_vus)
+pdf(file = file.path(output_dir, "atrx-lollipop-vus.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_vus_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+oncokb_maf_obj <- maftools::read.maf(oncokb_maf)
+
+pdf(file = file.path(output_dir, "atrx-lollipop-all.pdf"), width = 16, height = 6)
+lollipopPlot(oncokb_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE)
+while (!is.null(dev.list()))  dev.off()
+
+```
+
+```{r lollipop by ALT status, echo=FALSE, fig.height=5, fig.width=8, paged.print=TRUE}
+alt <- hist %>%
+  filter(`alt final` == "POS")
+non_alt <- hist %>%
+  filter(`alt final` == "NEG")
+
+## ALT mutant samples in MAF
+alt_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% alt$Kids_First_Biospecimen_ID_DNA) %>%
+  mutate(Variant_Classification = case_when(ONCOGENIC == "Likely Oncogenic" ~ "Likely Oncogenic",
+                                            ONCOGENIC == "Unknown" ~ "VUS",
+                                            TRUE ~ NA_character_))
+alt_maf_obj <- maftools::read.maf(alt_maf, vc_nonSyn = c("Likely Oncogenic", "VUS"))
+
+## non-ALT mutant samples in MAF
+non_alt_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% non_alt$Kids_First_Biospecimen_ID_DNA) %>%
+  mutate(Variant_Classification = case_when(ONCOGENIC == "Likely Oncogenic" ~ "Likely Oncogenic",
+                                            ONCOGENIC == "Unknown" ~ "VUS",
+                                            TRUE ~ NA_character_))
+non_alt_maf_obj <- maftools::read.maf(non_alt_maf, vc_nonSyn = c("Likely Oncogenic", "VUS"))
+
+## ALT, recode VUS
+alt_VUS_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% alt$Kids_First_Biospecimen_ID_DNA) %>%
+  mutate(Variant_Classification = case_when(ONCOGENIC == "Unknown" ~ "VUS",
+                                            TRUE ~ as.character(Variant_Classification)))
+alt_vus_maf_obj <- maftools::read.maf(alt_VUS_maf, vc_nonSyn = c("VUS",
+                                                                 "Frame_Shift_Del",
+                                                                 "Frame_Shift_Ins",
+                                                                 "Missense_Mutation",
+                                                                 "Nonsense_Mutation",
+                                                                 "Splice_Region",
+                                                                 "Splice_Site"))
+
+## non-ALT, recode VUS
+non_alt_VUS_maf <- oncokb_maf %>%
+  filter(Tumor_Sample_Barcode %in% non_alt$Kids_First_Biospecimen_ID_DNA) %>%
+  mutate(Variant_Classification = case_when(ONCOGENIC == "Unknown" ~ "VUS",
+                                            TRUE ~ as.character(Variant_Classification)))
+non_alt_vus_maf_obj <- maftools::read.maf(non_alt_VUS_maf, vc_nonSyn = c("VUS",
+                                                                         "Frame_Shift_Del",
+                                                                         "Frame_Shift_Ins",
+                                                                         "Missense_Mutation",
+                                                                         "Nonsense_Mutation",
+                                                                         "Splice_Region",
+                                                                         "Splice_Site"))
+
+tiff(file.path(output_dir, "atrx-lollipop-alt-pos.tiff"), height = 1500, width = 2700, units = "px", res = 300)
+lollipopPlot(alt_vus_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE, colors = colors, labPosSize = 0.8)
+while (!is.null(dev.list()))  dev.off()
+
+tiff(file.path(output_dir, "atrx-lollipop-alt-neg.tiff"), height = 1500, width = 2700, units = "px", res = 300)
+lollipopPlot(non_alt_vus_maf_obj, gene = "ATRX", AACol = "HGVSp_Short", showDomainLabel = FALSE, repel = TRUE, labPosAngle = 90, labelPos = "all", legendTxtSize = 1, showMutationRate = FALSE, colors = colors, labPosSize = 0.6)
+while (!is.null(dev.list()))  dev.off()
+
+tiff(file = file.path(output_dir, "atrx-lollipop-comp.tiff"), height = 1500, width = 2400, units = "px", res = 300)
+lollipopPlot2(m1 = alt_maf_obj, m2 = non_alt_maf_obj, gene = "ATRX", AACol1 = "HGVSp_Short", AACol2 = "HGVSp_Short", m1_name = "ALT+", m2_name = "ALT-", showDomainLabel = FALSE, colors = c("Likely Oncogenic" = "red", "VUS" = "blue"), legendTxtSize = 1, alpha = 0.8)#, labPosAngle = 90, m1_label = "all", m2_label = "all")
+dev.off()
+
+```
+

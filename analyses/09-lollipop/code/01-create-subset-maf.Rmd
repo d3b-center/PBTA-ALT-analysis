@@ -1,0 +1,75 @@
+---
+title: "Create subset MAF"
+output: 
+  html_notebook:
+  toc: TRUE
+toc_float: TRUE
+author: Jo Lynne Rokita
+params:
+  maf_in:
+    label: "MAF input file"
+    value: data/snv-consensus-plus-hotspots.maf.tsv.gz
+    input: file
+  maf_goi:
+    label: "HGAT goi MAF file"
+    value: output/hgat-goi.maf.tsv
+    input: file
+  maf_out:
+    label: "MAF output file"
+    value: output/snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv
+    input: file
+---
+  
+```{r load libraries}
+# load libraries
+library(tidyverse)
+library(maftools)
+
+# define directories 
+root_dir <- rprojroot::find_root(rprojroot::has_dir(".git"))
+analysis_dir <- file.path(root_dir, "analyses", "09-lollipop")
+input_dir <- file.path(analysis_dir, "input")
+output_dir <- file.path(analysis_dir, "output")
+data_dir <- file.path(root_dir, "data")
+
+# define file
+metadata_file <- file.path(root_dir, "analyses","02-add-histologies", "output", "stundon_hgat_updated_hist_alt.tsv")
+
+# goi file
+goi_file <- file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations")
+kegg_file <- file.path(root_dir, "analyses", "05-oncoplot", "input", "KEGG_MISMATCH_REPAIR.txt")
+
+```
+
+
+```{r load files}
+hist <- read_tsv(file.path(metadata_file), guess_max = 1000) %>%
+  filter(short_histology == "HGAT")
+keep_cols <- c("Tumor_Sample_Barcode",
+               "NCBI_Build",
+               "Hugo_Symbol",
+               "Transcript_ID",
+               "HGVSp_Short",
+               "HGVSp",
+               "Chromosome", 
+               "Start_Position", 
+               "End_Position", 
+               "Reference_Allele", 
+               "Tumor_Seq_Allele1",
+               "Tumor_Seq_Allele2", 
+               "Variant_Classification", 
+               "Variant_Type")
+kegg <- read_table(kegg_file, col_names = "genes")
+goi <- read_table(goi_file, col_names = "genes") %>%
+  bind_rows(kegg)
+
+maf <- data.table::fread(file.path(root_dir, params$maf_in), select = keep_cols, data.table = F) %>%
+  filter(Tumor_Sample_Barcode %in% hist$Kids_First_Biospecimen_ID_DNA,
+         Hugo_Symbol %in% goi$genes) %>%
+  unique() %>%
+  write_tsv(file.path(analysis_dir, params$maf_goi))
+
+dgd_maf <- read_tsv(file.path(data_dir, "snv-dgd.maf.tsv.gz")) %>%
+  filter(Hugo_Symbol %in% goi$genes) %>%
+  write_tsv(file.path(output_dir, "snv-dgd-goi.maf.tsv"))
+```
