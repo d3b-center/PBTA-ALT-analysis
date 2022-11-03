@@ -1,4 +1,3 @@
-
 library(readr)
 library(tidyverse)
 library(ggpubr)
@@ -16,6 +15,8 @@ maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 
 # source mutations used for oncoprint
 source(file.path(input_dir, "mutation-colors.R"))
+# source publication theme
+source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
 mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
 
 # metadata read in
@@ -29,7 +30,7 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
                             `alt final` == "neg" ~ "NEG",
                             TRUE ~ as.character(`alt final`)) 
   ) %>%
-  dplyr::select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, `alt final`, atrx_mut, telomere_ratio)
+  dplyr::select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, `alt final`, telomere_ratio)
 
 # get TMB 
 tmb_coding <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
@@ -48,21 +49,20 @@ maf %>%
 
 # read in mut sigs
 sigs <- readxl::read_excel(file.path(data_dir, "TableS2-DNA-results-table.xlsx"), sheet = 2) %>%
-  rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID)
+  dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID)
 
 # read in telomerase scores
 tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"), sheet = 2) %>%
   rename(telomerase_score = NormEXTENDScores_fpkm) %>%
   select(Kids_First_Biospecimen_ID_RNA, telomerase_score)
 
-names(tel)
 
 maf_reanno <- maf %>%
   filter(Variant_Classification %in% mut_of_interest) %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
   unique() %>%
   # pull together if multiple annotations per TSB
-  group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
+  group_by(Tumor_Sample_Barcode, Hugo_Symbol, VAF) %>%
   summarise(ONCOGENIC = str_c(unique(ONCOGENIC), collapse=";")) %>%
   # recode as likely oncogenic for those with both
   mutate(ONCOGENIC = case_when(grepl(";", ONCOGENIC) ~ "Oncogenic or Likely Oncogenic",
@@ -70,9 +70,8 @@ maf_reanno <- maf %>%
                                ONCOGENIC == "Likely Oncogenic" ~ "Oncogenic or Likely Oncogenic",
                                ONCOGENIC == "Oncogenic" ~ "Oncogenic or Likely Oncogenic",
                                TRUE ~ as.character(ONCOGENIC))) %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
   unique()
-
 
 alt_pos <- metadata %>% filter(`alt final` == "POS") %>% nrow()
 alt_neg <- metadata %>% filter(`alt final` == "NEG") %>% nrow()
@@ -119,6 +118,96 @@ for (gene in goi$X1) {
   }
 }
 
+
+# Create density plots for ATRX VAF by ALT status
+metadata_atrx_vaf <- metadata_atrx %>%
+  dplyr::rename(ALT_status = `alt final`) %>%
+  left_join(tmb_coding) %>%
+  left_join(tel) %>%
+  # remove hypermutant samples and those without mutations
+  filter(tmb < 10,
+         !is.na(VAF)) %>%
+  mutate(variable = case_when(ALT_status == "POS" & ONCOGENIC == "Oncogenic or Likely Oncogenic" ~ "ALT+ Oncogenic",
+                              ALT_status == "POS" & ONCOGENIC == "VUS" ~ "ALT+ VUS",
+                              ALT_status == "NEG" & ONCOGENIC == "Oncogenic or Likely Oncogenic" ~ "ALT- Oncogenic",
+                              ALT_status == "NEG" & ONCOGENIC == "VUS" ~ "ALT- VUS"))
+table(metadata_atrx_vaf$variable)
+
+# get group means
+mu <- plyr::ddply(metadata_atrx_vaf, "ALT_status", summarise, grp.mean=mean(VAF))
+mu
+
+# get group means
+mu2 <- plyr::ddply(metadata_atrx_vaf, "variable", summarise, grp.mean=mean(VAF))
+mu2
+
+# plot
+pdf(file.path(plots_dir, "test.pdf"))
+p1 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=ALT_status, fill=ALT_status, after_stat(count))) +
+  geom_density(adjust=1.5, alpha=.4) +
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=ALT_status),
+             linetype="dashed") +
+  xlim(0,1) +
+  xlab("Somatic ATRX mutation VAF") +
+  theme_Publication()
+
+p2 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=ALT_status, fill=ALT_status)) +
+  geom_density(adjust=1.5, alpha=.4) +
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=ALT_status),
+             linetype="dashed") +
+  xlim(0,1) +
+  xlab("Somatic ATRX mutation VAF") +
+  theme_Publication()
+
+p3 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=variable, fill=variable, after_stat(count))) +
+  geom_density(adjust=1.5, alpha=.4) +
+  geom_vline(data=mu2, aes(xintercept=grp.mean, color=variable),
+             linetype="dashed") +
+  xlim(0,1) +
+  xlab("Somatic ATRX mutation VAF") +
+  theme_Publication()
+
+
+p4 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=variable, fill=variable)) +
+  geom_density(adjust=1.5, alpha=.4) +
+  geom_vline(data=mu2, aes(xintercept=grp.mean, color=variable),
+             linetype="dashed") +
+  xlim(0,1) +
+  xlab("Somatic ATRX mutation VAF") +
+  theme_Publication()
+
+print(p1)
+print(p2)
+print(p3)
+print(p4)
+
+dev.off()
+
+
+# correlate ATRXm VAF with telomere ratio
+result <- cor.test(metadata_atrx_sub$VAF, metadata_atrx_sub$telomere_ratio, method = "pearson")
+result
+
+# Fit linear regression and create plot label
+corr <- result$estimate
+pval <-  result$p.value
+label <- paste0("Adjusted Pearson's R = ", signif(corr, 3),
+                ", p = ", signif(pval, 3))
+label_grob <- grobTree(textGrob(label, x=0.05, y=0.94, hjust=0))
+
+# plot correlation
+pdf(file.path(plots_dir, "atrx_vaf_telhunt_cor.pdf"))
+p1 <- ggplot(metadata_atrx_sub, aes(y = telomere_ratio, x = VAF)) +
+  stat_smooth(fill="lightgray", method = "lm", col = "black", show.legend = FALSE) + 
+  geom_point(size=4, color="black", stroke = 0.25) + 
+  annotation_custom(label_grob) +
+  ylim(c(0,5)) +
+  xlim(c(0,1.2)) +
+  xlab("Somatic ATRX mutation VAF") +
+  ylab("T/N telomere content ratio") +
+  theme_Publication()
+print(p1)
+dev.off()
 
 
 # merged mutation matrix read in

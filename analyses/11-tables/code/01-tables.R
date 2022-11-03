@@ -36,21 +36,24 @@ pbta_maf <- read_tsv(file.path(anno_maf_dir, "snv-consensus-plus-hotspots-hgat-o
   filter(Hugo_Symbol == "ATRX" & Variant_Classification %in% mut_of_interest) %>%
   mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~
            "splice",
-           HGVSp_Short = is.na(HGVSp_Short) & Variant_Classification == "3'UTR" ~
+        HGVSp_Short = is.na(HGVSp_Short) & Variant_Classification == "3'UTR" ~
            "3'UTR",
+        HGVSp_Short = is.na(HGVSp_Short) & Variant_Classification == "5'Flank" ~
+          "5'Flank",
          TRUE ~ as.character(HGVSp_Short))) %>%
   mutate(ATRXm = case_when(ONCOGENIC %in% c("Likely Oncogenic", "Oncogenic") ~ 
                            paste0(HGVSp_Short),
-                           ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)")))
+                           ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)"))) %>%
+  rename(ATRXm_VAF = VAF)
 
 pbta_atrx <- pbta_maf %>%
-  select(Kids_First_Biospecimen_ID, ATRXm) %>%
+  select(Kids_First_Biospecimen_ID, ATRXm, ATRXm_VAF) %>%
   # add SVs/CNVs
   add_row(Kids_First_Biospecimen_ID = "BS_STNH7YSX", ATRXm = "exon 1 DEL (promoter)") %>%
   add_row(Kids_First_Biospecimen_ID = "BS_JB3J82ZK", ATRXm = "deep DEL (truncation)") %>%
   add_row(Kids_First_Biospecimen_ID = "BS_KHSYAB3J", ATRXm = "deep DEL (truncation)") %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
-  select(sample_id, ATRXm) 
+  select(sample_id, ATRXm, ATRXm_VAF) 
 
 dgd_onco_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   rename(Kids_First_Biospecimen_ID = Tumor_Sample_Barcode) %>%
@@ -65,12 +68,16 @@ dgd_onco_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
                              paste0(HGVSp_Short),
                            ONCOGENIC == "Unknown" ~ paste0(HGVSp_Short, " (VUS)")))
 
+# add DGD ATRXm VAF
+dgd_atrx_vaf <- read_tsv(file.path(analysis_dir, "input", "dgd_atrx_vaf.tsv"))
+
 dgd_atrx <- dgd_onco_maf %>%
   select(Kids_First_Biospecimen_ID, HGVSp_Short, ATRXm) %>%
   left_join(v11[,c("Kids_First_Biospecimen_ID", "sample_id")]) %>%
-  select(sample_id, ATRXm) %>%
   # add DGD samples which we do not have MAFs for in release, but for which KAC had clinical results
-  add_row(sample_id = "7316-4678", ATRXm = "p.S1153*")
+  add_row(sample_id = "7316-4678", ATRXm = "p.S1153*") %>%
+  left_join(dgd_atrx_vaf, by = c("Kids_First_Biospecimen_ID", "sample_id", "ATRXm")) %>%
+  select(sample_id, ATRXm, ATRXm_VAF)
 
 # remove samples duplicated in DGD
 remove_atrx <- intersect(dgd_atrx$sample_id, pbta_atrx$sample_id)
@@ -171,9 +178,10 @@ all_pbta_dgd_ihc <- v11 %>%
   filter(!is.na(cohort_participant_id)) %>%
   group_by(cohort_participant_id, sample_id, tumor_descriptor, CNS_region, `C-Circle Assay`,
            UBTF, `ATRX IHC`,`H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`,  `T/N TelHunt ratio`, Cohort) %>%
-  summarise(ATRXm = str_c(unique(ATRXm), collapse = ", ")) %>%
+  summarise(ATRXm = str_c(unique(ATRXm), collapse = ", "),
+            ATRXm_VAF = str_c(unique(ATRXm_VAF), collapse = ", ")) %>%
   select(cohort_participant_id, sample_id, tumor_descriptor, CNS_region, `C-Circle Assay`,
-           UBTF, `ATRX IHC`, ATRXm, `H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`, `T/N TelHunt ratio`, Cohort) %>%
+           UBTF, `ATRX IHC`, ATRXm, ATRXm_VAF, `H3K28me3 IHC`, `H3K28M IHC`, `Somatic H3`, `T/N TelHunt ratio`, Cohort) %>%
   rename(`Patient ID` = cohort_participant_id,
          `Tumor ID` = sample_id,
          `Phase of Therapy` = tumor_descriptor,
