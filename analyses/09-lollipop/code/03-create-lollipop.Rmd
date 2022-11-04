@@ -6,23 +6,10 @@ output:
 toc_float: TRUE
 author: Jo Lynne Rokita, Ryan Corbett
 params:
-  #   maf_in:
-  #   label: "MAF input file"
-  # value: data/snv-consensus-plus-hotspots.maf.tsv.gz
-  # input: file
-  # maf_goi:
-  #   label: "HGAT goi MAF file"
-  # value: output/hgat-goi.maf.tsv
-  #input: file
   maf_out:
     label: "MAF output file"
     value: output/snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv
     input: file
-# python_path:
-#   label: "Python path"
-# #value: /usr/bin/python
-# value: /Users/harenzaj/miniconda3/bin/python
-#input: ""
 ---
   
   
@@ -52,10 +39,6 @@ Note: All VUS are missense mutations and no missense mutations are likely oncoge
 ```{r lollipop by oncogenic status}
 oncokb_maf <- read_tsv(file.path(analysis_dir, params$maf_out))
 unique(oncokb_maf$Transcript_ID) #ENST00000373344 is 2,492 residues
-
-# metadata_cols <- hist %>%
-#   dplyr::rename(Tumor_Sample_Barcode = Kids_First_Biospecimen_ID_DNA) %>%
-#   select(Tumor_Sample_Barcode, sample_id)
 
 hist <- read_tsv(file.path(metadata_file), guess_max = 1000) %>%
   filter(short_histology == "HGAT")
