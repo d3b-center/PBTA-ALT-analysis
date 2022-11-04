@@ -58,9 +58,6 @@ dgd_maf <- read_tsv(file.path(anno_maf_dir, "dgd_maf-goi-oncokb.tsv")) %>%
   mutate(HGVSp_Short = case_when(is.na(HGVSp_Short) & Variant_Classification == "Splice_Region" ~ "splice",
                                  TRUE ~ as.character(HGVSp_Short)),
          MMR = paste(Hugo_Symbol, HGVSp_Short, sep = " ")) %>%
-  select(Kids_First_Biospecimen_ID, Hugo_Symbol, HGVSp_Short, MMR, 
-         Variant_Classification, GENE_IN_ONCOKB, VARIANT_IN_ONCOKB,
-         ONCOGENIC, MUTATION_EFFECT, everything(dgd_maf)) %>%
   unique()
 
 
