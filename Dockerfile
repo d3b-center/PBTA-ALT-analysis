@@ -28,7 +28,8 @@ RUN install2.r \
 	survminer \
 	Hmisc \
 	optparse \
-	cutpointr
+	cutpointr \
+	stats
 
 # Install R packages from GitHub
 RUN installGithub.r d3b-center/annoFuse \
