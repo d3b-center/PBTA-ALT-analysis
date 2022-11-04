@@ -28,7 +28,8 @@ RUN install2.r \
 	survminer \
 	Hmisc \
 	optparse \
-	cutpointr
+	cutpointr \
+	stats
 
 # Install R packages from GitHub
 RUN installGithub.r d3b-center/annoFuse \
@@ -40,7 +41,9 @@ RUN apt-get -y --no-install-recommends install \
     python3-pip python3-dev
 RUN pip3 install \
   "matplotlib==3.1.2" \
-  "kiwisolver==1.2.0"
+  "kiwisolver==1.2.0" \
+  "requests==2.27.1" \
+  "urllib3==1.26.8"
 
 # Install oncokb
 RUN git clone https://github.com/oncokb/oncokb-annotator.git /home/oncokb-annotator
