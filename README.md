@@ -1,5 +1,5 @@
 # ALT in Pediatric Brain Tumors Can Occur without ATRX Mutation and is Enriched in Patients with Pathogenic Germline MMR Variants
-Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole <br>
+Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Ryan J. Corbett, Matthew Lueder, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole <br>
 \*Corresponding author
 
 
@@ -70,7 +70,7 @@ cd /home/rstudio/PBTA-ALT-analysis/analyses/module_of_interest
 
 ## Code Authors
 
-Jo Lynne Rokita ([@jharenza](https://github.com/jharenza)), Krutika S. Gaonkar ([@kgaonkar6](https://github.com/kgaonkar6)), Run Jin ([@runjin326](https://github.com/runjin326)), and Daniel P. Miller ([@dmiller15](https://github.com/dmiller15))
+Jo Lynne Rokita ([@jharenza](https://github.com/jharenza)), Krutika S. Gaonkar ([@kgaonkar6](https://github.com/kgaonkar6)), Run Jin ([@runjin326](https://github.com/runjin326)), Ryan C. Corbett (https://github.com/rjcorb), and Daniel P. Miller ([@dmiller15](https://github.com/dmiller15))
 
 ## Contact
 
