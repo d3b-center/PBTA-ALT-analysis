@@ -264,19 +264,27 @@ print(p)
 dev.off()
 
 ########### Assess ATRX clonality ############
+maf_reanno_vaf <- maf %>%
+  # select only ATRX
+  filter(Hugo_Symbol == "ATRX") %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
+  unique()
 
 # Create density plots for ATRX VAF by ALT status
-metadata_atrx_vaf <- metadata_atrx %>%
+metadata_atrx_vaf <- maf_reanno_vaf %>%
+  left_join(metadata) %>%
   dplyr::rename(ALT_status = `alt final`) %>%
   left_join(tmb_coding) %>%
   left_join(tel) %>%
   # remove hypermutant samples and those without mutations
   filter(tmb < 10,
          !is.na(VAF)) %>%
-  mutate(variable = case_when(ALT_status == "POS" & ONCOGENIC == "Oncogenic or Likely Oncogenic" ~ "ALT+ Oncogenic",
-                              ALT_status == "POS" & ONCOGENIC == "VUS" ~ "ALT+ VUS",
-                              ALT_status == "NEG" & ONCOGENIC == "Oncogenic or Likely Oncogenic" ~ "ALT- Oncogenic",
-                              ALT_status == "NEG" & ONCOGENIC == "VUS" ~ "ALT- VUS"))
+  mutate(variable = case_when(ALT_status == "POS" & ONCOGENIC == "Likely Oncogenic" ~ "ALT+ Oncogenic",
+                              ALT_status == "POS" & ONCOGENIC == "Oncogenic" ~ "ALT+ Oncogenic",
+                              ALT_status == "POS" & ONCOGENIC == "Unknown" ~ "ALT+ VUS",
+                              ALT_status == "NEG" & ONCOGENIC == "Likely Oncogenic" ~ "ALT- Oncogenic",
+                              ALT_status == "NEG" & ONCOGENIC == "Oncogenic" ~ "ALT- Oncogenic",
+                              ALT_status == "NEG" & ONCOGENIC == "Unknown" ~ "ALT- VUS"))
 table(metadata_atrx_vaf$variable)
 
 # get group means
