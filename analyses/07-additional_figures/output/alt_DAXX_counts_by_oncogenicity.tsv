@@ -1,0 +1,7 @@
+ALT	Mutation Type	Count	Frequency
+NEG	Not mutated	52	0.9811320754716981
+POS	Not mutated	30	0.9375
+NEG	Oncogenic or Likely Oncogenic	0	0
+POS	Oncogenic or Likely Oncogenic	1	0.03125
+NEG	VUS	1	0.018867924528301886
+POS	VUS	1	0.03125
