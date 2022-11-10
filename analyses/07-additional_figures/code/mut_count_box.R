@@ -18,10 +18,10 @@ maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 source(file.path(input_dir, "mutation-colors.R"))
 # source publication theme
 source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
-mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
+mut_of_interest <- c(names(colors), "Splice_Region")
 
 # metadata read in
-goi <- read_table(file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations"), col_names = F)
+goi <- read_table(file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations"), col_names = "genes")
   
 metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "output",
                                "stundon_hgat_updated_hist_alt.tsv")) %>%
@@ -38,7 +38,14 @@ tmb_coding <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-codin
   dplyr::select(Tumor_Sample_Barcode, tmb)
 
 # read in annotated MAF
-maf <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv"))
+maf <- read_tsv(file.path(maf_dir, "snv-consensus-plus-hotspots-hgat-oncokb.maf.tsv")) %>%
+  filter(Variant_Classification %in% mut_of_interest) %>%
+  filter(Hugo_Symbol %in% goi$genes) %>%
+  mutate(gene_var = paste(Hugo_Symbol, Variant_Classification, sep = "_"))
+table(maf$gene_var, maf$ONCOGENIC)
+
+tert <- maf %>%
+  filter(Hugo_Symbol == "TERT")
 
 maf %>%
   filter(ONCOGENIC == "Unknown") %>%
@@ -47,6 +54,9 @@ maf %>%
 maf %>%
   filter(ONCOGENIC != "Unknown") %>%
   count(Variant_Classification)
+
+maf %>%
+  count(ONCOGENIC)
 
 # read in mut sigs
 sigs <- readxl::read_excel(file.path(data_dir, "TableS2-DNA-results-table.xlsx"), sheet = 2) %>%
@@ -57,9 +67,10 @@ tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"),
   rename(telomerase_score = NormEXTENDScores_fpkm) %>%
   select(Kids_First_Biospecimen_ID_RNA, telomerase_score)
 
-
-maf_reanno <- maf %>%
-  filter(Variant_Classification %in% mut_of_interest) %>%
+maf_reanno_VAF <- maf %>%
+  # remove 5'Flank from genes other than TERT, as they were not used initially
+  filter(Variant_Classification != "5'Flank") %>%
+  bind_rows(tert) %>%
   select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
   unique() %>%
   # pull together if multiple annotations per TSB
@@ -74,10 +85,14 @@ maf_reanno <- maf %>%
   select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
   unique()
 
+maf_reanno <- maf_reanno_VAF %>%
+  select(-VAF) %>%
+  unique()
+
 alt_pos <- metadata %>% filter(`alt final` == "POS") %>% nrow()
 alt_neg <- metadata %>% filter(`alt final` == "NEG") %>% nrow()
 
-for (gene in goi$X1) {
+for (gene in goi$genes) {
   maf_reanno_goi <- maf_reanno %>%
   filter(Hugo_Symbol == gene)
   
