@@ -18,7 +18,7 @@ maf_dir <- file.path(root_dir, "analyses", "09-lollipop", "output")
 source(file.path(input_dir, "mutation-colors.R"))
 # source publication theme
 source(file.path(root_dir, "analyses", "04-cutpoint-analysis", "code", "theme.R"))
-mut_of_interest <- c(names(colors), "Splice_Region")
+mut_of_interest <- c(names(colors), "3'UTR", "5'UTR", "Splice_Region")
 
 # metadata read in
 goi <- read_table(file.path(root_dir, "analyses", "05-oncoplot", "input", "goi-mutations"), col_names = "genes")
@@ -67,14 +67,14 @@ tel <- readxl::read_excel(file.path(data_dir, "TableS3-RNA-results-table.xlsx"),
   rename(telomerase_score = NormEXTENDScores_fpkm) %>%
   select(Kids_First_Biospecimen_ID_RNA, telomerase_score)
 
-maf_reanno_VAF <- maf %>%
+maf_reanno <- maf %>%
   # remove 5'Flank from genes other than TERT, as they were not used initially
   filter(Variant_Classification != "5'Flank") %>%
   bind_rows(tert) %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
   unique() %>%
   # pull together if multiple annotations per TSB
-  group_by(Tumor_Sample_Barcode, Hugo_Symbol, VAF) %>%
+  group_by(Tumor_Sample_Barcode, Hugo_Symbol) %>%
   summarise(ONCOGENIC = str_c(unique(ONCOGENIC), collapse=";")) %>%
   # recode as likely oncogenic for those with both
   mutate(ONCOGENIC = case_when(grepl(";", ONCOGENIC) ~ "Oncogenic or Likely Oncogenic",
@@ -82,11 +82,7 @@ maf_reanno_VAF <- maf %>%
                                ONCOGENIC == "Likely Oncogenic" ~ "Oncogenic or Likely Oncogenic",
                                ONCOGENIC == "Oncogenic" ~ "Oncogenic or Likely Oncogenic",
                                TRUE ~ as.character(ONCOGENIC))) %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
-  unique()
-
-maf_reanno <- maf_reanno_VAF %>%
-  select(-VAF) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC) %>%
   unique()
 
 alt_pos <- metadata %>% filter(`alt final` == "POS") %>% nrow()

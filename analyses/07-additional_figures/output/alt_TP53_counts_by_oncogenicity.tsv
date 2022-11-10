@@ -3,5 +3,3 @@ NEG	Not mutated	30	0.5660377358490566
 POS	Not mutated	10	0.3125
 NEG	Oncogenic or Likely Oncogenic	23	0.4339622641509434
 POS	Oncogenic or Likely Oncogenic	22	0.6875
-NEG	VUS	0	0
-POS	VUS	1	0.03125
