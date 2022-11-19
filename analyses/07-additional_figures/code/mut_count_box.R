@@ -285,7 +285,7 @@ metadata_atrx_vaf <- maf_reanno_vaf %>%
                                        `alt final` == "NEG" & ONCOGENIC == "Oncogenic" ~ "ALT- Oncogenic",
                                        `alt final` == "NEG" & ONCOGENIC == "Unknown" ~ "ALT- VUS")) %>%
   dplyr::rename(`ALT status` = `alt final`,
-              `Tumor Fraction` = tumor_fraction)
+              `Tumor Purity` = tumor_fraction)
   
   table(metadata_atrx_vaf$`ALT ATRX status`)
 
@@ -331,11 +331,11 @@ label_grob <- grobTree(textGrob(label, x=0.05, y=0.9, hjust=0))
 # plot correlation
 p3 <- ggplot(metadata_atrx_vaf, aes(y = telomere_ratio, x = VAF)) +
   stat_smooth(fill = "grey90", method = "lm", col = "darkgrey", show.legend = FALSE) + 
-  geom_point(size = 4, aes(colour = `Tumor Fraction`, stroke = 0.25)) + 
+  geom_point(size = 4, aes(colour = `Tumor Purity`, stroke = 0.25)) + 
   scale_colour_gradient(high = "darkblue", low = "orange", na.value = "grey50", limits = c(0,1)) +
   ylim(c(0,5)) +
   xlim(c(0,1.05)) +
-  geom_hline(yintercept = 1.7, colour = "darkgrey", linetype = "dashed") +
+  geom_hline(yintercept = 1.699, colour = "darkgrey", linetype = "dashed") +
   geom_vline(xintercept = 0.2, colour = "darkgrey", linetype = "dashed") +
   annotation_custom(label_grob) +
   xlab("Somatic ATRX mutation VAF") +
@@ -397,3 +397,4 @@ ks.test(alt_pos_onco$VAF, alt_neg_vus$VAF)
 #data:  alt_pos_onco$VAF and alt_neg_vus$VAF
 #D = 0.38636, p-value = 0.7736
 #alternative hypothesis: two-sided
+
