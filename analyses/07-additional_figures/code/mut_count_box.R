@@ -267,7 +267,7 @@ dev.off()
 maf_reanno_vaf <- maf %>%
   # select only ATRX
   filter(Hugo_Symbol == "ATRX") %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, HGVSp_Short, ONCOGENIC, VAF) %>%
   unique()
 
 # Create density plots for ATRX VAF by ALT status
@@ -333,6 +333,7 @@ p3 <- ggplot(metadata_atrx_vaf, aes(y = telomere_ratio, x = VAF)) +
   annotation_custom(label_grob) +
   ylim(c(0,5)) +
   xlim(c(0,1.2)) +
+  geom_hline(yintercept = 1.7) +
   xlab("Somatic ATRX mutation VAF") +
   ylab("T/N telomere content ratio") +
   theme_Publication()
@@ -354,6 +355,39 @@ ks.test(pos$VAF, neg$VAF)
 #	Exact two-sample Kolmogorov-Smirnov test
 
 # data:  pos$VAF and neg$VAF
-# D = 0.35, p-value = 0.7283
+# D = 0.35, p-value = 0.83389
 # alternative hypothesis: two-sided
 
+table(metadata_atrx_vaf$ONCOGENIC)
+
+alt_pos_onco <- metadata_atrx_vaf %>%
+  filter(ALT_status == "POS" & ONCOGENIC == "Likely Oncogenic")
+alt_pos_vus <- metadata_atrx_vaf %>%
+  filter(ALT_status == "POS" & ONCOGENIC == "Unknown")
+
+ks.test(alt_pos_onco$VAF, alt_pos_vus$VAF)
+
+#Two-sample Kolmogorov-Smirnov test
+
+#data:  alt_pos_onco$VAF and alt_pos_vus$VAF
+#D = 0.54545, p-value = 0.3473
+#alternative hypothesis: two-sided
+
+#Warning message:
+#  In ks.test(alt_pos_onco$VAF, alt_pos_vus$VAF) :
+#  cannot compute exact p-value with ties
+
+
+alt_pos_onco <- metadata_atrx_vaf %>%
+  filter(ALT_status == "POS" & ONCOGENIC == "Likely Oncogenic")
+alt_neg_vus <- metadata_atrx_vaf %>%
+  filter(ALT_status == "NEG" & ONCOGENIC == "Unknown")
+
+ks.test(alt_pos_onco$VAF, alt_neg_vus$VAF)
+
+
+#Two-sample Kolmogorov-Smirnov test
+
+#data:  alt_pos_onco$VAF and alt_neg_vus$VAF
+#D = 0.38636, p-value = 0.7736
+#alternative hypothesis: two-sided
