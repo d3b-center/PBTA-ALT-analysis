@@ -335,7 +335,7 @@ p3 <- ggplot(metadata_atrx_vaf, aes(y = telomere_ratio, x = VAF)) +
   scale_colour_gradient(high = "darkblue", low = "orange", na.value = "grey50", limits = c(0,1)) +
   ylim(c(0,5)) +
   xlim(c(0,1.05)) +
-  geom_hline(yintercept = 1.699, colour = "darkgrey", linetype = "dashed") +
+  geom_hline(yintercept = 1.068, colour = "darkgrey", linetype = "dashed") +
   geom_vline(xintercept = 0.2, colour = "darkgrey", linetype = "dashed") +
   annotation_custom(label_grob) +
   xlab("Somatic ATRX mutation VAF") +
