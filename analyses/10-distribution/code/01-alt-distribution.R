@@ -62,8 +62,8 @@ theme_Publication() +
   xlab("Histology") +
   ylab("T/N telomere content ratio") +
   coord_flip() +
-  geom_hline(aes(yintercept = 1.0679, linetype = "HGAT")) +
-  geom_hline(aes(yintercept = 0.9963, linetype = "non-HGAT"), colour = "gray") +
+  geom_hline(aes(yintercept = 1.0679, linetype = "HGG")) +
+  geom_hline(aes(yintercept = 0.9963, linetype = "non-HGG"), colour = "gray") +
 scale_linetype_manual(name = "ALT+ cutpoint", values = c(2, 2), 
                       guide = guide_legend(override.aes = list(color = c("black", "gray")))) 
 

@@ -31,7 +31,7 @@ metadata <- read_tsv(file.path(root_dir, "analyses", "02-add-histologies", "outp
                             `alt final` == "neg" ~ "NEG",
                             TRUE ~ as.character(`alt final`)) 
   ) %>%
-  dplyr::select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, `alt final`, telomere_ratio)
+  dplyr::select(Tumor_Sample_Barcode, Kids_First_Biospecimen_ID_RNA, sample_id, `alt final`, telomere_ratio, tumor_fraction)
 
 # get TMB 
 tmb_coding <- read_tsv(file.path(data_dir,"pbta-snv-consensus-mutation-tmb-coding.tsv")) %>%
@@ -267,47 +267,49 @@ dev.off()
 maf_reanno_vaf <- maf %>%
   # select only ATRX
   filter(Hugo_Symbol == "ATRX") %>%
-  select(Tumor_Sample_Barcode, Hugo_Symbol, ONCOGENIC, VAF) %>%
+  select(Tumor_Sample_Barcode, Hugo_Symbol, HGVSp_Short, ONCOGENIC, VAF) %>%
   unique()
 
 # Create density plots for ATRX VAF by ALT status
 metadata_atrx_vaf <- maf_reanno_vaf %>%
   left_join(metadata) %>%
-  dplyr::rename(ALT_status = `alt final`) %>%
   left_join(tmb_coding) %>%
   left_join(tel) %>%
   # remove hypermutant samples and those without mutations
   filter(tmb < 10,
          !is.na(VAF)) %>%
-  mutate(variable = case_when(ALT_status == "POS" & ONCOGENIC == "Likely Oncogenic" ~ "ALT+ Oncogenic",
-                              ALT_status == "POS" & ONCOGENIC == "Oncogenic" ~ "ALT+ Oncogenic",
-                              ALT_status == "POS" & ONCOGENIC == "Unknown" ~ "ALT+ VUS",
-                              ALT_status == "NEG" & ONCOGENIC == "Likely Oncogenic" ~ "ALT- Oncogenic",
-                              ALT_status == "NEG" & ONCOGENIC == "Oncogenic" ~ "ALT- Oncogenic",
-                              ALT_status == "NEG" & ONCOGENIC == "Unknown" ~ "ALT- VUS"))
-table(metadata_atrx_vaf$variable)
+  mutate(`ALT ATRX status` = case_when(`alt final` == "POS" & ONCOGENIC == "Likely Oncogenic" ~ "ALT+ Oncogenic",
+                                       `alt final` == "POS" & ONCOGENIC == "Oncogenic" ~ "ALT+ Oncogenic",
+                                       `alt final` == "POS" & ONCOGENIC == "Unknown" ~ "ALT+ VUS",
+                                       `alt final` == "NEG" & ONCOGENIC == "Likely Oncogenic" ~ "ALT- Oncogenic",
+                                       `alt final` == "NEG" & ONCOGENIC == "Oncogenic" ~ "ALT- Oncogenic",
+                                       `alt final` == "NEG" & ONCOGENIC == "Unknown" ~ "ALT- VUS")) %>%
+  dplyr::rename(`ALT status` = `alt final`,
+              `Tumor Purity` = tumor_fraction)
+  
+  table(metadata_atrx_vaf$`ALT ATRX status`)
 
 # get group means
-mu <- plyr::ddply(metadata_atrx_vaf, "ALT_status", summarise, grp.mean=mean(VAF))
+mu <- plyr::ddply(metadata_atrx_vaf, "`ALT status`", summarise, grp.mean=mean(VAF))
 mu
 
 # get group means
-mu2 <- plyr::ddply(metadata_atrx_vaf, "variable", summarise, grp.mean=mean(VAF))
+mu2 <- plyr::ddply(metadata_atrx_vaf, "`ALT ATRX status`", summarise, grp.mean=mean(VAF))
 mu2
 
 # plot
-p1 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=ALT_status, color = ALT_status, after_stat(count))) +
+p1 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=`ALT status`, color = `ALT status`, after_stat(count))) +
   geom_density(adjust=1.5, alpha=.4) +
-  geom_vline(data=mu, aes(xintercept=grp.mean, color=ALT_status),
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=`ALT status`),
              linetype="dashed") +
   xlim(0,1) +
   xlab("Somatic ATRX mutation VAF") +
   ylab("Count") +
   theme_Publication()
 
-p2 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=variable, color = variable, after_stat(count))) +
+p2 <- ggplot(data=metadata_atrx_vaf, aes(x=VAF, group=`ALT ATRX status`, color = `ALT ATRX status`, after_stat(count))) +
   geom_density(adjust=1.5, alpha=.4) +
-  geom_vline(data=mu2, aes(xintercept=grp.mean, color=variable),
+  geom_vline(data=mu2, aes(xintercept=grp.mean, color=`ALT ATRX status`),
              linetype="dashed") +
   xlim(0,1) +
   xlab("Somatic ATRX mutation VAF") +
@@ -328,32 +330,71 @@ label_grob <- grobTree(textGrob(label, x=0.05, y=0.9, hjust=0))
 
 # plot correlation
 p3 <- ggplot(metadata_atrx_vaf, aes(y = telomere_ratio, x = VAF)) +
-  stat_smooth(fill="lightgray", method = "lm", col = "black", show.legend = FALSE) + 
-  geom_point(size=4, color="black", stroke = 0.25) + 
-  annotation_custom(label_grob) +
+  stat_smooth(fill = "grey90", method = "lm", col = "darkgrey", show.legend = FALSE) + 
+  geom_point(size = 4, aes(colour = `Tumor Purity`, stroke = 0.25)) + 
+  scale_colour_gradient(high = "darkblue", low = "orange", na.value = "grey50", limits = c(0,1)) +
   ylim(c(0,5)) +
-  xlim(c(0,1.2)) +
+  xlim(c(0,1.05)) +
+  geom_hline(yintercept = 1.068, colour = "darkgrey", linetype = "dashed") +
+  geom_vline(xintercept = 0.2, colour = "darkgrey", linetype = "dashed") +
+  annotation_custom(label_grob) +
   xlab("Somatic ATRX mutation VAF") +
   ylab("T/N telomere content ratio") +
   theme_Publication()
+p3
 
+dev.off()
 
 tiff(file.path(plots_dir, "atrx_clonality.tiff"), height = 1400, width = 5000, res = 300)
-p <- ggarrange(p1, p2, p3, widths = c(450, 500, 400), heights = c(150, 150, 150), align = "h", labels = c("B", "C", "D"), ncol = 3, nrow = 1)
+p <- ggarrange(p1, p2, p3, widths = c(400, 475, 500), heights = c(150, 150, 150), align = "h", labels = c("B", "C", "D"), ncol = 3, nrow = 1)
 print(p)
 dev.off()
 
 # Are the distributions significantly different? No
 
 pos <- metadata_atrx_vaf %>%
-  filter(ALT_status == "POS")
+  filter(`ALT status` == "POS")
 neg <- metadata_atrx_vaf %>%
-  filter(ALT_status == "NEG")
+  filter(`ALT status` == "NEG")
 
 ks.test(pos$VAF, neg$VAF)
 #	Exact two-sample Kolmogorov-Smirnov test
 
 # data:  pos$VAF and neg$VAF
-# D = 0.35, p-value = 0.7283
+# D = 0.35, p-value = 0.83389
 # alternative hypothesis: two-sided
+
+table(metadata_atrx_vaf$ONCOGENIC)
+
+alt_pos_onco <- metadata_atrx_vaf %>%
+  filter(`ALT status` == "POS" & ONCOGENIC == "Likely Oncogenic")
+alt_pos_vus <- metadata_atrx_vaf %>%
+  filter(`ALT status` == "POS" & ONCOGENIC == "Unknown")
+
+ks.test(alt_pos_onco$VAF, alt_pos_vus$VAF)
+
+#Two-sample Kolmogorov-Smirnov test
+
+#data:  alt_pos_onco$VAF and alt_pos_vus$VAF
+#D = 0.54545, p-value = 0.3473
+#alternative hypothesis: two-sided
+
+#Warning message:
+#  In ks.test(alt_pos_onco$VAF, alt_pos_vus$VAF) :
+#  cannot compute exact p-value with ties
+
+
+alt_pos_onco <- metadata_atrx_vaf %>%
+  filter(`ALT status` == "POS" & ONCOGENIC == "Likely Oncogenic")
+alt_neg_vus <- metadata_atrx_vaf %>%
+  filter(`ALT status` == "NEG" & ONCOGENIC == "Unknown")
+
+ks.test(alt_pos_onco$VAF, alt_neg_vus$VAF)
+
+
+#Two-sample Kolmogorov-Smirnov test
+
+#data:  alt_pos_onco$VAF and alt_neg_vus$VAF
+#D = 0.38636, p-value = 0.7736
+#alternative hypothesis: two-sided
 
