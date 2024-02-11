@@ -2,6 +2,7 @@
 Jennifer L. Stundon, Heba Ijaz, Krutika S. Gaonkar, Rebecca S. Kaufman, Run Jin, Anastasios Karras, Zalman Vaksman, Jung Kim, Ryan J. Corbett, Matthew Lueder, Daniel P. Miller, Yiran Guo, Mariarita Santi, Marilyn Li, Gonzalo Lopez, Phillip J. Storm Adam C. Resnick, Angela Waanders, Suzanne McFarland, Douglas R. Stewart, Sharon J. Diskin, Jo Lynne Rokita\*, Kristina A. Cole <br>
 \*Corresponding author
 
+The manuscript has been [published](https://pubmed.ncbi.nlm.nih.gov/36541551/) and the repository is now read-only.
 
 ## To reproduce the code in this repository:
 This repository contains a docker image and code used to conduct somatic analyses for the manuscript noted above.
